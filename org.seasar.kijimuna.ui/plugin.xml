@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.0"?>
+<plugin>
+   <extension-point id="diconeditorpart" name="Dicon EditorPart" schema="schema/org.seasar.kijimuna.ui.diconeditorpart.exsd"/>
+
+   <extension
+         point="org.eclipse.ui.propertyPages">
+      <page
+            adaptable="true"
+            objectClass="org.eclipse.core.resources.IProject"
+            class="org.seasar.kijimuna.ui.internal.preference.ProjectPreferencePage"
+            name="%plugin.brand"
+            id="org.seasar.eclipse.ui.projectproperty">
+      </page>
+   </extension>
+   <extension
+         point="org.eclipse.ui.preferencePages">
+      <page
+            class="org.seasar.kijimuna.ui.internal.preference.PluginPreferencePage"
+            name="%plugin.brand"
+            id="org.seasar.kijimuna.ui.preferences.PluginPreferencePage"/>
+   </extension>
+   <extension
+         point="org.eclipse.ui.editors">
+      <editor
+            class="org.seasar.kijimuna.ui.internal.editor.dicon.DiconEditor"
+            contributorClass="org.seasar.kijimuna.ui.internal.editor.dicon.DiconEditorContributor"
+            default="true"
+            filenames="*.dicon"
+            icon="images/icon/dicon_obj.gif"
+            id="org.seasar.kijimuna.ui.editor.dicon"
+            name="%editor.dicon"/>
+   </extension>
+   <extension
+         point="org.eclipse.ui.views">
+      <category
+            name="%plugin.brand"
+            id="org.seasar.kijimuna.ui.category"/>
+      <view
+            allowMultiple="false"
+            icon="images/icon/container.gif"
+            class="org.seasar.kijimuna.ui.internal.view.dicon.DiconTreeView"
+            category="org.seasar.kijimuna.ui.category"
+            name="%view.dicon_tree"
+            id="org.seasar.kijimuna.ui.dicontreeview"/>
+   </extension>
+   <extension
+         point="org.eclipse.ui.newWizards">
+      <category
+            name="%plugin.brand"
+            id="org.seasar.kijimuna.ui.category"/>
+      <wizard
+            icon="images/icon/new_dicon.gif"
+            class="org.seasar.kijimuna.ui.internal.wizard.dicon.NewDiconWizard"
+            category="org.seasar.kijimuna.ui.category"
+            name="%wizard.name"
+            id="org.seasar.kijimuna.ui.wizard1">
+      </wizard>
+   </extension>
+   <extension
+         point="org.seasar.kijimuna.ui.diconeditorpart">
+      <editPart
+            index="1"
+            class="org.seasar.kijimuna.ui.internal.editor.dicon.DiconXmlEditor"
+            name="XML"/>
+   </extension>
+
+</plugin>
