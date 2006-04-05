@@ -1,17 +1,17 @@
-�C���X�g�[���菇�F
+インストール手順：
 
--�_�E�����[�h����ZIP�t�@�C����Eclipse�u�ȊO�́v�ꏊ�ɉ𓀂��܂��B
--Eclipse3.1�̃��j���[���A[Help]-[Software Updates]-[Find and Install...]
- ��I�т܂��B 
--[Install/Update]�_�C�A���O���ł�̂ŁA[Search for new features to install]
- ��I�����āA[Next]�{�^���N���b�N 
--[New Local Site...]�{�^�����N���b�N 
--[�t�H���_�̎Q��]�_�C�A���O���o��̂ŁA��ق�ZIP�t�@�C�����𓀂����t�H���_
- ��I�����āA[OK] 
--[Sites to include in Search]�c���[�r���[�ɁA���͖��̃m�[�h�������̂ŁA
- �m�[�h���J���ƁA[Kijimuna unstable versions]������܂��̂ŁA�`�F�b�N����
- [Next]�{�^���N���b�N 
--���Ƃ͎w���ǂ���Next-Next-Finish�ŁA�C���X�g�[�����n�܂�܂� 
--�v���O�C���t�B�[�`���[����������Ă��Ȃ��|�̕\�����ł܂����A[ok]���N���b�N
- ���Ă��������B
--�C���X�g�[��������A�ċN�������߂���̂ŁA�ċN�����Ă��������B 
+-ダウンロードしたZIPファイルをEclipse「以外の」場所に解凍します。
+-Eclipse3.1のメニューより、[Help]-[Software Updates]-[Find and Install...]
+ を選びます。 
+-[Install/Update]ダイアログがでるので、[Search for new features to install]
+ を選択して、[Next]ボタンクリック 
+-[New Local Site...]ボタンをクリック 
+-[フォルダの参照]ダイアログが出るので、先ほどZIPファイルを解凍したフォルダ
+ を選択して、[OK] 
+-[Sites to include in Search]ツリービューに、入力名のノードが現れるので、
+ ノードを開くと、[Kijimuna unstable versions]が現れますので、チェックして
+ [Next]ボタンクリック 
+-あとは指示どおりNext-Next-Finishで、インストールが始まります 
+-プラグインフィーチャーが署名されていない旨の表示がでますが、[ok]をクリック
+ してください。
+-インストール完了後、再起動を求められるので、再起動してください。 

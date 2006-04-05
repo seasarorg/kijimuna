@@ -1,253 +1,253 @@
-Kijimuna �ύX����
+Kijimuna 変更履歴
 
 
 1.0.8beta (2006-04-04)
 ----------------------------------------------------------------------
-[�V�K] �o���f�[�V������ON/OFF�؂�ւ��ł���悤�ɂ��܂����B
+[新規] バリデーションをON/OFF切り替えできるようにしました。
 
 1.0.7beta (2006-04-03)
 ----------------------------------------------------------------------
-[�V�K] Dicon�G�f�B�^�ŁAinclude�̃n�C�p�[�����N�ɑΉ����܂����B
-[�V�K] Dicon�G�f�B�^�ŁAcomponent�Q�Ƃ̃n�C�p�[�����N�ɑΉ����܂����B
+[新規] Diconエディタで、includeのハイパーリンクに対応しました。
+[新規] Diconエディタで、component参照のハイパーリンクに対応しました。
 
 1.0.6beta (2006-04-02)
 ----------------------------------------------------------------------
-[�V�K] class�����̃n�C�p�[�����N�ɑΉ����܂����B
+[新規] class属性のハイパーリンクに対応しました。
 
 1.0.5beta (2006-03-18)
 ----------------------------------------------------------------------
-[�C��] components.dtd�̃o�[�W�����ɂ���āA<component>�̓��͕⊮���o����
-       �������̂��C�����܂����B
+[修正] components.dtdのバージョンによって、<component>の入力補完が出来な
+       かったのを修正しました。
 
 1.0.4beta (2006-03-12)
 ----------------------------------------------------------------------
-[�C��] Edit���j���[���ADicon�G�f�B�^�ƘA������悤�ɂ��܂����B
+[修正] Editメニューを、Diconエディタと連動するようにしました。
 
 1.0.3beta (2006-03-06)
 ----------------------------------------------------------------------
-[�V�K] Seasar2.4��DTD�ɑΉ����܂����B
+[新規] Seasar2.4のDTDに対応しました。
 
-[�C��] XML�R�����g�̃A���R�����g�ŐF���߂�Ȃ��̂��C�����܂����B
+[修正] XMLコメントのアンコメントで色が戻らないのを修正しました。
 
 1.0.2beta (2006-03-05)
 ----------------------------------------------------------------------
-[�C��] Dicon�t�@�C���̕ύX�ۑ����̃o���f�[�V���������������܂����B
+[修正] Diconファイルの変更保存時のバリデーションを高速化しました。
 
 1.0.1beta (2006-03-02)
 ----------------------------------------------------------------------
-[�ύX] ���C�Z���X���AApache License, Version 2.0.�ɕύX���܂����B
+[変更] ライセンスを、Apache License, Version 2.0.に変更しました。
 
-[�ύX] components.dtd���A�ŐV�ɂ��܂����B 
+[変更] components.dtdを、最新にしました。 
 
-[�C��] include������ꍇ�̃o���f�[�V���������������܂����B
+[修正] includeがある場合のバリデーションを高速化しました。
 
 
 1.0.0 (2005-11-01)
 ----------------------------------------------------------------------
-[�V�K] Eclipse3.1��Java5�v���W�F�N�g�ɑΉ����܂����B
+[新規] Eclipse3.1のJava5プロジェクトに対応しました。
 
-[�C��] �p�����NullPointerException����������̂��C�����܂����B
+[修正] 英語環境でNullPointerExceptionが発生するのを修正しました。
 
 
 0.7.0 (2005-10-18)
 ----------------------------------------------------------------------
-[�V�K] Seasar2.3�ɑΉ����܂����B
+[新規] Seasar2.3に対応しました。
 
 
 0.6.26 (2005-10-10)
 ----------------------------------------------------------------------
-[�C��] pointcut�̃R���}��ɋ󔒂������ƕ����ƔF������Ȃ��̂��C������
-       �����B
+[修正] pointcutのコンマ後に空白が無いと複数と認識されないのを修正しま
+       した。
 
-[�C��] �}�W�b�N�R���|�[�l���gservletContext�����������̂Œǉ����܂����B
+[修正] マジックコンポーネントservletContextが無かったので追加しました。
 
-[�V�K] class�����̃N���X�K�w(java.lang.Object�͏���)�̃N���X���R���|�[
-       �l���g�L�[�Ƃ��Ĉ����悤�ɂ��܂����B
+[新規] class属性のクラス階層(java.lang.Objectは除く)のクラスをコンポー
+       ネントキーとして扱うようにしました。
 
-[�V�K] ����name��������������ꍇ�ɁA�R���|�[�l���g�L�[����������Ƃ���
-       �G���[�ɂ��܂����B
+[新規] 同じname属性が複数ある場合に、コンポーネントキーが複数あるという
+       エラーにしました。
 
-[�V�K] include�ŏz�Q�Ƃ����ꍇ�ɁA�G���[�Ƃ��ĕ񍐂���悤�ɂ��܂����B
+[新規] includeで循環参照した場合に、エラーとして報告するようにしました。
 
-[�C��] Dicon�t�@�C�������E�B�U�[�h�ŁA�����t�@�C�������w�肵���ꍇ��
-       �G���[���b�Z�[�W��\������悤�ɂ��܂����B
+[修正] Diconファイル生成ウィザードで、既存ファイル名を指定した場合に
+       エラーメッセージを表示するようにしました。
 
-[�V�K] Dicon�t�@�C���̌��ؒ��ɁA�X�e�[�^�X�o�[�ɏ󋵂�\������悤��
-       ���܂����B
+[新規] Diconファイルの検証中に、ステータスバーに状況を表示するように
+       しました。
 
 
 0.6.25 (2005-09-10)
 ----------------------------------------------------------------------
-[�V�K] class�����̓��͕⊮�̕��@�Ƃ��āA�p�b�P�[�W������̕⊮�ɉ����āA
-       �N���X������̕⊮���T�|�[�g���܂����B�⊮���@�́AJava�G�f�B�^��
-       ���������ƂȂ�悤�ɕύX���܂����B
+[新規] class属性の入力補完の方法として、パッケージ名からの補完に加えて、
+       クラス名からの補完をサポートしました。補完方法は、Javaエディタと
+       同じ挙動となるように変更しました。
 
-[�V�K] dicon�t�@�C���쐬�E�B�U�[�h�ŁA�G���R�[�f�B���O�̈ꗗ��Shift_JIS
-       ��Windows-31J��ǉ����܂����B
+[新規] diconファイル作成ウィザードで、エンコーディングの一覧にShift_JIS
+       とWindows-31Jを追加しました。
 
-[�C��] UTF-8��<description>�̓��e�ɓ��{����L�q�����ꍇ�A���̌��̃^�O
-       �⊮�Ƃ��āA<components>�������ɏo�Ȃ��Ȃ�̂��C�����܂����B
+[修正] UTF-8で<description>の内容に日本語を記述した場合、その後ろのタグ
+       補完として、<components>しか候補に出なくなるのを修正しました。
 
-[�C��] �R���X�g���N�^�����̌^�������N���X�̃N���X�ɑ΂��āA�R���X�g���N
-       �^�C���W�F�N�V������ݒ肷��ƁA�R���X�g���N�^��������Ȃ��Ƃ�
-       ���G���[����������̂��C�����܂����B
+[修正] コンストラクタ引数の型が内部クラスのクラスに対して、コンストラク
+       タインジェクションを設定すると、コンストラクタが見つからないとい
+       うエラーが発生するのを修正しました。
 
-[����] Eclipse3.1�ŁAJava5�v���W�F�N�g��Generics�ɂ͖��Ή��ł��B�Y������
-       ���\�b�h��������Ȃ��Ȃǂ̃G���[���������܂��B�C���ɂ́A���΂�
-       �����Ԃ������錩���݂ł��B
+[制限] Eclipse3.1で、Java5プロジェクトのGenericsには未対応です。該当する
+       メソッドが見つからないなどのエラーが発生します。修正には、しばら
+       く時間がかかる見込みです。
 
-[����] Kijimuna�ɂ́AEclipse3.0�p��3.1�p������܂��BKijimuna�̃C���X�g�[
-       �����ɂ̓o�[�W�����ɒ��ӂ��Ă��������B
+[制限] Kijimunaには、Eclipse3.0用と3.1用があります。Kijimunaのインストー
+       ル時にはバージョンに注意してください。
 
 
 0.6.24 (2005-05-09)
 ----------------------------------------------------------------------
-[�C��] ���ɂ���ẮAclsss������interface�^��component�v�f�̃{�f�B��
-       OGNL�����L�q�����ꍇ�Ɂu�A�X�y�N�g���K�v�v�̃G���[���o��ꍇ��
-       ����̂��C�����܂����B
+[修正] 環境によっては、clsss属性がinterface型のcomponent要素のボディに
+       OGNL式を記述した場合に「アスペクトが必要」のエラーが出る場合が
+       あるのを修正しました。
 
-[�ύX] clsss������interface�^��component�v�f�̃{�f�B��OGNL�����L�q����
-       �ꍇ�Ɂu�������class�����̗������L�q����Ă���v�̌x�����o�Ă�
-       �܂����B������AOGNL����]���������ʂ̃I�u�W�F�N�g��class������
-       �^�ɑ���\�Ŗ����ꍇ�̂݃G���[�Ƃ���悤�ɕύX���܂����B
+[変更] clsss属性がinterface型のcomponent要素のボディにOGNL式を記述した
+       場合に「式言語とclass属性の両方が記述されている」の警告が出てい
+       ました。これを、OGNL式を評価した結果のオブジェクトがclass属性の
+       型に代入可能で無い場合のみエラーとするように変更しました。
 
-[�C��] class������HttpSession�₻����p������interface�^���w�肵���ꍇ
-       �Ɂu�A�X�y�N�g���K�v�v�̃G���[���o��Ƌ��ɁA���̑��̌��؂��s��
-       ��Ă��Ȃ������̂��C�����܂����B
+[修正] class属性にHttpSessionやそれを継承したinterface型を指定した場合
+       に「アスペクトが必要」のエラーが出ると共に、その他の検証が行わ
+       れていなかったのを修正しました。
 
 
 0.6.23 (2005-05-02)
 ----------------------------------------------------------------------
-[�C��] �C���^�t�F�[�X���p������Ă��鎞�̃R���|�[�l���g�L�[�ɁA�e�C��
-       �^�t�F�[�X������Ȃ������̂��C�����܂����B
+[修正] インタフェースが継承されている時のコンポーネントキーに、親イン
+       タフェースが現れなかったのを修正しました。
 
-[�ύX] dicon�G�f�B�^�̃G���R�[�f�B���O�Ƃ��āAdicon�t�@�C����encoding
-       �œ��o�͂���悤�ɕύX���܂����B
+[変更] diconエディタのエンコーディングとして、diconファイルのencoding
+       で入出力するように変更しました。
 
 
 0.6.22 (2005-04-18)
 ----------------------------------------------------------------------
-[�C��] <meta>�v�f�̓��e���ȗ��������ɁA�G���[���o�Ă����̂��C�����܂����B
+[修正] <meta>要素の内容を省略した時に、エラーが出ていたのを修正しました。
 
 
 0.6.21 (2005-04-11)
 ----------------------------------------------------------------------
-[�C��] �v���p�e�B��get/set���\�b�h�̏������Aset��get�ƋL�q���ꂽ�ꍇ�ɁA
-       SetterInjection�Ώۃv���p�e�B��������Ȃ��Ƃ����G���[���o�Ă�
-       ���̂��C�����܂����B
+[修正] プロパティのget/setメソッドの順序が、set→getと記述された場合に、
+       SetterInjection対象プロパティが見つからないというエラーが出てい
+       たのを修正しました。
 
-[�ύX] Kijimuna�ݒ��S2�v���W�F�N�g��OFF�ɂ����ۂɁA�ݒ���e�𖳌��\��
-       ����悤�ɂ��܂����B
+[変更] Kijimuna設定でS2プロジェクトをOFFにした際に、設定内容を無効表示
+       するようにしました。
 
-[�C��] JAR�̃��[�g�ɂ���dicon�t�@�C����include�����ꍇ�ɁAdicon�t�@�C
-       ����������Ȃ��Ƃ����G���[���C�����܂����B
+[修正] JARのルートにあるdiconファイルをincludeした場合に、diconファイ
+       ルが見つからないというエラーを修正しました。
 
-[�ύX] ���o�[�W������dicon�G�f�B�^�́Adicon�t�@�C����encoding�ł͂Ȃ��A
-       �u�E�B���h�E���ݒ聨���[�N�x���`���G�f�B�^�v�Ŏw�肳��Ă���G
-       ���R�[�f�B���O�ŊJ���܂��B
-       ����܂ŁA�G���R�[�f�B���O���قȂ�ꍇ�͕ۑ��ł��܂���ł������A
-       ���̃o�[�W�������狭���ۑ����邩�m�F����悤�ɂ��܂����B
+[変更] 現バージョンのdiconエディタは、diconファイルのencodingではなく、
+       「ウィンドウ→設定→ワークベンチ→エディタ」で指定されているエ
+       ンコーディングで開きます。
+       これまで、エンコーディングが異なる場合は保存できませんでしたが、
+       このバージョンから強制保存するか確認するようにしました。
 
 
 0.6.20 (2005-04-04)
 ----------------------------------------------------------------------
-[�C��] �R���e���c�A�V�X�g�̋N���L�[���A�u�E�B���h�E���ݒ聨���[�N�x���`��
-       �L�[���ҏW���R���e���c�A�V�X�g�v�Őݒ肵�Ă���L�[�V�[�P���X�ɕύX
-       ���܂����B
-       Mac OS X�ŃC���v�b�g���\�b�h�Ƌ�������ꍇ�́A�L�[�V�[�P���X�̐ݒ�
-       �𒲐����Ă��������B
+[修正] コンテンツアシストの起動キーを、「ウィンドウ→設定→ワークベンチ→
+       キー→編集→コンテンツアシスト」で設定してあるキーシーケンスに変更
+       しました。
+       Mac OS Xでインプットメソッドと競合する場合は、キーシーケンスの設定
+       を調整してください。
 
-[�C��] dicon�t�@�C����encoding�Ɏw�肷��G���R�[�f�B���O���́A�݊����̂���
-       �͈͂ŕύX�ł���悤�ɂ��܂����B
-       Mac OS X��encoding=Shift_JIS��dicon�t�@�C���̕ۑ����ɁASJIS��ύX��
-       ���Ȃ��Ƃ����G���[���������Ȃ��Ȃ�܂����B
+[修正] diconファイルのencodingに指定するエンコーディング名は、互換性のある
+       範囲で変更できるようにしました。
+       Mac OS Xでencoding=Shift_JISのdiconファイルの保存時に、SJISを変更で
+       きないというエラーが発生しなくなりました。
 
 
 0.6.19 (2005-04-02)
 ----------------------------------------------------------------------
-[�C��] �C���i�[�N���X��F������悤�ɏC�����܂����B����ɂ��S2�{�̂ɕt������
-       test.org.seasar.framework.aop.interceptors��InterceptorChainTest.dicon
-       �̕s�K�؂ȃG���[���\������Ȃ��Ȃ�܂����B
+[修正] インナークラスを認識するように修正しました。これによりS2本体に付属する
+       test.org.seasar.framework.aop.interceptorsのInterceptorChainTest.dicon
+       の不適切なエラーが表示されなくなりました。
 
-[�C��] Mac OS X�ŁA�v���W�F�N�g�ݒ�_�C�A���O�̃��C�A�E�g���Y���ĕ\�������
-       �����̂��C�����܂����B
+[修正] Mac OS Xで、プロジェクト設定ダイアログのレイアウトがズレて表示されて
+       いたのを修正しました。
 
-[�ύX] Mac OS X�ŁA�R���e���c�A�V�X�g�̋N���L�[���ACtrl+�X�y�[�X����Command+
-       �X�y�[�X�ɏC�����܂����B
+[変更] Mac OS Xで、コンテンツアシストの起動キーを、Ctrl+スペースからCommand+
+       スペースに修正しました。
 
-[�C��] Eclipse3.1M5a�ŃR���p�C���G���[�ɂȂ�̂��C�����܂����B
+[修正] Eclipse3.1M5aでコンパイルエラーになるのを修正しました。
 
-[����] ���̃v���O�C���́AEclipse3.1M5a�ł͎��s���G���[���������ē��삵�܂���B
-       �\�[�X�R�[�h����R���p�C������Ύ��s���G���[�͔������܂��񂪁Adicon
-       �t�@�C���̌��؂ŕs�K�؂Ȍx����G���[���񍐂���܂��B
+[制限] このプラグインは、Eclipse3.1M5aでは実行時エラーが発生して動作しません。
+       ソースコードからコンパイルすれば実行時エラーは発生しませんが、dicon
+       ファイルの検証で不適切な警告やエラーが報告されます。
 
 
 0.6.18
 ----------------------------------------------------------------------
-[�V�K] Kijimuna���v���O�C��Update�T�C�g�ōX�V�ł���悤�ɂ��܂����B
+[新規] KijimunaをプラグインUpdateサイトで更新できるようにしました。
 
-[�V�K] 2.1dtd����component��instance���urequest�v�������́usession�v�Ƃ�����
-       �ɁAHttpServletRequest�EHttpServletResponse�EHttpSession���R���|�[�l��
-       �g�Ɏ����C���W�F�N�V����������s���ꍇ��}�����Ă��܂��B
+[新規] 2.1dtd下でcomponentのinstanceを「request」もしくは「session」とした際
+       に、HttpServletRequest・HttpServletResponse・HttpSessionがコンポーネン
+       トに自動インジェクション判定を行う場合を抑制しています。
 
-[�V�K] �R���e�i�̃}�W�b�N�R���|�[�l���g��HTTP���N�G�X�g�EHTTP���X�|���X�E�Z�b
-       �V������ǉ������BSeasar2.1�ւ̑Ή��ł��B
+[新規] コンテナのマジックコンポーネントにHTTPリクエスト・HTTPレスポンス・セッ
+       ションを追加した。Seasar2.1への対応です。
 
-[�V�K] �V����Seasar2.1��DTD�Ƀp�[�T�[�Ή����܂����B 
+[新規] 新しいSeasar2.1のDTDにパーサー対応しました。 
 
-[�V�K] �R�[�h�⊮�@�\�ƃ^�O�̐F�Â��@�\������DiconXML�G�f�B�^�𓋍ڂ��܂����B
-       �⊮���s�����e�́A�ȉ��̂Ƃ���ł��B
+[新規] コード補完機能とタグの色づけ機能をもつDiconXMLエディタを搭載しました。
+       補完を行う内容は、以下のとおりです。
 
-       �EXmlDecl�̕⊮
-       �EDocDecl�̕⊮
-       �EDTD�ɏ]�����G�������g���̕⊮
-       �EDTD�ɏ]�����������̕⊮
-       �EDTD�ɏ]���������l�̕⊮
-       �Ecomponent�G�������g��class�����̕⊮
-       �Eproperty�G�������g��name�����̕⊮
-       �EinitMethod�G�������g��name�����̕⊮
-       �EdestroyMethod�G�������g��name�����̕⊮
-       �Easpect�G�������g��pointcut�����̕⊮
-       �Einclude�G�������g��path�����̕⊮
+       ・XmlDeclの補完
+       ・DocDeclの補完
+       ・DTDに従ったエレメント名の補完
+       ・DTDに従った属性名の補完
+       ・DTDに従った属性値の補完
+       ・componentエレメントのclass属性の補完
+       ・propertyエレメントのname属性の補完
+       ・initMethodエレメントのname属性の補完
+       ・destroyMethodエレメントのname属性の補完
+       ・aspectエレメントのpointcut属性の補完
+       ・includeエレメントのpath属性の補完
 
-[�V�K] Outline��meta�m�[�h��\������悤�ɂ��܂����B 
+[新規] Outlineにmetaノードを表示するようにしました。 
 
-[�V�K] Outline��description�m�[�h��\������悤�ɂ��܂����B 
+[新規] Outlineにdescriptionノードを表示するようにしました。 
 
-[�V�K] �V�KDicon�t�@�C���쐬�E�B�U�[�h�ɂāA2.1/2.0��I������悤�ɂ��܂����B 
+[新規] 新規Diconファイル作成ウィザードにて、2.1/2.0を選択するようにしました。 
 
-[�V�K] Outline�̃A�C�R������Ԃɉ����ď����Ȃ��܂��iEclipse�p��ł�decorator��
-       �����j����ɕ`�悷��d�g�݂ɂ��܂����B
+[新規] Outlineのアイコンを状態に応じて小さなおまけ（Eclipse用語ではdecoratorと
+       いう）を上に描画する仕組みにしました。
 
-[�V�K] Outline��̃R���|�[�l���g�L�[�̎q�m�[�h�Ƃ��āA�C���^�[�t�F�C�X�m�[�h�A
-       ���ł��̃C���^�[�t�F�C�X�̃��\�b�h��\������悤�ɂȂ�܂����B 
+[新規] Outline上のコンポーネントキーの子ノードとして、インターフェイスノード、
+       孫でそのインターフェイスのメソッドを表示するようになりました。 
 
-[�V�K] Outline��̃A�X�y�N�g�\���ɂ��āApointcut�̐ݒ肪�ȗ�����Ď����C���^
-       �[�t�F�C�X�S���̃��\�b�h���K�p�����ꍇ�A���̎����C���^�[�t�F�C�X���m
-       �[�h�\������悤�ɂȂ�܂����B 
+[新規] Outline上のアスペクト表示について、pointcutの設定が省略されて実装インタ
+       ーフェイス全部のメソッドが適用される場合、その実装インターフェイスをノ
+       ード表示するようになりました。 
 
-[�C��] A include B include A �Ƃ����֌W��Dicon�c���[�̒��ł���ƁA�X�^�b�N�I
-       �[�o�[�t���[����������s����C�����܂����B
+[修正] A include B include A という関係をDiconツリーの中でつくると、スタックオ
+       ーバーフローが発生する不具合を修正しました。
 
-[�C��] org.eclipse.swt.SWTError: No more handles �Ƃ����G���[��Outline�A�C�R��
-       �̃C���[�W���\�[�X�Ǘ��̖�肩�甭�����AEclipse�𗎂Ƃ����Ƃ��������
-       �C�����܂����B
+[修正] org.eclipse.swt.SWTError: No more handles というエラーがOutlineアイコン
+       のイメージリソース管理の問題から発生し、Eclipseを落とすこともある問題を
+       修正しました。
 
-[�C��] �A�X�y�N�g�̐ݒ�ŁApointcut=".*"�Ƃ����Ƃ��ɃR���X�g���N�^�[�܂œK�p��
-       �\�b�h�̈ꗗ�ɉ�����Ă�������C�����܂����B 
+[修正] アスペクトの設定で、pointcut=".*"としたときにコンストラクターまで適用メ
+       ソッドの一覧に加わっている問題を修正しました。 
 
-[�ύX] XML��encoding�ŁuMS932�v�\�����uShift_JIS�v�ɂ��܂��B
+[変更] XMLのencodingで「MS932」表示を「Shift_JIS」にします。
 
-[�ύX] �V�K�쐬�E�B�U�[�h�̃f�t�H���g�G���R�[�f�B���O��UTF-8�ɂ��܂����B
+[変更] 新規作成ウィザードのデフォルトエンコーディングをUTF-8にしました。
 
-[����] XmlDecl��encoding�����𒼐ڕύX����ƕۑ��ł��܂���B�_�C�A���O�ʒm
-       ���܂��B
+[制限] XmlDeclのencoding属性を直接変更すると保存できません。ダイアログ通知
+       します。
 
-[����] Jar�̃��[�g�ɒu����Dicon��PackageExplorer����J�����Ƃ���Outline��
-       �o�Ȃ��B
+[制限] Jarのルートに置いたDiconをPackageExplorerから開いたときにOutlineが
+       出ない。
 
-[����] Jar����Dicon�t�@�C����I�������Ƃ��ɁA�v���W�F�N�g���ς��Ă�DiconTree��
-       �ǐ����Ȃ��B
+[制限] Jar中のDiconファイルを選択したときに、プロジェクトが変ってもDiconTreeが
+       追随しない。
 
 
 0.6.11
