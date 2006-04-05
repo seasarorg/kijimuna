@@ -20,10 +20,10 @@ package org.seasar.kijimuna.core.dicon.model;
  */
 public interface IExpressionElement extends IDiconElement {
 
-    void setLocking(boolean lock);
-    
+	void setLocking(boolean lock);
+
 	String getExpression();
-	
+
 	boolean isOGNL();
-    
+
 }

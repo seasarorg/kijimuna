@@ -22,21 +22,20 @@ import org.eclipse.core.runtime.IAdaptable;
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public interface IRttiPropertyDescriptor 
-		extends IAdaptable,  Serializable, Comparable {
+public interface IRttiPropertyDescriptor extends IAdaptable, Serializable, Comparable {
 
 	IRtti getParent();
-	
-    IRtti getType();
-    
-    String getName();
-    
-    IRtti getValue();
-    
-    void setValue(IRtti value);
 
-    boolean isWritable();
-    
-    boolean isReadable(); 
-    
+	IRtti getType();
+
+	String getName();
+
+	IRtti getValue();
+
+	void setValue(IRtti value);
+
+	boolean isWritable();
+
+	boolean isReadable();
+
 }

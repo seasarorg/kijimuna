@@ -19,6 +19,7 @@ import java.util.Collection;
 
 import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.jdt.core.IType;
+
 import org.seasar.kijimuna.core.search.IPackageRequestor;
 
 /**
@@ -27,11 +28,11 @@ import org.seasar.kijimuna.core.search.IPackageRequestor;
 public class DefaultPackageRequestor implements IPackageRequestor {
 
 	private Collection collection;
-	
+
 	public DefaultPackageRequestor(Collection collection) {
 		this.collection = collection;
 	}
-	
+
 	public void acceptPackage(IPackageFragment pack, boolean archive) {
 		collection.add(pack);
 	}

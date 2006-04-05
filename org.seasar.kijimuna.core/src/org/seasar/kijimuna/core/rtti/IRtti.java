@@ -25,13 +25,13 @@ import org.eclipse.jdt.core.IType;
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public interface IRtti extends IAdaptable, Serializable, Comparable {
-    
+
 	IType getType();
-	
+
 	RttiLoader getRttiLoader();
 
 	boolean isInterface();
-	
+
 	boolean isFinal();
 
 	boolean isAssignableFrom(IRtti testRtti);
@@ -47,18 +47,17 @@ public interface IRtti extends IAdaptable, Serializable, Comparable {
 	IRttiFieldDescriptor getField(String field, boolean staticAccess);
 
 	IRttiFieldDescriptor[] getFields(Pattern pattern);
-	
+
 	IRttiConstructorDesctiptor getConstructor(IRtti[] args);
 
 	IRttiConstructorDesctiptor[] getConstructors();
 
-	IRttiMethodDesctiptor getMethod(
-	        String name, IRtti[] args, boolean staticAccess);
-	
+	IRttiMethodDesctiptor getMethod(String name, IRtti[] args, boolean staticAccess);
+
 	IRttiMethodDesctiptor[] getMethods(Pattern pattern);
 
 	IRttiPropertyDescriptor getProperty(String name);
-	
+
 	IRttiPropertyDescriptor[] getProperties(Pattern pattern);
-	
+
 }

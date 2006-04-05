@@ -22,6 +22,6 @@ import org.seasar.kijimuna.core.dicon.model.IDiconElement;
  */
 public interface IValidation {
 
-    void validation(IDiconElement element);
-    
+	void validation(IDiconElement element);
+
 }

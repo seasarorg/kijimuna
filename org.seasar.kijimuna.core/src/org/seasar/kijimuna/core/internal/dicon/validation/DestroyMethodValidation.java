@@ -27,21 +27,21 @@ import org.seasar.kijimuna.core.dicon.model.IDiconElement;
  */
 public class DestroyMethodValidation implements IValidation, ConstCore {
 
-    public void validation(IDiconElement element) {
-        if(element instanceof IDestroyMethodElement) {
-            validDestroy((IDestroyMethodElement)element);
-        }
-    }
-    
-    private void validDestroy(IDestroyMethodElement destroy) {
-        IComponentElement component = (IComponentElement)destroy.getParent();
-		String instance = component.getInstanceMode();
-		if(!instance.equals(DICON_VAL_INSTANCE_SINGLETON)) {
-		    MarkerSetting.createDiconMarker(
-		            "dicon.validation.DestroyMethodValidation.1",
-		            destroy, new Object[] { instance });
+	public void validation(IDiconElement element) {
+		if (element instanceof IDestroyMethodElement) {
+			validDestroy((IDestroyMethodElement) element);
 		}
-       
-    }
+	}
+
+	private void validDestroy(IDestroyMethodElement destroy) {
+		IComponentElement component = (IComponentElement) destroy.getParent();
+		String instance = component.getInstanceMode();
+		if (!instance.equals(DICON_VAL_INSTANCE_SINGLETON)) {
+			MarkerSetting.createDiconMarker("dicon.validation.DestroyMethodValidation.1",
+					destroy, new Object[] {
+						instance
+					});
+		}
+	}
 
 }

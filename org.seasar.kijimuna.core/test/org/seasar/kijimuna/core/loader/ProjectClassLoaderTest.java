@@ -17,11 +17,10 @@ package org.seasar.kijimuna.core.loader;
 
 import java.net.URL;
 
-import org.seasar.kijimuna.core.ConstCore;
-import org.seasar.kijimuna.core.loader.ProjectClassLoader;
-import org.seasar.kijimuna.core.test.TestProject;
-
 import junit.framework.TestCase;
+
+import org.seasar.kijimuna.core.ConstCore;
+import org.seasar.kijimuna.core.test.TestProject;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
@@ -30,31 +29,31 @@ public class ProjectClassLoaderTest extends TestCase implements ConstCore {
 
 	private TestProject project;
 	private ProjectClassLoader loader;
-    
-    public ProjectClassLoaderTest(String name) {
-        super(name);
-    }
-    
-    protected void setUp() throws Exception {
+
+	public ProjectClassLoaderTest(String name) {
+		super(name);
+	}
+
+	protected void setUp() throws Exception {
 		project = new TestProject();
-        project.addJar(ID_PLUGIN_CORE, "/dtdparser-1.2.1.jar");
-        loader = new ProjectClassLoader(project.getJavaProject());
-    }
+		project.addJar(ID_PLUGIN_CORE, "/dtdparser-1.2.1.jar");
+		loader = new ProjectClassLoader(project.getJavaProject());
+	}
 
-    protected void tearDown() throws Exception {
+	protected void tearDown() throws Exception {
 		project.dispose();
-    }
+	}
 
-    public void testGetURLs() {
-        URL[] urls = loader.getURLs();
-        for(int i = 0; i < urls.length; i++) {
-            System.out.println(urls[i].toString());
-        }
-    }
-    
-    public void testLoadClass() throws Exception {
-        loader.loadClass("com.wutka.dtd.DTD");
-        assertTrue(true);
-    }
+	public void testGetURLs() {
+		URL[] urls = loader.getURLs();
+		for (int i = 0; i < urls.length; i++) {
+			System.out.println(urls[i].toString());
+		}
+	}
+
+	public void testLoadClass() throws Exception {
+		loader.loadClass("com.wutka.dtd.DTD");
+		assertTrue(true);
+	}
 
 }

@@ -29,108 +29,108 @@ import org.seasar.kijimuna.core.util.ModelUtils;
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public class Pointcut implements IPointcut {
-    
-    private IAspectElement aspect;
-    private String regexp;
-    private String message;
-    private Pattern pattern;
-    private IRtti[] implementings;
-    private IRttiMethodDesctiptor[] methods;
-    private boolean autoApply;
-    
-    public Pointcut(IAspectElement aspect, String regexp) {
-        this.aspect = aspect;
-        if(regexp != null) {
-	        this.regexp = regexp;
-        } else {
-            autoApply = true;
-        }
-        getPattern();
-    }
-    
-    private Pattern getPattern() {
-        if(pattern == null) {
-	        try {
-	            String r = regexp;
-	            if(autoApply) {
-	                r = ".*";
-	            }
-	            pattern = Pattern.compile(r);
-	        } catch (PatternSyntaxException e) {
-	            message = e.getMessage();
-	        }
-        }
-        return pattern;
-    }
-    
-    public boolean isAutoApply() {
-        return autoApply;
-    }
-    
-    public IRtti getInstanceRtti() {
-    	return ModelUtils.getComponentRtti(aspect);
-    }
-    
-    public IRtti[] getImplementings() {
-        if(implementings == null) {
-            implementings = new IRtti[0];
-            if(autoApply) {
-                methods = new IRttiMethodDesctiptor[0];
-	            IRtti rtti = ModelUtils.getComponentRtti(aspect);
-	            if(rtti != null) {
-	                implementings = rtti.getInterfaces();
-	            }
-            }
-        }
-        return implementings;
-    }
-    
-    public IRttiMethodDesctiptor[] getApplyMethods() {
-        if(methods == null) {
-            methods = new IRttiMethodDesctiptor[0];
-            if(!autoApply) {
-                implementings = new IRtti[0];
-	            Pattern p = getPattern();
-	            if(p != null) {
-	            	IRtti rtti = getInstanceRtti();
-	                if(rtti != null) {
-	                	methods = rtti.getMethods(p);
-	                }
-	            }
-            }
-        }
-        return methods;
-    }
 
-    public IRttiMethodDesctiptor[] getApplyMethods(IRtti implementing) {
-        if(autoApply) {
-        	IRtti rtti = getInstanceRtti();
-            return ModelUtils.getImplementMethods(rtti, implementing);
-        }
-        return new IRttiMethodDesctiptor[0];
-    }
-    
-    public String getRegexp() {
-        if(regexp != null) {
-            return regexp;
-        }
-        return KijimunaCore.getResourceString("dicon.tools.Pointcut.1");
-    }
+	private IAspectElement aspect;
+	private String regexp;
+	private String message;
+	private Pattern pattern;
+	private IRtti[] implementings;
+	private IRttiMethodDesctiptor[] methods;
+	private boolean autoApply;
 
-    public int compareTo(Object test) {
-        if(test instanceof IPointcut) {
-            IPointcut pointcut = (IPointcut)test;
-            return getRegexp().compareTo(pointcut.getRegexp());
-        }
-        return 0;
-    }
-    
-    public String getErrorMessage() {
-        return message;
-    }
+	public Pointcut(IAspectElement aspect, String regexp) {
+		this.aspect = aspect;
+		if (regexp != null) {
+			this.regexp = regexp;
+		} else {
+			autoApply = true;
+		}
+		getPattern();
+	}
 
-    public boolean hasError() {
-        return (message != null);
-    }
+	private Pattern getPattern() {
+		if (pattern == null) {
+			try {
+				String r = regexp;
+				if (autoApply) {
+					r = ".*";
+				}
+				pattern = Pattern.compile(r);
+			} catch (PatternSyntaxException e) {
+				message = e.getMessage();
+			}
+		}
+		return pattern;
+	}
+
+	public boolean isAutoApply() {
+		return autoApply;
+	}
+
+	public IRtti getInstanceRtti() {
+		return ModelUtils.getComponentRtti(aspect);
+	}
+
+	public IRtti[] getImplementings() {
+		if (implementings == null) {
+			implementings = new IRtti[0];
+			if (autoApply) {
+				methods = new IRttiMethodDesctiptor[0];
+				IRtti rtti = ModelUtils.getComponentRtti(aspect);
+				if (rtti != null) {
+					implementings = rtti.getInterfaces();
+				}
+			}
+		}
+		return implementings;
+	}
+
+	public IRttiMethodDesctiptor[] getApplyMethods() {
+		if (methods == null) {
+			methods = new IRttiMethodDesctiptor[0];
+			if (!autoApply) {
+				implementings = new IRtti[0];
+				Pattern p = getPattern();
+				if (p != null) {
+					IRtti rtti = getInstanceRtti();
+					if (rtti != null) {
+						methods = rtti.getMethods(p);
+					}
+				}
+			}
+		}
+		return methods;
+	}
+
+	public IRttiMethodDesctiptor[] getApplyMethods(IRtti implementing) {
+		if (autoApply) {
+			IRtti rtti = getInstanceRtti();
+			return ModelUtils.getImplementMethods(rtti, implementing);
+		}
+		return new IRttiMethodDesctiptor[0];
+	}
+
+	public String getRegexp() {
+		if (regexp != null) {
+			return regexp;
+		}
+		return KijimunaCore.getResourceString("dicon.tools.Pointcut.1");
+	}
+
+	public int compareTo(Object test) {
+		if (test instanceof IPointcut) {
+			IPointcut pointcut = (IPointcut) test;
+			return getRegexp().compareTo(pointcut.getRegexp());
+		}
+		return 0;
+	}
+
+	public String getErrorMessage() {
+		return message;
+	}
+
+	public boolean hasError() {
+		return (message != null);
+	}
 
 }

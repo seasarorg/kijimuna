@@ -19,4 +19,5 @@ package org.seasar.kijimuna.core.dicon.info;
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public interface IDirectAccessed {
+
 }

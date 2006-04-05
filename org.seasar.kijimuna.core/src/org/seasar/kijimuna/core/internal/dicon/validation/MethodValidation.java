@@ -30,35 +30,31 @@ import org.seasar.kijimuna.core.util.StringUtils;
  */
 public class MethodValidation implements IValidation, ConstCore {
 
-    public void validation(IDiconElement element) {
-        if(element instanceof IMethodElement) {
-            validMethod((IMethodElement)element);
-        }
-    }
+	public void validation(IDiconElement element) {
+		if (element instanceof IMethodElement) {
+			validMethod((IMethodElement) element);
+		}
+	}
 
-    private void validMethod(IMethodElement method) {
+	private void validMethod(IMethodElement method) {
 		String methodName = method.getMethodName();
 		String el = method.getExpression();
-		if(StringUtils.existValue(methodName)) {
-			if(StringUtils.existValue(el)) {
-			    MarkerSetting.createDiconMarker(
-			            "dicon.validation.MethodValidation.1",
-			            method); 
+		if (StringUtils.existValue(methodName)) {
+			if (StringUtils.existValue(el)) {
+				MarkerSetting.createDiconMarker("dicon.validation.MethodValidation.1",
+						method);
 			}
 		} else {
-			if(StringUtils.noneValue(el)) {
-			    MarkerSetting.createDiconMarker(
-			            "dicon.validation.MethodValidation.2",
-			            method); 
+			if (StringUtils.noneValue(el)) {
+				MarkerSetting.createDiconMarker("dicon.validation.MethodValidation.2",
+						method);
 			}
-			for(Iterator it = method.getArgList().iterator(); it.hasNext();) {
-			    IArgElement arg = (IArgElement)it.next(); 
-			    MarkerSetting.createDiconMarker(
-			            "dicon.validation.MethodValidation.3",
-			            arg); 
+			for (Iterator it = method.getArgList().iterator(); it.hasNext();) {
+				IArgElement arg = (IArgElement) it.next();
+				MarkerSetting.createDiconMarker("dicon.validation.MethodValidation.3",
+						arg);
 			}
 		}
-        
-    }
-    
+	}
+
 }

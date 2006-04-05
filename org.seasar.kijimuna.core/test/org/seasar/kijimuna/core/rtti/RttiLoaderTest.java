@@ -17,28 +17,26 @@ package org.seasar.kijimuna.core.rtti;
 
 import java.util.TreeMap;
 
-import org.eclipse.jdt.core.IJavaProject;
-import org.seasar.kijimuna.core.test.TestProject;
-
 import junit.framework.TestCase;
 
+import org.eclipse.jdt.core.IJavaProject;
+
+import org.seasar.kijimuna.core.test.TestProject;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public class RttiLoaderTest extends TestCase {
-	
+
 	public RttiLoaderTest(String arg) {
 		super(arg);
 	}
 
-	
 	private TestProject project;
 
 	protected void setUp() throws Exception {
 		project = new TestProject();
 	}
-	
 
 	protected void tearDown() throws Exception {
 		project.dispose();
@@ -49,7 +47,7 @@ public class RttiLoaderTest extends TestCase {
 		RttiLoader loader = new RttiLoader(jp.getElementName(), false);
 		assertEquals(loader.getProject(), jp);
 	}
-	
+
 	public void testIsAutoConvert() {
 		IJavaProject jp = project.getJavaProject();
 		RttiLoader loader = new RttiLoader(jp.getElementName(), false);
@@ -57,14 +55,14 @@ public class RttiLoaderTest extends TestCase {
 		loader = new RttiLoader(jp.getElementName(), true);
 		assertTrue(loader.isAutoConvert());
 	}
-	
+
 	public void testLoadRtti1() throws Exception {
 		IJavaProject jp = project.getJavaProject();
 		RttiLoader loader = new RttiLoader(jp.getElementName(), false);
 		IRtti rtti = loader.loadRtti(Integer.TYPE);
 		assertEquals(rtti.getQualifiedName(), "int");
 	}
-	
+
 	public void testLoadRtti2() throws Exception {
 		IJavaProject jp = project.getJavaProject();
 		RttiLoader loader = new RttiLoader(jp.getElementName(), false);
@@ -77,7 +75,7 @@ public class RttiLoaderTest extends TestCase {
 		RttiLoader loader = new RttiLoader(jp.getElementName(), false);
 		IRtti rtti = loader.loadRtti(TreeMap.class);
 		IRtti[] interfaces = rtti.getInterfaces();
-		assertEquals(interfaces.length,4);
+		assertEquals(interfaces.length, 4);
 	}
 
 }

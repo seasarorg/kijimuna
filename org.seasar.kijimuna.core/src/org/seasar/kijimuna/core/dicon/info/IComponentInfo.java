@@ -26,9 +26,9 @@ import org.seasar.kijimuna.core.rtti.IRttiPropertyDescriptor;
 public interface IComponentInfo extends Serializable {
 
 	IComponentKey[] getComponentKeys();
-	
-	IRttiConstructorDesctiptor getAutoInjectedConstructor(); 
-	
+
+	IRttiConstructorDesctiptor getAutoInjectedConstructor();
+
 	IRttiPropertyDescriptor[] getAutoInjectedProperties();
-	
+
 }

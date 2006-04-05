@@ -22,8 +22,8 @@ import java.util.List;
  */
 public interface IMethodElement extends IExpressionElement {
 
-    String getMethodName();
-    
-    List getArgList();
+	String getMethodName();
+
+	List getArgList();
 
 }

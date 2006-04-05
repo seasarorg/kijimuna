@@ -20,6 +20,7 @@ package org.seasar.kijimuna.core.preference;
  */
 public interface IPreferences {
 
+	// default preferences
 	String getDefault(String key);
 	boolean getDefaultBoolean(String key);
 	byte[] getDefaultByteArray(String key);
@@ -36,7 +37,8 @@ public interface IPreferences {
 	void putDefaultLong(String key, long value);
 	void removeDefault(String key);
 	void clearDefault();
-	
+
+	// project preferences
 	String get(String key);
 	boolean getBoolean(String key);
 	byte[] getByteArray(String key);
@@ -53,6 +55,8 @@ public interface IPreferences {
 	void putLong(String key, long value);
 	void remove(String key);
 	void clear();
-	
+
+	// flash
 	void flash();
+
 }

@@ -22,32 +22,33 @@ import org.seasar.kijimuna.core.rtti.IRtti;
  */
 public abstract class AbstractRttiValuableDescriptor {
 
-    private IRtti parent;
+	private IRtti parent;
 	private IRtti type;
-    private String name;
-    private IRtti value;
+	private String name;
+	private IRtti value;
 
-    public AbstractRttiValuableDescriptor(IRtti parent, String name, IRtti type) {
-    	this.parent = parent;
-        this.name = name;
-        this.type = type;
-    }
-    
-    protected void setType(IRtti type) {
-        this.type = type;
-    }
-    
+	public AbstractRttiValuableDescriptor(IRtti parent, String name, IRtti type) {
+		this.parent = parent;
+		this.name = name;
+		this.type = type;
+	}
+
+	protected void setType(IRtti type) {
+		this.type = type;
+	}
+
 	public IRtti getParent() {
 		return parent;
 	}
 
-    public String getName() {
-        return name;
-    }
-    public IRtti getType() {
-        return type;
-    }
-    
+	public String getName() {
+		return name;
+	}
+
+	public IRtti getType() {
+		return type;
+	}
+
 	public IRtti getValue() {
 		return value;
 	}
@@ -55,11 +56,12 @@ public abstract class AbstractRttiValuableDescriptor {
 	public void setValue(IRtti value) {
 		this.value = value;
 	}
-	
+
 	public Object getAdapter(Class adapter) {
-		if(value != null) {
+		if (value != null) {
 			value.getAdapter(adapter);
 		}
 		return null;
 	}
+
 }

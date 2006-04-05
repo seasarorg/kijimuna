@@ -17,6 +17,7 @@ package org.seasar.kijimuna.core.internal.dicon.model;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IStorage;
+
 import org.seasar.kijimuna.core.ConstCore;
 import org.seasar.kijimuna.core.dicon.DiconNature;
 import org.seasar.kijimuna.core.dicon.model.IContainerElement;
@@ -28,49 +29,49 @@ import org.seasar.kijimuna.core.rtti.RttiLoader;
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public abstract class DiconElement extends DefaultElement
-		implements IDiconElement, ConstCore {
+public abstract class DiconElement extends DefaultElement implements IDiconElement,
+		ConstCore {
 
-    private int markerSeverity = MARKER_SEVERITY_NONE; 
-    
+	private int markerSeverity = MARKER_SEVERITY_NONE;
+
 	public DiconElement(IProject project, IStorage storage, String elementName) {
 		super(project, storage, elementName);
 	}
-	
+
 	public IContainerElement getContainerElement() {
 		IElement root = getRootElement();
-		if((root != null) && (root instanceof IContainerElement)) {
-			return (IContainerElement)root; 
+		if ((root != null) && (root instanceof IContainerElement)) {
+			return (IContainerElement) root;
 		}
 		return null;
 	}
 
 	public RttiLoader getRttiLoader() {
-	    DiconNature nature = getNature();
-	    if(nature != null) {
-	        return nature.getRttiLoader();
-	    }
-	    return null;
+		DiconNature nature = getNature();
+		if (nature != null) {
+			return nature.getRttiLoader();
+		}
+		return null;
 	}
-	
+
 	public DiconNature getNature() {
-    	IProject project = (IProject)getAdapter(IProject.class);
-	    if(project != null) {
-	        return DiconNature.getInstance(project);
-	    }
-	    return null;
+		IProject project = (IProject) getAdapter(IProject.class);
+		if (project != null) {
+			return DiconNature.getInstance(project);
+		}
+		return null;
 	}
-	
+
 	public void setMarkerServerity(int markerSeverity) {
-	    if(this.markerSeverity < markerSeverity) {
-	        this.markerSeverity = markerSeverity;
-	    }
+		if (this.markerSeverity < markerSeverity) {
+			this.markerSeverity = markerSeverity;
+		}
 	}
-	
+
 	public int getMarkerSeverity() {
-	    return markerSeverity;
+		return markerSeverity;
 	}
-	
+
 	public abstract String getDisplayName();
 
 }

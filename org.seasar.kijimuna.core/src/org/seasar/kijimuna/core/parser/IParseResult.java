@@ -19,11 +19,11 @@ package org.seasar.kijimuna.core.parser;
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public interface IParseResult {
-    
-    String getPublicId();
-    
-    IElement getRootElement();
-    
-    IElement getLastStackElement();
+
+	String getPublicId();
+
+	IElement getRootElement();
+
+	IElement getLastStackElement();
 
 }

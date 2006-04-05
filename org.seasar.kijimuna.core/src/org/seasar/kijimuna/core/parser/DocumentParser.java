@@ -24,14 +24,16 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
+
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IStorage;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+
 import org.seasar.kijimuna.core.KijimunaCore;
-import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
@@ -39,17 +41,17 @@ import org.xml.sax.SAXException;
 public class DocumentParser {
 
 	private static SAXParserFactory factory;
-	
-	private IParseResult parse(InputStream stream, String systemID, 
+
+	private IParseResult parse(InputStream stream, String systemID,
 			IProgressMonitor monitor, DocumentHandler handler) {
-	    if((stream == null) || (handler == null)) {
-	        return null;
-	    }
+		if ((stream == null) || (handler == null)) {
+			return null;
+		}
 		handler.setProgressMonitor(monitor);
 		try {
 			InputSource source = new InputSource(stream);
-			if(systemID != null) {
-			    source.setSystemId(systemID);
+			if (systemID != null) {
+				source.setSystemId(systemID);
 			}
 			getParser().parse(source, handler);
 		} catch (Exception e) {
@@ -76,9 +78,9 @@ public class DocumentParser {
 		}
 		return parse(in, systemID, null, handler);
 	}
-	
-	public IParseResult parse(IProject project, IStorage storage, IProgressMonitor monitor, 
-			DocumentHandler handler) {
+
+	public IParseResult parse(IProject project, IStorage storage,
+			IProgressMonitor monitor, DocumentHandler handler) {
 		if (storage == null) {
 			return null;
 		}
@@ -89,7 +91,7 @@ public class DocumentParser {
 		}
 		try {
 			InputStream stream = storage.getContents();
-			String systemID = storage.getFullPath().toString(); 
+			String systemID = storage.getFullPath().toString();
 			return parse(stream, systemID, monitor, handler);
 		} catch (Exception e) {
 			KijimunaCore.reportException(e);
@@ -97,8 +99,7 @@ public class DocumentParser {
 		}
 	}
 
-	private SAXParser getParser() throws ParserConfigurationException,
-			SAXException {
+	private SAXParser getParser() throws ParserConfigurationException, SAXException {
 		if (factory == null) {
 			factory = SAXParserFactory.newInstance();
 			factory.setValidating(true);

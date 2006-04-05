@@ -19,6 +19,7 @@ import java.util.List;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IStorage;
+
 import org.seasar.kijimuna.core.ConstCore;
 import org.seasar.kijimuna.core.KijimunaCore;
 import org.seasar.kijimuna.core.dicon.model.IComponentElement;
@@ -28,26 +29,26 @@ import org.seasar.kijimuna.core.rtti.IRtti;
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-class ComponentHolderElement extends AbstractExpressionElement
-	implements IComponentHolderElement, ConstCore {
-	
-    protected ComponentHolderElement(
-	        IProject project, IStorage storage, String elementName) {
+class ComponentHolderElement extends AbstractExpressionElement implements
+		IComponentHolderElement, ConstCore {
+
+	protected ComponentHolderElement(IProject project, IStorage storage,
+			String elementName) {
 		super(project, storage, elementName);
 	}
 
 	protected IRtti getNonExpressionValue() {
 		List children = getChildren();
-		int size = children.size(); 
-		if(size != 0) {
-		    Object element = children.get(size - 1);
-			if(element instanceof IComponentElement) {
-			    IComponentElement component = (IComponentElement)element;
-			    return (IRtti)component.getAdapter(IRtti.class);
+		int size = children.size();
+		if (size != 0) {
+			Object element = children.get(size - 1);
+			if (element instanceof IComponentElement) {
+				IComponentElement component = (IComponentElement) element;
+				return (IRtti) component.getAdapter(IRtti.class);
 			}
-		} 
+		}
 		return getRttiLoader().loadHasErrorRtti(null,
-		        KijimunaCore.getResourceString("dicon.model.ComponentHolderElement.1"));
+				KijimunaCore.getResourceString("dicon.model.ComponentHolderElement.1"));
 	}
 
 }

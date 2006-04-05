@@ -16,6 +16,7 @@
 package org.seasar.kijimuna.core.internal.rtti;
 
 import org.eclipse.jdt.core.IMethod;
+
 import org.seasar.kijimuna.core.rtti.IRtti;
 import org.seasar.kijimuna.core.rtti.IRttiMethodDesctiptor;
 
@@ -25,8 +26,8 @@ import org.seasar.kijimuna.core.rtti.IRttiMethodDesctiptor;
 public class DefaultRttiMethodDescriptor extends AbstractRttiInvokableDescriptor
 		implements IRttiMethodDesctiptor {
 
-    public DefaultRttiMethodDescriptor(IMethod iMethod, IRtti parent) {
-	    super(iMethod, parent);
+	public DefaultRttiMethodDescriptor(IMethod iMethod, IRtti parent) {
+		super(iMethod, parent);
 	}
 
 }

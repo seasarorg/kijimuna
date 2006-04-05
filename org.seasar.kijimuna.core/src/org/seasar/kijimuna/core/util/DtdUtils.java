@@ -21,7 +21,6 @@ import java.util.List;
 import org.seasar.kijimuna.core.dtd.IAttributeDef;
 import org.seasar.kijimuna.core.dtd.IElementDef;
 
-
 /**
  * @author Toshitaka Agata (Nulab, Inc.)
  */
@@ -36,8 +35,8 @@ public class DtdUtils {
 				requiredAttributes.add(attribute);
 			}
 		}
-		return (IAttributeDef[]) requiredAttributes.toArray(
-		        new IAttributeDef[requiredAttributes.size()]);
+		return (IAttributeDef[]) requiredAttributes
+				.toArray(new IAttributeDef[requiredAttributes.size()]);
 	}
 
 }

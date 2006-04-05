@@ -23,26 +23,26 @@ import org.seasar.kijimuna.core.parser.IParseResult;
  */
 public class DefaultParseResult implements IParseResult {
 
-    private String publicId;
-    private IElement rootElement;
-    private IElement lastStack;
-    
-    public DefaultParseResult(String publicId, IElement rootElement, IElement lastStack) {
-        this.publicId = publicId;
-        this.rootElement = rootElement;
-        this.lastStack = lastStack;
-    }
+	private String publicId;
+	private IElement rootElement;
+	private IElement lastStack;
 
-    public String getPublicId() {
-        return publicId;
-    }
-    
-    public IElement getRootElement() {
-        return rootElement;
-    }
-    
-    public IElement getLastStackElement() {
-        return lastStack;
-    }
- 
+	public DefaultParseResult(String publicId, IElement rootElement, IElement lastStack) {
+		this.publicId = publicId;
+		this.rootElement = rootElement;
+		this.lastStack = lastStack;
+	}
+
+	public String getPublicId() {
+		return publicId;
+	}
+
+	public IElement getRootElement() {
+		return rootElement;
+	}
+
+	public IElement getLastStackElement() {
+		return lastStack;
+	}
+
 }

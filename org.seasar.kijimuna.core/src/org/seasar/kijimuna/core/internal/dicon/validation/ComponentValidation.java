@@ -15,8 +15,6 @@
  */
 package org.seasar.kijimuna.core.internal.dicon.validation;
 
-import java.util.Iterator;
-
 import org.seasar.kijimuna.core.ConstCore;
 import org.seasar.kijimuna.core.dicon.DiconOgnlRtti;
 import org.seasar.kijimuna.core.dicon.IValidation;
@@ -34,52 +32,51 @@ import org.seasar.kijimuna.core.util.StringUtils;
  */
 public class ComponentValidation implements IValidation, ConstCore {
 
-    public void validation(IDiconElement element) {
-        if(element instanceof IComponentElement) {
-            IComponentElement component = (IComponentElement)element;
-            checkError(component);
-            validComponent(component);
-        }
-    }
-
-    private void checkError(IComponentElement component) {
-        IRtti rtti = (IRtti)component.getAdapter(IRtti.class);
-		if(rtti instanceof HasErrorRtti) {
-			MarkerSetting.createDiconMarker(
-			        "dicon.validation.ComponentValidation.1", 
-			        component, ((HasErrorRtti)rtti).getErrorMessage());
+	public void validation(IDiconElement element) {
+		if (element instanceof IComponentElement) {
+			IComponentElement component = (IComponentElement) element;
+			checkError(component);
+			validComponent(component);
 		}
-    }
-    
-    private void validComponent(IComponentElement component) {
+	}
+
+	private void checkError(IComponentElement component) {
+		IRtti rtti = (IRtti) component.getAdapter(IRtti.class);
+		if (rtti instanceof HasErrorRtti) {
+			MarkerSetting.createDiconMarker("dicon.validation.ComponentValidation.1",
+					component, ((HasErrorRtti) rtti).getErrorMessage());
+		}
+	}
+
+	private void validComponent(IComponentElement component) {
 		String el = component.getExpression();
 		String className = component.getComponentClassName();
 		String instance = component.getInstanceMode();
-		if(StringUtils.noneValue(className) &&
-			StringUtils.noneValue(el) &&
-			!instance.equals(DICON_VAL_INSTANCE_OUTER)) {
-		    MarkerSetting.createDiconMarker(
-		            "dicon.validation.ComponentValidation.2",
-		            component);
+		if (StringUtils.noneValue(className) && StringUtils.noneValue(el)
+				&& !instance.equals(DICON_VAL_INSTANCE_OUTER)) {
+			MarkerSetting.createDiconMarker("dicon.validation.ComponentValidation.2",
+					component);
 		}
-		if(StringUtils.existValue(className) &&
-			StringUtils.existValue(el)) {
-		    RttiLoader rttiLoader = component.getRttiLoader();
-		    IRtti elRtti = new DiconOgnlRtti(rttiLoader).getValue(component.getContainerElement(), el);
-		    IRtti classRtti = rttiLoader.loadRtti(className);
-		    if (!classRtti.isAssignableFrom(elRtti)) {
-			    MarkerSetting.createDiconMarker(
-			            "dicon.validation.ComponentValidation.3",
-			            component);
-		    }
-		}
-		IComponentKey[] keys = component.getTooManyComponentKeyArray(IComponentKey.TOO_MANY_FETAL);
-		if (keys != null && keys.length > 0) {
-			for (int i = 0; i < keys.length; i++) {
-			    MarkerSetting.createDiconMarker(
-			            "dicon.validation.ComponentValidation.4",
-			            component, new IComponentKey[] {keys[i]});
+		if (StringUtils.existValue(className) && StringUtils.existValue(el)) {
+			RttiLoader rttiLoader = component.getRttiLoader();
+			IRtti elRtti = new DiconOgnlRtti(rttiLoader).getValue(component
+					.getContainerElement(), el);
+			IRtti classRtti = rttiLoader.loadRtti(className);
+			if (!classRtti.isAssignableFrom(elRtti)) {
+				MarkerSetting.createDiconMarker("dicon.validation.ComponentValidation.3",
+						component);
 			}
 		}
-    }
+		IComponentKey[] keys = component
+				.getTooManyComponentKeyArray(IComponentKey.TOO_MANY_FETAL);
+		if (keys != null && keys.length > 0) {
+			for (int i = 0; i < keys.length; i++) {
+				MarkerSetting.createDiconMarker("dicon.validation.ComponentValidation.4",
+						component, new IComponentKey[] {
+							keys[i]
+						});
+			}
+		}
+	}
+
 }

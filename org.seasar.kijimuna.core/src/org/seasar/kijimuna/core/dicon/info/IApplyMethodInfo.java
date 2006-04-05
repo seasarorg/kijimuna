@@ -24,6 +24,6 @@ import org.seasar.kijimuna.core.rtti.IRttiMethodDesctiptor;
  */
 public interface IApplyMethodInfo extends Serializable {
 
-	IRttiMethodDesctiptor getAutoInjectedMethod(); 
-	
+	IRttiMethodDesctiptor getAutoInjectedMethod();
+
 }

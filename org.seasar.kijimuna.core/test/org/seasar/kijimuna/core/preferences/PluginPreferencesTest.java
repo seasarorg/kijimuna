@@ -23,13 +23,14 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.util.Date;
 
+import junit.framework.TestCase;
+
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.IScopeContext;
+
 import org.seasar.kijimuna.core.KijimunaCore;
 import org.seasar.kijimuna.core.preference.PluginScope;
-
-import junit.framework.TestCase;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
@@ -38,40 +39,39 @@ public class PluginPreferencesTest extends TestCase {
 
 	public void testLoad() throws Exception {
 		KijimunaCore kijimuna = KijimunaCore.getInstance();
-	    IPath path = kijimuna.getStateLocation().append(
-	    		".settings").append("testproject1.prefs");
-	    File file = path.toFile();
-	    file.getParentFile().mkdirs();
-	    file.createNewFile();
-	    OutputStreamWriter writer = 
-	        new OutputStreamWriter(new FileOutputStream(file));
-	    writer.write("#" + new Date() + "\r\n"); 
-	    writer.write("eclipse.preferences.version=1\r\n");
-	    writer.write("key1=value1\r\n");
-	    writer.flush();
-	    IScopeContext scope = new PluginScope(kijimuna);
-	    IEclipsePreferences pref = scope.getNode("testproject1");
-	    assertEquals(pref.get("key1", "no val"), "value1");
+		IPath path = kijimuna.getStateLocation().append(".settings").append(
+				"testproject1.prefs");
+		File file = path.toFile();
+		file.getParentFile().mkdirs();
+		file.createNewFile();
+		OutputStreamWriter writer = new OutputStreamWriter(new FileOutputStream(file));
+		writer.write("#" + new Date() + "\r\n");
+		writer.write("eclipse.preferences.version=1\r\n");
+		writer.write("key1=value1\r\n");
+		writer.flush();
+		IScopeContext scope = new PluginScope(kijimuna);
+		IEclipsePreferences pref = scope.getNode("testproject1");
+		assertEquals(pref.get("key1", "no val"), "value1");
 	}
-	
+
 	public void testFlash() throws Exception {
 		KijimunaCore kijimuna = KijimunaCore.getInstance();
-	    IScopeContext scope = new PluginScope(kijimuna);
-	    IEclipsePreferences pref = scope.getNode("testproject2");
-	    pref.put("key2", "value2");
-	    pref.flush();
-	    IPath path = kijimuna.getStateLocation().append(
-	    	".settings").append("testproject2.prefs");
-	    File file = path.toFile();
-	    assertTrue(file.exists());
-	    BufferedReader reader = new BufferedReader(new InputStreamReader(
-	            new FileInputStream(file)));
-	    String line1 = reader.readLine();
-	    assertTrue(line1.startsWith("#"));
-	    String line2 = reader.readLine();
-	    assertTrue(line2.length() > 0);
-	    String line3 = reader.readLine();
-	    assertEquals(line3, "key2=value2");
+		IScopeContext scope = new PluginScope(kijimuna);
+		IEclipsePreferences pref = scope.getNode("testproject2");
+		pref.put("key2", "value2");
+		pref.flush();
+		IPath path = kijimuna.getStateLocation().append(".settings").append(
+				"testproject2.prefs");
+		File file = path.toFile();
+		assertTrue(file.exists());
+		BufferedReader reader = new BufferedReader(new InputStreamReader(
+				new FileInputStream(file)));
+		String line1 = reader.readLine();
+		assertTrue(line1.startsWith("#"));
+		String line2 = reader.readLine();
+		assertTrue(line2.length() > 0);
+		String line3 = reader.readLine();
+		assertEquals(line3, "key2=value2");
 	}
-	
+
 }

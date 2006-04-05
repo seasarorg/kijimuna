@@ -21,19 +21,20 @@ import org.seasar.kijimuna.core.dtd.IAttributeDef;
  * @author Toshitaka Agata (Nulab, Inc.)
  */
 public class DefaultAttributeDef implements IAttributeDef {
-	
+
 	private String name;
 	private String decl;
 	private String defaultValue;
 	private String[] items;
-	
-	public DefaultAttributeDef(String name, String decl, String defaultValue, String[] items) {
+
+	public DefaultAttributeDef(String name, String decl, String defaultValue,
+			String[] items) {
 		this.name = name;
 		this.decl = decl;
 		this.defaultValue = defaultValue;
 		this.items = items;
 	}
-	
+
 	public String getDecl() {
 		return decl;
 	}

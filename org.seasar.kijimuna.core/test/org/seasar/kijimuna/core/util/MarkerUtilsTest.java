@@ -15,16 +15,16 @@
  */
 package org.seasar.kijimuna.core.util;
 
+import junit.framework.TestCase;
+
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.jdt.core.IType;
+
 import org.seasar.kijimuna.core.ConstCore;
 import org.seasar.kijimuna.core.KijimunaCore;
-import org.seasar.kijimuna.core.util.MarkerUtils;
 import org.seasar.kijimuna.core.test.TestProject;
-
-import junit.framework.TestCase;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
@@ -33,11 +33,11 @@ public class MarkerUtilsTest extends TestCase implements ConstCore {
 
 	private TestProject testProject;
 	private IResource file;
-	
+
 	public MarkerUtilsTest(String arg) {
 		super(arg);
 	}
-	
+
 	protected void setUp() throws Exception {
 		testProject = new TestProject();
 		IPackageFragment pack = testProject.createPackage("test");
@@ -51,17 +51,19 @@ public class MarkerUtilsTest extends TestCase implements ConstCore {
 	protected void tearDown() throws Exception {
 		testProject.dispose();
 	}
- 	
+
 	public void testCreateErrorMarker() throws Exception {
 		MarkerUtils.createMarker(ID_MARKER, MARKER_SEVERITY_DICON_FETAL,
 				MARKER_SEVERITY_ERROR, file, 1, "test error");
 		IMarker[] markers = MarkerUtils.findMarker(file, ID_MARKER);
 		assertEquals(markers.length, 1);
-		assertEquals(((Integer)markers[0].getAttribute(IMarker.SEVERITY)).intValue(), IMarker.SEVERITY_ERROR);
+		assertEquals(((Integer) markers[0].getAttribute(IMarker.SEVERITY)).intValue(),
+				IMarker.SEVERITY_ERROR);
 		assertEquals(markers[0].getAttribute(IMarker.MESSAGE), "test error");
-		assertEquals(((Integer)markers[0].getAttribute(IMarker.LINE_NUMBER)).intValue(), 1);
+		assertEquals(((Integer) markers[0].getAttribute(IMarker.LINE_NUMBER)).intValue(),
+				1);
 	}
-	
+
 	public void testDeleteProblemMarker() throws Exception {
 		MarkerUtils.createMarker(ID_MARKER, MARKER_SEVERITY_DICON_FETAL,
 				MARKER_SEVERITY_ERROR, file, 1, "test error");
@@ -71,24 +73,25 @@ public class MarkerUtilsTest extends TestCase implements ConstCore {
 		markers = MarkerUtils.findMarker(file, ID_MARKER);
 		assertEquals(markers.length, 0);
 	}
-	
+
 	public void testDumpMessageDescription() {
-	    dumpMessageDescriptor("XMLƒp[ƒT[‚ª’Ê’m‚·‚éƒGƒ‰[", MARKER_SET_XML_ERROR);
-	    dumpMessageDescriptor("XMLƒp[ƒT[‚ª’Ê’m‚·‚éŒx", MARKER_SET_XML_WARNING);
-	    dumpMessageDescriptor("©“®ƒCƒ“ƒWƒFƒNƒVƒ‡ƒ“‚Ånull‚ªİ’è‚³‚ê‚éê‡", MARKER_SET_NULL_INJECTION);
-	    dumpMessageDescriptor("©“®ƒCƒ“ƒWƒFƒNƒVƒ‡ƒ“‚³‚ê‚éƒRƒ“ƒ|[ƒlƒ“ƒg–¼", MARKER_SET_AUTO_INJECTION);
-	    dumpMessageDescriptor("JavaŒ^‚ÉŠÖ˜A‚·‚é’v–½“I‚È–â‘è", MARKER_SET_JAVA_FETAL);
-	    dumpMessageDescriptor("XMLİ’è‚É‚¨‚¯‚é’v–½“I‚È–â‘è", MARKER_SET_DICON_FETAL);
-	    dumpMessageDescriptor("XMLİ’è‚É‚¨‚¯‚é”äŠr“IŒy”÷‚È–â‘è", MARKER_SET_DICON_PROBLEM);
+		dumpMessageDescriptor("XMLãƒ‘ãƒ¼ã‚µãƒ¼ãŒé€šçŸ¥ã™ã‚‹ã‚¨ãƒ©ãƒ¼", MARKER_SET_XML_ERROR);
+		dumpMessageDescriptor("XMLãƒ‘ãƒ¼ã‚µãƒ¼ãŒé€šçŸ¥ã™ã‚‹è­¦å‘Š", MARKER_SET_XML_WARNING);
+		dumpMessageDescriptor("è‡ªå‹•ã‚¤ãƒ³ã‚¸ã‚§ã‚¯ã‚·ãƒ§ãƒ³ã§nullãŒè¨­å®šã•ã‚Œã‚‹å ´åˆ", MARKER_SET_NULL_INJECTION);
+		dumpMessageDescriptor("è‡ªå‹•ã‚¤ãƒ³ã‚¸ã‚§ã‚¯ã‚·ãƒ§ãƒ³ã•ã‚Œã‚‹ã‚³ãƒ³ãƒãƒ¼ãƒãƒ³ãƒˆå", MARKER_SET_AUTO_INJECTION);
+		dumpMessageDescriptor("Javaå‹ã«é–¢é€£ã™ã‚‹è‡´å‘½çš„ãªå•é¡Œ", MARKER_SET_JAVA_FETAL);
+		dumpMessageDescriptor("XMLè¨­å®šã«ãŠã‘ã‚‹è‡´å‘½çš„ãªå•é¡Œ", MARKER_SET_DICON_FETAL);
+		dumpMessageDescriptor("XMLè¨­å®šã«ãŠã‘ã‚‹æ¯”è¼ƒçš„è»½å¾®ãªå•é¡Œ", MARKER_SET_DICON_PROBLEM);
 	}
 
 	private void dumpMessageDescriptor(String category, String[] idArray) {
-	    for(int i = 0; i < idArray.length; i++) {
-	        System.out.print(idArray[i]);
-	        System.out.print(",");
-	        System.out.print(category);
-	        System.out.print(",");
-	        System.out.println(KijimunaCore.getResourceString(idArray[i]));
-	    }
+		for (int i = 0; i < idArray.length; i++) {
+			System.out.print(idArray[i]);
+			System.out.print(",");
+			System.out.print(category);
+			System.out.print(",");
+			System.out.println(KijimunaCore.getResourceString(idArray[i]));
+		}
 	}
+
 }

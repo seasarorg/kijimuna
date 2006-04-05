@@ -22,10 +22,9 @@ import org.seasar.kijimuna.core.rtti.IRtti;
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public interface ITooManyRegisted extends IRtti {
-    
-    IDiconElement[] getRegistedComponents();
-    
-    String getErrorMessage();
 
-    
+	IDiconElement[] getRegistedComponents();
+
+	String getErrorMessage();
+
 }

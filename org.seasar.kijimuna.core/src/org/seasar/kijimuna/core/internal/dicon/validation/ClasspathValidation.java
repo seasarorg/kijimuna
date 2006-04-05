@@ -16,6 +16,7 @@
 package org.seasar.kijimuna.core.internal.dicon.validation;
 
 import org.eclipse.core.resources.IProject;
+
 import org.seasar.kijimuna.core.ConstCore;
 import org.seasar.kijimuna.core.dicon.DiconNature;
 import org.seasar.kijimuna.core.dicon.IProjectValidation;
@@ -29,17 +30,17 @@ import org.seasar.kijimuna.core.rtti.RttiLoader;
  */
 public class ClasspathValidation implements IProjectValidation, ConstCore {
 
-    public void validation(IProject project) {
-        DiconNature nature = DiconNature.getInstance(project);
-        if(nature != null) {
-            RttiLoader loader = nature.getRttiLoader();
+	public void validation(IProject project) {
+		DiconNature nature = DiconNature.getInstance(project);
+		if (nature != null) {
+			RttiLoader loader = nature.getRttiLoader();
 			IRtti rtti = loader.loadRtti(MODEL_INTERFACE_S2CONTAINER);
-			if(rtti instanceof HasErrorRtti) {
+			if (rtti instanceof HasErrorRtti) {
 				MarkerSetting.createProjectMarker(
-				        "dicon.validation.ClasspathValidation.1", 
-				        project, ((HasErrorRtti)rtti).getErrorMessage());
+						"dicon.validation.ClasspathValidation.1", project,
+						((HasErrorRtti) rtti).getErrorMessage());
 			}
-        }
-    }
+		}
+	}
 
 }

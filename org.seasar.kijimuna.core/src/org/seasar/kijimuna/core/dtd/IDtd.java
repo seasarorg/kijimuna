@@ -19,9 +19,9 @@ package org.seasar.kijimuna.core.dtd;
  * @author Toshitaka Agata (Nulab, Inc.)
  */
 public interface IDtd {
-    
-    IElementDef[] getElementAll();
-	
-    IElementDef getElement(String name);
-    
+
+	IElementDef[] getElementAll();
+
+	IElementDef getElement(String name);
+
 }

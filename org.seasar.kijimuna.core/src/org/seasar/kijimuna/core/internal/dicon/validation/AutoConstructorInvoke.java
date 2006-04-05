@@ -33,93 +33,101 @@ import org.seasar.kijimuna.core.util.StringUtils;
  */
 public class AutoConstructorInvoke implements IValidation, ConstCore {
 
-    public void validation(IDiconElement element) {
-        if(element instanceof IComponentElement) {
-            IComponentElement component = (IComponentElement)element;
-            String el = component.getExpression();
-            if((component.getArgList().size() == 0) && StringUtils.noneValue(el)) {
-                String autoBinding = component.getAutoBindingMode();
-                if(autoBinding.equals(DICON_VAL_AUTO_BINDING_AUTO) || 
-                        autoBinding.equals(DICON_VAL_AUTO_BINDING_CONSTRUCTOR)) {
-                    autoAssembler(component);
-                } else {
-                    defaultAssembler(component);
-                }
-            }
-        }
-    }
-    
-	private void reportInjection(IComponentElement component,
-	        IRtti[] suitableArgs, IRtti[] injectedArgs, String display) {
-		for(int i = 0; i < injectedArgs.length; i++) {
-            if(injectedArgs[i] instanceof IComponentNotFound) {
-				MarkerSetting.createDiconMarker(
-				        "dicon.validation.AutoConstructorInvoke.3",
-				        component, new Object[] { display, new Integer(i + 1) });
-            } else if(injectedArgs[i] instanceof ITooManyRegisted) {
-				MarkerSetting.createDiconMarker(
-				        "dicon.validation.AutoConstructorInvoke.5",
-				        component, new Object[] { display, new Integer(i + 1) });
-            } else if(injectedArgs[i] != null) {
-			    MarkerSetting.createDiconMarker(
-			            "dicon.validation.AutoConstructorInvoke.2",
-				        component, new Object[] {
-                        	display, new Integer(i + 1),
-                        	ModelUtils.getInjectedElementName(injectedArgs[i]) });
-            }
-		}
-	}
-	
-	private boolean checkCyclicReference(
-	        IComponentElement component, IRtti injectedArg, int num, String display) {
-	    if(DICON_VAL_INSTANCE_SINGLETON.equals(component.getInstanceMode())) {
-	        IComponentElement injectedElement = 
-            	(IComponentElement)injectedArg.getAdapter(IComponentElement.class);
-            if(component.equals(injectedElement)) {
-			    MarkerSetting.createDiconMarker(
-			            "dicon.validation.AutoConstructorInvoke.4",
-				        component, new Object[] { display, new Integer(num + 1) });
-                return true;
-            }
-	    }
-	    return false;
-	}
-	
-	// Ž©“®‚ÉƒRƒ“ƒXƒgƒ‰ƒNƒ^‚ð’T‚·ƒAƒbƒZƒ“ƒuƒ‹
-	private void autoAssembler(IComponentElement component) {
-	    IComponentInfo info = 
-	        (IComponentInfo)component.getAdapter(IComponentInfo.class);
-	    if(info != null) {
-	        IRttiConstructorDesctiptor suitable = info.getAutoInjectedConstructor();
-	        if(suitable != null) {
-			    IRtti[] suitableArgs = suitable.getArgs();
-	            IRtti[] injectedArgs = suitable.getValues();
-	            if(injectedArgs != null) {
-					String display = ModelUtils.getConstructorDisplay(suitable, true);
-					for(int i = 0; i < suitableArgs.length; i++) {
-					    if(injectedArgs[i] != null) {
-					        checkCyclicReference(component, injectedArgs[i], i, display);
-					    }
-				    }
-				    reportInjection(component, suitableArgs, injectedArgs, display);
-	            }
-	        }
-	    }
-	}
-
-	// ƒfƒtƒHƒ‹ƒgƒRƒ“ƒXƒgƒ‰ƒNƒ^‚Ås‚¤ƒAƒbƒZƒ“ƒuƒ‹
-	private void defaultAssembler(IComponentElement component) {
-	    IRttiConstructorDesctiptor suitable = (IRttiConstructorDesctiptor)
-	    		component.getAdapter(IRttiConstructorDesctiptor.class);
-		if(suitable == null) {
-			int aspectSize = component.getAspectList().size();
-			if(aspectSize == 0) {
-				String qualifiedName = component.getComponentClassName();
-			    MarkerSetting.createDiconMarker(
-			            "dicon.validation.AutoConstructorInvoke.1",
-			            component, new Object[] { qualifiedName });
+	public void validation(IDiconElement element) {
+		if (element instanceof IComponentElement) {
+			IComponentElement component = (IComponentElement) element;
+			String el = component.getExpression();
+			if ((component.getArgList().size() == 0) && StringUtils.noneValue(el)) {
+				String autoBinding = component.getAutoBindingMode();
+				if (autoBinding.equals(DICON_VAL_AUTO_BINDING_AUTO)
+						|| autoBinding.equals(DICON_VAL_AUTO_BINDING_CONSTRUCTOR)) {
+					autoAssembler(component);
+				} else {
+					defaultAssembler(component);
+				}
 			}
 		}
 	}
-	
+
+	private void reportInjection(IComponentElement component, IRtti[] suitableArgs,
+			IRtti[] injectedArgs, String display) {
+		for (int i = 0; i < injectedArgs.length; i++) {
+			if (injectedArgs[i] instanceof IComponentNotFound) {
+				MarkerSetting.createDiconMarker(
+						"dicon.validation.AutoConstructorInvoke.3", component,
+						new Object[] {
+								display, new Integer(i + 1)
+						});
+			} else if (injectedArgs[i] instanceof ITooManyRegisted) {
+				MarkerSetting.createDiconMarker(
+						"dicon.validation.AutoConstructorInvoke.5", component,
+						new Object[] {
+								display, new Integer(i + 1)
+						});
+			} else if (injectedArgs[i] != null) {
+				MarkerSetting.createDiconMarker(
+						"dicon.validation.AutoConstructorInvoke.2", component,
+						new Object[] {
+								display, new Integer(i + 1),
+								ModelUtils.getInjectedElementName(injectedArgs[i])
+						});
+			}
+		}
+	}
+
+	private boolean checkCyclicReference(IComponentElement component, IRtti injectedArg,
+			int num, String display) {
+		if (DICON_VAL_INSTANCE_SINGLETON.equals(component.getInstanceMode())) {
+			IComponentElement injectedElement = (IComponentElement) injectedArg
+					.getAdapter(IComponentElement.class);
+			if (component.equals(injectedElement)) {
+				MarkerSetting.createDiconMarker(
+						"dicon.validation.AutoConstructorInvoke.4", component,
+						new Object[] {
+								display, new Integer(num + 1)
+						});
+				return true;
+			}
+		}
+		return false;
+	}
+
+	// è‡ªå‹•ã«ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿ã‚’æŽ¢ã™ã‚¢ãƒƒã‚»ãƒ³ãƒ–ãƒ«ï¿½ï¿½Tï¿½ï¿½ï¿½Aï¿½bï¿½Zï¿½ï¿½ï¿½uï¿½ï¿½
+	private void autoAssembler(IComponentElement component) {
+		IComponentInfo info = (IComponentInfo) component.getAdapter(IComponentInfo.class);
+		if (info != null) {
+			IRttiConstructorDesctiptor suitable = info.getAutoInjectedConstructor();
+			if (suitable != null) {
+				IRtti[] suitableArgs = suitable.getArgs();
+				IRtti[] injectedArgs = suitable.getValues();
+				if (injectedArgs != null) {
+					String display = ModelUtils.getConstructorDisplay(suitable, true);
+					for (int i = 0; i < suitableArgs.length; i++) {
+						if (injectedArgs[i] != null) {
+							checkCyclicReference(component, injectedArgs[i], i, display);
+						}
+					}
+					reportInjection(component, suitableArgs, injectedArgs, display);
+				}
+			}
+		}
+	}
+
+	// ãƒ‡ãƒ•ã‚©ãƒ«ãƒˆã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿ã§è¡Œã†ã‚¢ãƒƒã‚»ãƒ³ãƒ–ãƒ«ï¿½Åsï¿½ï¿½ï¿½Aï¿½bï¿½Zï¿½ï¿½ï¿½uï¿½ï¿½
+	private void defaultAssembler(IComponentElement component) {
+		IRttiConstructorDesctiptor suitable = (IRttiConstructorDesctiptor) component
+				.getAdapter(IRttiConstructorDesctiptor.class);
+		if (suitable == null) {
+			int aspectSize = component.getAspectList().size();
+			if (aspectSize == 0) {
+				String qualifiedName = component.getComponentClassName();
+				MarkerSetting.createDiconMarker(
+						"dicon.validation.AutoConstructorInvoke.1", component,
+						new Object[] {
+							qualifiedName
+						});
+			}
+		}
+	}
+
 }

@@ -33,34 +33,35 @@ import org.seasar.kijimuna.core.util.StringUtils;
  */
 public class ManualMethodInvoke implements IValidation, ConstCore {
 
-    public void validation(IDiconElement element) {
-        if(element instanceof IMethodElement) {
-            invoke((IMethodElement)element);
-        }
-    }
+	public void validation(IDiconElement element) {
+		if (element instanceof IMethodElement) {
+			invoke((IMethodElement) element);
+		}
+	}
 
 	private void invoke(IMethodElement method) {
 		String methodName = method.getMethodName();
 		List argList = method.getArgList();
-		if(StringUtils.existValue(methodName) && (argList.size() > 0)) {
-		    IRtti component = ModelUtils.getComponentRtti(method);
-		    if(		(component != null) && 
-		            !(component instanceof HasErrorRtti)) {
-		        IRtti[] rttiArgs = ModelUtils.convertArray(method.getArgList().toArray());
-		        for(int i = 0; i < rttiArgs.length; i++) {
-		            if(rttiArgs[i] instanceof HasErrorRtti) {
-		                return;
-		            }
-		        }
-			    IRttiMethodDesctiptor descriptor =
-			        (IRttiMethodDesctiptor)method.getAdapter(IRttiMethodDesctiptor.class);
-			    if(descriptor == null) {
-					String display = ModelUtils.getMethodDisplay(
-							component, methodName, rttiArgs, true);
+		if (StringUtils.existValue(methodName) && (argList.size() > 0)) {
+			IRtti component = ModelUtils.getComponentRtti(method);
+			if ((component != null) && !(component instanceof HasErrorRtti)) {
+				IRtti[] rttiArgs = ModelUtils.convertArray(method.getArgList().toArray());
+				for (int i = 0; i < rttiArgs.length; i++) {
+					if (rttiArgs[i] instanceof HasErrorRtti) {
+						return;
+					}
+				}
+				IRttiMethodDesctiptor descriptor = (IRttiMethodDesctiptor) method
+						.getAdapter(IRttiMethodDesctiptor.class);
+				if (descriptor == null) {
+					String display = ModelUtils.getMethodDisplay(component, methodName,
+							rttiArgs, true);
 					MarkerSetting.createDiconMarker(
-					        "dicon.validation.ManualMethodInvoke.1",
-					        method, new Object[] { display });
-			    }
+							"dicon.validation.ManualMethodInvoke.1", method,
+							new Object[] {
+								display
+							});
+				}
 			}
 		}
 	}

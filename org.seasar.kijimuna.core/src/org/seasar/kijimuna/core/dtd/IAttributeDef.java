@@ -19,18 +19,18 @@ package org.seasar.kijimuna.core.dtd;
  * @author Toshitaka Agata (Nulab, Inc.)
  */
 public interface IAttributeDef {
-	
+
 	String FIXED = "FIXED";
 	String REQUIRED = "REQUIRED";
 	String IMPLIED = "IMPLIED";
 	String VALUE = "VALUE";
-	
+
 	String getName();
-	
+
 	String getDecl();
-	
+
 	String getDefaultValue();
-	
+
 	String[] getItems();
 
 }

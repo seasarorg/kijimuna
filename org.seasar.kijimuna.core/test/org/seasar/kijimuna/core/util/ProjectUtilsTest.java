@@ -15,10 +15,10 @@
  */
 package org.seasar.kijimuna.core.util;
 
+import junit.framework.TestCase;
+
 import org.seasar.kijimuna.core.ConstCore;
 import org.seasar.kijimuna.core.test.TestProject;
-
-import junit.framework.TestCase;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
@@ -26,28 +26,28 @@ import junit.framework.TestCase;
 public class ProjectUtilsTest extends TestCase implements ConstCore {
 
 	private TestProject testProject;
-    
-    public ProjectUtilsTest(String arg) {
+
+	public ProjectUtilsTest(String arg) {
 		super(arg);
 	}
-	
+
 	protected void setUp() throws Exception {
 		testProject = new TestProject();
 
 		// TODO: not implement
-//		testProject.addJar(ID_PLUGIN_CORE, "test.jar");
+		// testProject.addJar(ID_PLUGIN_CORE, "test.jar");
 	}
 
 	protected void tearDown() throws Exception {
 		testProject.dispose();
 	}
-    
+
 	public void testFindDiconStorage() throws Exception {
 		// TODO: not implement
-//	    IStorage storage = ProjectUtils.findDiconStorage(
-//	            testProject.getProject(), "/org/seasar/kijimuna/test/injar.dicon");
-//	    assertNotNull(storage);
-//	    assertEquals(storage.getName(), "injar.dicon");
+		// IStorage storage = ProjectUtils.findDiconStorage(
+		// testProject.getProject(), "/org/seasar/kijimuna/test/injar.dicon");
+		// assertNotNull(storage);
+		// assertEquals(storage.getName(), "injar.dicon");
 	}
-	
+
 }

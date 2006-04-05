@@ -32,43 +32,48 @@ import org.seasar.kijimuna.core.util.ModelUtils;
  */
 public class ManualConstructorInvoke implements IValidation, ConstCore {
 
-    public void validation(IDiconElement element) {
-        if(element instanceof IComponentElement) {
-   		    manualAssembler((IComponentElement)element);
-    	}
-    }
+	public void validation(IDiconElement element) {
+		if (element instanceof IComponentElement) {
+			manualAssembler((IComponentElement) element);
+		}
+	}
 
-	// 引数のあるコンストラクタでのアッセンブル
+	// 蠑墓焚縺ｮ縺ゅｋ繧ｳ繝ｳ繧ｹ繝医Λ繧ｯ繧ｿ縺ｧ縺ｮ繧｢繝�繧ｻ繝ｳ繝悶Ν
 	private void manualAssembler(IComponentElement component) {
 		List args = component.getArgList();
-		if(args.size() == 0) {
-		    return;
+		if (args.size() == 0) {
+			return;
 		}
-	    IRtti rtti = (IRtti)component.getAdapter(IRtti.class);
-		if((rtti != null) && !(rtti instanceof HasErrorRtti)) {
+		IRtti rtti = (IRtti) component.getAdapter(IRtti.class);
+		if ((rtti != null) && !(rtti instanceof HasErrorRtti)) {
 			int aspectSize = component.getAspectList().size();
-			if((aspectSize == 0) && (rtti.isInterface())) {
+			if ((aspectSize == 0) && (rtti.isInterface())) {
 				MarkerSetting.createDiconMarker(
-					"dicon.validation.ManualConstructorInvoke.1",
-					component, new Object[] { rtti.getQualifiedName() });
+						"dicon.validation.ManualConstructorInvoke.1", component,
+						new Object[] {
+							rtti.getQualifiedName()
+						});
 			} else {
-			    IRtti[] rttiArgs = ModelUtils.convertArray(component.getArgList().toArray());
-			    for(int i = 0; i < rttiArgs.length; i++) {
-			        if(rttiArgs[i] instanceof HasErrorRtti) {
-			            return;
-			        }
-			    }
-				IRttiConstructorDesctiptor descriptor = (IRttiConstructorDesctiptor)
-						component.getAdapter(IRttiConstructorDesctiptor.class);
-				if(descriptor == null) {
-					String display = ModelUtils.getMethodDisplay(
-							rtti, rtti.getShortName(), rttiArgs, true);
+				IRtti[] rttiArgs = ModelUtils.convertArray(component.getArgList()
+						.toArray());
+				for (int i = 0; i < rttiArgs.length; i++) {
+					if (rttiArgs[i] instanceof HasErrorRtti) {
+						return;
+					}
+				}
+				IRttiConstructorDesctiptor descriptor = (IRttiConstructorDesctiptor) component
+						.getAdapter(IRttiConstructorDesctiptor.class);
+				if (descriptor == null) {
+					String display = ModelUtils.getMethodDisplay(rtti, rtti
+							.getShortName(), rttiArgs, true);
 					MarkerSetting.createDiconMarker(
-					        "dicon.validation.ManualConstructorInvoke.2",
-					        component, new Object[] { display });
+							"dicon.validation.ManualConstructorInvoke.2", component,
+							new Object[] {
+								display
+							});
 				}
 			}
 		}
 	}
-    
+
 }

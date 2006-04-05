@@ -24,23 +24,24 @@ import org.seasar.kijimuna.core.dicon.info.IComponentKey;
  */
 public interface IComponentElement extends IExpressionElement {
 
-    String getComponentName();
-    
-    String getComponentClassName();
-    
-    String getAutoBindingMode();
-    
-    String getInstanceMode();
-    
-    List getArgList();
-    
-    List getAspectList();
-    
-    List getDestroyMethodList() ;
-    
-    List getInitMethodList();
-    
-    List getPropertyList();
-    
-    IComponentKey[] getTooManyComponentKeyArray(int tooMany);
+	String getComponentName();
+
+	String getComponentClassName();
+
+	String getAutoBindingMode();
+
+	String getInstanceMode();
+
+	List getArgList();
+
+	List getAspectList();
+
+	List getDestroyMethodList();
+
+	List getInitMethodList();
+
+	List getPropertyList();
+
+	IComponentKey[] getTooManyComponentKeyArray(int tooMany);
+
 }

@@ -30,33 +30,32 @@ import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 public class PluginPreferences extends EclipsePreferences {
 
 	private static Set loadedNodes = new HashSet();
-	
-    private String pluginID;
-    private String qualifier;
-    private IEclipsePreferences loadLevel;
-    private int segmentCount;
-    
-    public PluginPreferences() {
-        super(null, null);
-    }
-    
-    private PluginPreferences(
-            IEclipsePreferences parent, String name) {
+
+	private String pluginID;
+	private String qualifier;
+	private IEclipsePreferences loadLevel;
+	private int segmentCount;
+
+	public PluginPreferences() {
+		super(null, null);
+	}
+
+	private PluginPreferences(IEclipsePreferences parent, String name) {
 		super((EclipsePreferences) parent, name);
-        String path = absolutePath();
+		String path = absolutePath();
 		segmentCount = getSegmentCount(path);
 		if (segmentCount < 2) {
 			return;
 		}
 		pluginID = getSegment(path, 1);
 		if (segmentCount > 2) {
-		    qualifier = getSegment(path, 2);
+			qualifier = getSegment(path, 2);
 		}
-    }
+	}
 
-	protected EclipsePreferences internalCreate(
-	        IEclipsePreferences nodeParent, String nodeName, Plugin context) {
-	    return new PluginPreferences(nodeParent, nodeName);
+	protected EclipsePreferences internalCreate(IEclipsePreferences nodeParent,
+			String nodeName, Plugin context) {
+		return new PluginPreferences(nodeParent, nodeName);
 	}
 
 	protected IPath getLocation() {
@@ -68,7 +67,7 @@ public class PluginPreferences extends EclipsePreferences {
 		return computeLocation(path, qualifier);
 	}
 
-    protected IEclipsePreferences getLoadLevel() {
+	protected IEclipsePreferences getLoadLevel() {
 		if (loadLevel == null) {
 			if (pluginID == null || qualifier == null) {
 				return null;
@@ -80,7 +79,7 @@ public class PluginPreferences extends EclipsePreferences {
 			loadLevel = node;
 		}
 		return loadLevel;
-    }
+	}
 
 	protected void loaded() {
 		loadedNodes.add(name());
@@ -89,5 +88,5 @@ public class PluginPreferences extends EclipsePreferences {
 	protected boolean isAlreadyLoaded(IEclipsePreferences node) {
 		return loadedNodes.contains(node.name());
 	}
-    
+
 }

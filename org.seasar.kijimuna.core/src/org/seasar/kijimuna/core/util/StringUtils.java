@@ -20,33 +20,33 @@ package org.seasar.kijimuna.core.util;
  */
 public class StringUtils {
 
-    public static boolean isWhitespace(char c) {
-    	if(c == ' ' || c == '\t' || c == '\n' || c == '\r') {
-    		return true;
-    	}
-    	return false;
-    }
-    
-    public static String replaceIgnorableChars(String source) {
-    	if(source != null) {
-    		source = source.replaceAll("\r", " ");
-    		source = source.replaceAll("\n", " ");
-    		source = source.replaceAll("\t", " ");
-    		return source.trim();
-    	}
-    	return null;
-    }
+	public static boolean isWhitespace(char c) {
+		if (c == ' ' || c == '\t' || c == '\n' || c == '\r') {
+			return true;
+		}
+		return false;
+	}
 
-    public static boolean existValue(String value) {
-    	value = replaceIgnorableChars(value);
-    	if ((value == null) || (value.length() == 0)) {
-    		return false;
-    	}
-    	return true;
-    }
+	public static String replaceIgnorableChars(String source) {
+		if (source != null) {
+			source = source.replaceAll("\r", " ");
+			source = source.replaceAll("\n", " ");
+			source = source.replaceAll("\t", " ");
+			return source.trim();
+		}
+		return null;
+	}
 
-    public static boolean noneValue(String value) {
-    	return !existValue(value);
-    }
+	public static boolean existValue(String value) {
+		value = replaceIgnorableChars(value);
+		if ((value == null) || (value.length() == 0)) {
+			return false;
+		}
+		return true;
+	}
+
+	public static boolean noneValue(String value) {
+		return !existValue(value);
+	}
 
 }

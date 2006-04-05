@@ -20,6 +20,6 @@ package org.seasar.kijimuna.core.dicon.model;
  */
 public interface IMetaElement extends IComponentHolderElement {
 
-    String getMetaName();
-    
+	String getMetaName();
+
 }

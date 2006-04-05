@@ -25,18 +25,18 @@ import org.seasar.kijimuna.core.rtti.IRttiMethodDesctiptor;
  */
 public interface IPointcut extends Serializable, Comparable {
 
-    String getRegexp();
-    
-    boolean hasError();
-    
-    String getErrorMessage();
-    
-    boolean isAutoApply();
-    
-    IRtti getInstanceRtti();
-    
-    IRtti[] getImplementings();
-    
-    IRttiMethodDesctiptor[] getApplyMethods();
+	String getRegexp();
+
+	boolean hasError();
+
+	String getErrorMessage();
+
+	boolean isAutoApply();
+
+	IRtti getInstanceRtti();
+
+	IRtti[] getImplementings();
+
+	IRttiMethodDesctiptor[] getApplyMethods();
 
 }

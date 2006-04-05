@@ -26,18 +26,18 @@ import org.seasar.kijimuna.core.rtti.IRtti;
  */
 public interface IContainerElement extends IDiconElement {
 
-    List getComponentList();
-    
-    List getIncludeList();
-    
-    String getNamespace();
-    
-    String getPath();
-    
-    IComponentKey createComponentKey(Object key);
-    
-    IDiconElement findDefinition(IComponentKey componentKey, Stack stack);
-    
-    IRtti getComponent(IComponentKey componentKey);
-    
+	List getComponentList();
+
+	List getIncludeList();
+
+	String getNamespace();
+
+	String getPath();
+
+	IComponentKey createComponentKey(Object key);
+
+	IDiconElement findDefinition(IComponentKey componentKey, Stack stack);
+
+	IRtti getComponent(IComponentKey componentKey);
+
 }

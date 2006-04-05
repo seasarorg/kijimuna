@@ -17,6 +17,7 @@ package org.seasar.kijimuna.core.internal.dicon.model;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IStorage;
+
 import org.seasar.kijimuna.core.ConstCore;
 import org.seasar.kijimuna.core.dicon.model.IPropertyElement;
 import org.seasar.kijimuna.core.util.StringUtils;
@@ -24,16 +25,16 @@ import org.seasar.kijimuna.core.util.StringUtils;
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class PropertyElement extends ComponentHolderElement
-	implements IPropertyElement, ConstCore {
-	
+public class PropertyElement extends ComponentHolderElement implements IPropertyElement,
+		ConstCore {
+
 	public PropertyElement(IProject project, IStorage storage) {
 		super(project, storage, DICON_TAG_PROPERTY);
 	}
-	
+
 	public String getBindingType() {
 		String bindingType = getAttribute(DICON_ATTR_BINDINGTYPE);
-		if(StringUtils.noneValue(bindingType)) {
+		if (StringUtils.noneValue(bindingType)) {
 			bindingType = DICON_VAL_BINDING_TYPE_SHOULD;
 		}
 		return bindingType;
@@ -47,9 +48,10 @@ public class PropertyElement extends ComponentHolderElement
 		StringBuffer buffer = new StringBuffer();
 		buffer.append(getPropertyName());
 		String superDisplay = super.getDisplayName();
-		if(StringUtils.existValue(superDisplay)) {
+		if (StringUtils.existValue(superDisplay)) {
 			buffer.append(" ").append(superDisplay);
 		}
 		return buffer.toString();
 	}
+
 }

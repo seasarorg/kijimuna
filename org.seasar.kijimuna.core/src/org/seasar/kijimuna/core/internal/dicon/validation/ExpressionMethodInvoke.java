@@ -29,25 +29,24 @@ import org.seasar.kijimuna.core.util.StringUtils;
  */
 public class ExpressionMethodInvoke implements IValidation, ConstCore {
 
-    public void validation(IDiconElement element) {
-        if(element instanceof IMethodElement) {
-            invoke((IMethodElement)element);
-        }
-    }
-
-    private void invoke(IMethodElement method) {
-		String el = method.getExpression();
-		if(StringUtils.existValue(el)) {
-		    IRtti rtti = (IRtti)method.getAdapter(IRtti.class);
-		    if(rtti != null) {
-		        if(rtti instanceof HasErrorRtti) {
-		            String message = ((HasErrorRtti)rtti).getErrorMessage();
-				    MarkerSetting.createDiconMarker(
-				            "dicon.validation.ExpressionMethodInvoke.1",
-				            method, message);
-				}
-		    }
+	public void validation(IDiconElement element) {
+		if (element instanceof IMethodElement) {
+			invoke((IMethodElement) element);
 		}
-    }
-    
+	}
+
+	private void invoke(IMethodElement method) {
+		String el = method.getExpression();
+		if (StringUtils.existValue(el)) {
+			IRtti rtti = (IRtti) method.getAdapter(IRtti.class);
+			if (rtti != null) {
+				if (rtti instanceof HasErrorRtti) {
+					String message = ((HasErrorRtti) rtti).getErrorMessage();
+					MarkerSetting.createDiconMarker(
+							"dicon.validation.ExpressionMethodInvoke.1", method, message);
+				}
+			}
+		}
+	}
+
 }

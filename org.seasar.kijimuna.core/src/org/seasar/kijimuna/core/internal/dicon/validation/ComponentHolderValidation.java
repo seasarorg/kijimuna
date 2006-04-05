@@ -33,49 +33,46 @@ import org.seasar.kijimuna.core.util.StringUtils;
  */
 public class ComponentHolderValidation implements IValidation, ConstCore {
 
-    public void validation(IDiconElement element) {
-        if(element instanceof IComponentHolderElement) {
-            IComponentHolderElement arg = (IComponentHolderElement)element; 
-            checkError(arg);
-            validComponentHolder(arg);
-        }
-    }
-    
-    private void checkError(IComponentHolderElement componentHolder) {
-        IRtti rtti = (IRtti)componentHolder.getAdapter(IRtti.class);
-		if(rtti instanceof HasErrorRtti) {
-			MarkerSetting.createDiconMarker(
-			        "dicon.validation.ComponentHolderValidation.1", 
-			        componentHolder, ((HasErrorRtti)rtti).getErrorMessage());
+	public void validation(IDiconElement element) {
+		if (element instanceof IComponentHolderElement) {
+			IComponentHolderElement arg = (IComponentHolderElement) element;
+			checkError(arg);
+			validComponentHolder(arg);
 		}
-    }
-    
-    private void validComponentHolder(
-            IComponentHolderElement componentHolder) {
+	}
+
+	private void checkError(IComponentHolderElement componentHolder) {
+		IRtti rtti = (IRtti) componentHolder.getAdapter(IRtti.class);
+		if (rtti instanceof HasErrorRtti) {
+			MarkerSetting.createDiconMarker(
+					"dicon.validation.ComponentHolderValidation.1", componentHolder,
+					((HasErrorRtti) rtti).getErrorMessage());
+		}
+	}
+
+	private void validComponentHolder(IComponentHolderElement componentHolder) {
 		String el = componentHolder.getExpression();
 		List children = componentHolder.getChildren();
-		int size = children.size(); 
-		if(StringUtils.existValue(el)) {
-			if(size > 0) {
-			    IDiconElement element = (IDiconElement)children.get(size - 1);
-			    MarkerSetting.createDiconMarker(
-			            "dicon.validation.ComponentHolderValidation.2", 
-			            element);
+		int size = children.size();
+		if (StringUtils.existValue(el)) {
+			if (size > 0) {
+				IDiconElement element = (IDiconElement) children.get(size - 1);
+				MarkerSetting.createDiconMarker(
+						"dicon.validation.ComponentHolderValidation.2", element);
 			}
 		} else {
-			if(size == 0 && componentHolder instanceof MetaElement == false) {
-			    MarkerSetting.createDiconMarker(
-			            "dicon.validation.ComponentHolderValidation.3", 
-			            componentHolder);
+			if (size == 0 && componentHolder instanceof MetaElement == false) {
+				MarkerSetting.createDiconMarker(
+						"dicon.validation.ComponentHolderValidation.3", componentHolder);
 			}
 		}
-		if(size > 1) {
-			for(Iterator it = children.iterator(); it.hasNext();) {
-				IDiconElement element = (IDiconElement)it.next();
-			    MarkerSetting.createDiconMarker(
-			            "dicon.validation.ComponentHolderValidation.4", 
-			            element);
+		if (size > 1) {
+			for (Iterator it = children.iterator(); it.hasNext();) {
+				IDiconElement element = (IDiconElement) it.next();
+				MarkerSetting.createDiconMarker(
+						"dicon.validation.ComponentHolderValidation.4", element);
 			}
 		}
-    }
+	}
+
 }

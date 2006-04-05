@@ -17,15 +17,16 @@ package org.seasar.kijimuna.core.internal.dicon.model;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IStorage;
+
 import org.seasar.kijimuna.core.ConstCore;
 import org.seasar.kijimuna.core.dicon.model.IInitMethodElement;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class InitMethodElement extends MethodElement
-		implements IInitMethodElement, ConstCore {
-	
+public class InitMethodElement extends MethodElement implements IInitMethodElement,
+		ConstCore {
+
 	public InitMethodElement(IProject project, IStorage storage) {
 		super(project, storage, DICON_TAG_INITMETHOD);
 	}

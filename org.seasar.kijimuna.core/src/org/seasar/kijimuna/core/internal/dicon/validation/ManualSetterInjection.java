@@ -31,32 +31,34 @@ import org.seasar.kijimuna.core.util.StringUtils;
  */
 public class ManualSetterInjection implements IValidation, ConstCore {
 
-    public void validation(IDiconElement element) {
-        if(element instanceof IPropertyElement) {
-            manualInject((IPropertyElement)element);
-        }
-    }
-    
-    private void manualInject(IPropertyElement property) {
-        IComponentElement componentElement = (IComponentElement)property.getParent();
-		IRtti component = (IRtti)componentElement.getAdapter(IRtti.class);
-		if(component != null) {
-			IRtti value = (IRtti)property.getAdapter(IRtti.class);
-			if(value instanceof HasErrorRtti) {
-			    return;
+	public void validation(IDiconElement element) {
+		if (element instanceof IPropertyElement) {
+			manualInject((IPropertyElement) element);
+		}
+	}
+
+	private void manualInject(IPropertyElement property) {
+		IComponentElement componentElement = (IComponentElement) property.getParent();
+		IRtti component = (IRtti) componentElement.getAdapter(IRtti.class);
+		if (component != null) {
+			IRtti value = (IRtti) property.getAdapter(IRtti.class);
+			if (value instanceof HasErrorRtti) {
+				return;
 			}
 			String propertyName = property.getPropertyName();
-			if(StringUtils.existValue(propertyName) && (value != null)) {
-			    IRttiPropertyDescriptor desc = component.getProperty(propertyName); 
-				if((desc == null) || !desc.isWritable() || 
-				        !desc.getType().isAssignableFrom(value)) {
-				    MarkerSetting.createDiconMarker(
-				            "dicon.validation.ManualSetterInjection.1",
-				            property, new Object[] { component.getQualifiedName(), 
-					        	propertyName, value.getQualifiedName() });
+			if (StringUtils.existValue(propertyName) && (value != null)) {
+				IRttiPropertyDescriptor desc = component.getProperty(propertyName);
+				if ((desc == null) || !desc.isWritable()
+						|| !desc.getType().isAssignableFrom(value)) {
+					MarkerSetting.createDiconMarker(
+							"dicon.validation.ManualSetterInjection.1", property,
+							new Object[] {
+									component.getQualifiedName(), propertyName,
+									value.getQualifiedName()
+							});
 				}
 			}
-		}        
-    }
+		}
+	}
 
 }

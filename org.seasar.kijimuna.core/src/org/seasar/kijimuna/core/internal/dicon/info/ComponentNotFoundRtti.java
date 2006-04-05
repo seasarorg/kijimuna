@@ -24,29 +24,30 @@ import org.seasar.kijimuna.core.rtti.IRtti;
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class ComponentNotFoundRtti extends HasErrorRtti
-		implements IComponentNotFound {
-    
-    private IComponentKey key;
-    
-    public ComponentNotFoundRtti(IComponentKey key) {
-        super(key.getDisplayName(), KijimunaCore.getResourceString(
-                "dicon.tools.ComponentNotFoundRtti.1", new Object[] { key }));
-        this.key = key;
-    }
+public class ComponentNotFoundRtti extends HasErrorRtti implements IComponentNotFound {
 
-    protected IRtti getWrappedRtti() {
-        if(key instanceof IRtti) {
-           return (IRtti)key; 
-        }
-        return null;
-    }
+	private IComponentKey key;
 
-    public Object getAdapter(Class adapter) {
-        if(IComponentKey.class.equals(adapter)) {
-            return key;
-        }
-        return super.getAdapter(adapter);
-    }
-    
+	public ComponentNotFoundRtti(IComponentKey key) {
+		super(key.getDisplayName(), KijimunaCore.getResourceString(
+				"dicon.tools.ComponentNotFoundRtti.1", new Object[] {
+					key
+				}));
+		this.key = key;
+	}
+
+	protected IRtti getWrappedRtti() {
+		if (key instanceof IRtti) {
+			return (IRtti) key;
+		}
+		return null;
+	}
+
+	public Object getAdapter(Class adapter) {
+		if (IComponentKey.class.equals(adapter)) {
+			return key;
+		}
+		return super.getAdapter(adapter);
+	}
+
 }

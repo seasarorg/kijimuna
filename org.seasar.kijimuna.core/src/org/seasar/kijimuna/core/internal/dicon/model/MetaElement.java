@@ -19,6 +19,7 @@ import java.util.List;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IStorage;
+
 import org.seasar.kijimuna.core.ConstCore;
 import org.seasar.kijimuna.core.dicon.model.IComponentElement;
 import org.seasar.kijimuna.core.dicon.model.IMetaElement;
@@ -28,9 +29,9 @@ import org.seasar.kijimuna.core.util.StringUtils;
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class MetaElement extends ComponentHolderElement
-		implements IMetaElement, ConstCore {
-	
+public class MetaElement extends ComponentHolderElement implements IMetaElement,
+		ConstCore {
+
 	public MetaElement(IProject project, IStorage storage) {
 		super(project, storage, DICON_TAG_META);
 	}
@@ -38,18 +39,18 @@ public class MetaElement extends ComponentHolderElement
 	public String getMetaName() {
 		return getAttribute(DICON_ATTR_NAME);
 	}
-	
+
 	public String getDisplayName() {
 		StringBuffer buffer = new StringBuffer();
 		String metaName = getMetaName();
-		if(StringUtils.existValue(metaName)) {
-		    buffer.append(metaName);
+		if (StringUtils.existValue(metaName)) {
+			buffer.append(metaName);
 		}
 		String superDisplay = super.getDisplayName();
-		if(StringUtils.existValue(superDisplay)) {
-		    if(StringUtils.existValue(metaName)) {
-		        buffer.append(" ");
-		    }
+		if (StringUtils.existValue(superDisplay)) {
+			if (StringUtils.existValue(metaName)) {
+				buffer.append(" ");
+			}
 			buffer.append(superDisplay);
 		}
 		return buffer.toString();
@@ -57,14 +58,15 @@ public class MetaElement extends ComponentHolderElement
 
 	protected IRtti getNonExpressionValue() {
 		List children = getChildren();
-		int size = children.size(); 
-		if(size != 0) {
-		    Object element = children.get(size - 1);
-			if(element instanceof IComponentElement) {
-			    IComponentElement component = (IComponentElement)element;
-			    return (IRtti)component.getAdapter(IRtti.class);
+		int size = children.size();
+		if (size != 0) {
+			Object element = children.get(size - 1);
+			if (element instanceof IComponentElement) {
+				IComponentElement component = (IComponentElement) element;
+				return (IRtti) component.getAdapter(IRtti.class);
 			}
-		} 
+		}
 		return null;
 	}
+
 }

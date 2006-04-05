@@ -21,12 +21,13 @@ import org.ognl.el.OgnlException;
  * @author Masataka Kurihara (Gluegent, Inc)
  */
 public class OgnlRttiUnprocessable extends OgnlException {
-    
-    public OgnlRttiUnprocessable() {
-        super();
-    }
-    
-    public OgnlRttiUnprocessable(String message) {
-        super(message);
-    }
+
+	public OgnlRttiUnprocessable() {
+		super();
+	}
+
+	public OgnlRttiUnprocessable(String message) {
+		super(message);
+	}
+
 }

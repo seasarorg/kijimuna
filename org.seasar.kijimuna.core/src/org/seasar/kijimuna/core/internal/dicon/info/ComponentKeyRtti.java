@@ -22,40 +22,39 @@ import org.seasar.kijimuna.core.rtti.RttiWrapper;
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public final class ComponentKeyRtti extends RttiWrapper
-		implements IComponentKey {
-    
-    private int tooMany;
-    
-    public ComponentKeyRtti(IRtti rtti) {
-        super(rtti);
-    }
-    
-    public void setTooMany(int tooMany) {
-        this.tooMany = tooMany;
-    }
-    
-    public int getTooMany() {
-        return tooMany;
-    }
-    
-    public String getDisplayName() {
-        return getQualifiedName();
-    }
-    
-    public int getKeyType() {
-        return INTERFACE;
-    }
-    
-    public int compareTo(Object test) {
-    	if(test instanceof IComponentKey) {
-    		IComponentKey testKey = (IComponentKey)test;
-    		if(testKey.getKeyType() == STRING) {
-    			return 1;
-    		}
-    		return getDisplayName().compareTo(testKey.getDisplayName());
-    	}
-    	return 0;
-    }    
+public final class ComponentKeyRtti extends RttiWrapper implements IComponentKey {
+
+	private int tooMany;
+
+	public ComponentKeyRtti(IRtti rtti) {
+		super(rtti);
+	}
+
+	public void setTooMany(int tooMany) {
+		this.tooMany = tooMany;
+	}
+
+	public int getTooMany() {
+		return tooMany;
+	}
+
+	public String getDisplayName() {
+		return getQualifiedName();
+	}
+
+	public int getKeyType() {
+		return INTERFACE;
+	}
+
+	public int compareTo(Object test) {
+		if (test instanceof IComponentKey) {
+			IComponentKey testKey = (IComponentKey) test;
+			if (testKey.getKeyType() == STRING) {
+				return 1;
+			}
+			return getDisplayName().compareTo(testKey.getDisplayName());
+		}
+		return 0;
+	}
 
 }

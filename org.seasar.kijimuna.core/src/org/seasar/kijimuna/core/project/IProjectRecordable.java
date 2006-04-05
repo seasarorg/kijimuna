@@ -25,12 +25,11 @@ import org.eclipse.core.runtime.IProgressMonitor;
 public interface IProjectRecordable extends IProjectNature {
 
 	void initProjectRecords(IProgressMonitor monitor);
-    
-	boolean restoreProjectRecords(
-			IPath recorderPath, IProgressMonitor monitor);
-	
-	boolean saveProjectRecords(
-			IPath recorderPath, IProgressMonitor monitor);
-	
+
+	boolean restoreProjectRecords(IPath recorderPath, IProgressMonitor monitor);
+
+	boolean saveProjectRecords(IPath recorderPath, IProgressMonitor monitor);
+
 	void customProcess(int type, IPath recorderPath, IProgressMonitor monitor);
+
 }

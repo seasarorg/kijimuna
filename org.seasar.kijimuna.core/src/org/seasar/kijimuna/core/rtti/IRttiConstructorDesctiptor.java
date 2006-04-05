@@ -20,9 +20,9 @@ import java.io.Serializable;
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public interface IRttiConstructorDesctiptor
-		extends IRttiInvokableDesctiptor, Serializable, Comparable {
-	
+public interface IRttiConstructorDesctiptor extends IRttiInvokableDesctiptor,
+		Serializable, Comparable {
+
 	boolean isDefaultConstructor();
 
 }

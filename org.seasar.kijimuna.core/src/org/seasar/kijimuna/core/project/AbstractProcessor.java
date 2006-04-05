@@ -22,18 +22,19 @@ import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+
 import org.seasar.kijimuna.core.KijimunaCore;
 
 /**
  * @author Masataka Kurihara (Gluegent,Inc.)
  */
-public abstract class AbstractProcessor 
-		extends IncrementalProjectBuilder implements IFileProcessor {
+public abstract class AbstractProcessor extends IncrementalProjectBuilder implements
+		IFileProcessor {
 
-	protected final IProject[] build(int kind, Map args,
-			IProgressMonitor monitor) throws CoreException {
+	protected final IProject[] build(int kind, Map args, IProgressMonitor monitor)
+			throws CoreException {
 		IProject project = getProject();
-		if(project != null) {
+		if (project != null) {
 			if (kind != FULL_BUILD) {
 				IResourceDelta resourceDelta = getDelta(project);
 				if (resourceDelta != null) {
@@ -47,15 +48,15 @@ public abstract class AbstractProcessor
 		return null;
 	}
 
-    public void processProject(IProject project, IProgressMonitor monitor) {
-        if(project != null) {
-            try {
-                project.accept(new ResourceVisitor(getNatureID(), this, monitor));
-    			handleFinish(project, monitor);
-            } catch (CoreException e) {
-                KijimunaCore.reportException(e);
-            }
-        }
-    }
-	
+	public void processProject(IProject project, IProgressMonitor monitor) {
+		if (project != null) {
+			try {
+				project.accept(new ResourceVisitor(getNatureID(), this, monitor));
+				handleFinish(project, monitor);
+			} catch (CoreException e) {
+				KijimunaCore.reportException(e);
+			}
+		}
+	}
+
 }

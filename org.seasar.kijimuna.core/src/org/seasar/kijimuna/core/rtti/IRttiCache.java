@@ -24,12 +24,12 @@ import org.eclipse.core.resources.IStorage;
  */
 public interface IRttiCache extends Serializable {
 
-    IRtti getRttiFromCache(String key);
-    
-    void putRttiToCache(String key, IRtti rtti);
-    
-    void removeRttiFromCache(IStorage storage);
-    
-    void clearRttiCache();
-    
+	IRtti getRttiFromCache(String key);
+
+	void putRttiToCache(String key, IRtti rtti);
+
+	void removeRttiFromCache(IStorage storage);
+
+	void clearRttiCache();
+
 }

@@ -21,6 +21,7 @@ import org.ognl.el.MethodFailedException;
 import org.ognl.el.OgnlException;
 import org.ognl.el.PropertyAccessor;
 import org.ognl.util.ClassRegistry;
+
 import org.seasar.kijimuna.core.KijimunaCore;
 import org.seasar.kijimuna.core.rtti.HasErrorRtti;
 import org.seasar.kijimuna.core.rtti.IRtti;
@@ -37,29 +38,29 @@ public class OgnlExtensions extends Extensions {
 
 	private RttiLoader loader;
 	private ClassRegistry accessors = new ClassRegistry();
-	
+
 	public OgnlExtensions(RttiLoader loader) {
 		this.loader = loader;
 	}
-	
+
 	private IRtti convert(RttiLoader localLoader, Object obj)
 			throws OgnlRttiUnprocessable {
-	    if (obj instanceof IRtti) {
-		    if(obj instanceof HasErrorRtti) {
-		        String message = ((HasErrorRtti)obj).getErrorMessage();
+		if (obj instanceof IRtti) {
+			if (obj instanceof HasErrorRtti) {
+				String message = ((HasErrorRtti) obj).getErrorMessage();
 				throw new OgnlRttiUnprocessable(message);
-		    }
-			return (IRtti)obj;
+			}
+			return (IRtti) obj;
 		}
 		return localLoader.loadRtti(obj.getClass());
 	}
-	
+
 	private IRtti[] convertArgs(RttiLoader localLoader, Object[] args)
 			throws OgnlRttiUnprocessable {
-		if(args != null) {
+		if (args != null) {
 			IRtti[] rttiArgs = new IRtti[args.length];
 			for (int i = 0; i < args.length; i++) {
-				if(args[i] != null) {
+				if (args[i] != null) {
 					rttiArgs[i] = convert(localLoader, args[i]);
 				}
 			}
@@ -67,29 +68,30 @@ public class OgnlExtensions extends Extensions {
 		}
 		return new IRtti[0];
 	}
-	
-	private IRtti invoke(IRtti rtti, String methodName, 
-	        Object[] args, boolean staticAccess) throws OgnlRttiUnprocessable {
+
+	private IRtti invoke(IRtti rtti, String methodName, Object[] args,
+			boolean staticAccess) throws OgnlRttiUnprocessable {
 		RttiLoader localLoader = rtti.getRttiLoader();
 		IRtti[] rttiArgs = convertArgs(localLoader, args);
-		IRttiMethodDesctiptor descriptor = rtti.getMethod(
-		        methodName, rttiArgs, staticAccess);
-		if(descriptor != null) {
+		IRttiMethodDesctiptor descriptor = rtti.getMethod(methodName, rttiArgs,
+				staticAccess);
+		if (descriptor != null) {
 			return descriptor.getReturnType();
 		}
-	    return loader.loadHasErrorRtti(null, KijimunaCore.getResourceString(
-	            "rtti.ognl.OgnlExtensions.1",
-	            new Object[] {  rtti.getQualifiedName(), methodName, rttiArgs }));
+		return loader.loadHasErrorRtti(null, KijimunaCore.getResourceString(
+				"rtti.ognl.OgnlExtensions.1", new Object[] {
+						rtti.getQualifiedName(), methodName, rttiArgs
+				}));
 	}
-	
+
 	private PropertyAccessor getPropertyAccessor(Class forClass) {
-		return (PropertyAccessor)accessors.get(forClass);
+		return (PropertyAccessor) accessors.get(forClass);
 	}
 
 	public void setPropertyAccessor(Class forClass, PropertyAccessor accessor) {
 		accessors.put(forClass, accessor);
 	}
-	
+
 	public Object callArrayConstructor(ExecutionEnvironment environment,
 			String componentClassName, Object[] args) throws OgnlException {
 		return loader.loadRtti(componentClassName + "[]");
@@ -98,122 +100,124 @@ public class OgnlExtensions extends Extensions {
 	public Object callConstructor(ExecutionEnvironment environment,
 			String targetClassName, Object[] args) throws OgnlException {
 		IRtti rtti = loader.loadRtti(targetClassName);
-		if(rtti instanceof HasErrorRtti) {
-		    return rtti;
+		if (rtti instanceof HasErrorRtti) {
+			return rtti;
 		}
 		IRtti[] rttiArgs = convertArgs(loader, args);
 		IRttiConstructorDesctiptor descriptor = rtti.getConstructor(rttiArgs);
-		if(descriptor != null) {
+		if (descriptor != null) {
 			return rtti;
 		}
-	    return loader.loadHasErrorRtti(null,
-	            KijimunaCore.getResourceString("rtti.ognl.OgnlExtensions.2",
-	            new Object[] {  targetClassName, rtti.getShortName(), rttiArgs }));
+		return loader.loadHasErrorRtti(null, KijimunaCore.getResourceString(
+				"rtti.ognl.OgnlExtensions.2", new Object[] {
+						targetClassName, rtti.getShortName(), rttiArgs
+				}));
 	}
-	
+
 	public Object callMethod(ExecutionEnvironment environment, Object target,
-			String methodName, Object[] args) throws MethodFailedException,
-			OgnlException {
+			String methodName, Object[] args) throws MethodFailedException, OgnlException {
 		IRtti rtti = convert(loader, target);
-		if(rtti instanceof HasErrorRtti) {
-		    return rtti;
+		if (rtti instanceof HasErrorRtti) {
+			return rtti;
 		}
-	    return invoke(rtti, methodName, args, false);
+		return invoke(rtti, methodName, args, false);
 	}
-	
+
 	public Object callStaticMethod(ExecutionEnvironment environment,
 			String targetClassName, String methodName, Object[] args)
 			throws MethodFailedException, OgnlException {
 		IRtti rtti = loader.loadRtti(targetClassName);
-		if(rtti instanceof HasErrorRtti) {
-		    return rtti;
+		if (rtti instanceof HasErrorRtti) {
+			return rtti;
 		}
-	    return invoke(rtti, methodName, args, true);
+		return invoke(rtti, methodName, args, true);
 	}
-	
+
 	public Object getIndexedPropertyValue(ExecutionEnvironment environment,
 			Object source, Object index) throws OgnlException {
 		throw new OgnlRttiUnprocessable();
 	}
-	
-	public Object getNamedIndexedPropertyValue(
-			ExecutionEnvironment environment, Object source,
-			String propertyName, Object index) throws OgnlException {
+
+	public Object getNamedIndexedPropertyValue(ExecutionEnvironment environment,
+			Object source, String propertyName, Object index) throws OgnlException {
 		throw new OgnlRttiUnprocessable();
 	}
-	
-	public Object getPropertyValue(ExecutionEnvironment environment,
-			Object source, Object property) throws OgnlException {
+
+	public Object getPropertyValue(ExecutionEnvironment environment, Object source,
+			Object property) throws OgnlException {
 		PropertyAccessor accessor = getPropertyAccessor(source.getClass());
-		if(accessor != null) {
+		if (accessor != null) {
 			return accessor.getPropertyValue(environment, source, property);
 		}
 		IRtti rtti = convert(loader, source);
-		if(rtti instanceof HasErrorRtti) {
-		    return rtti;
+		if (rtti instanceof HasErrorRtti) {
+			return rtti;
 		}
 		String propertyName = property.toString();
-	    IRttiPropertyDescriptor prop = rtti.getProperty(propertyName);
-	    if((prop != null) && prop.isReadable()) {
-	        return prop.getType();
-	    }
-        IRttiFieldDescriptor field = rtti.getField(propertyName, false);
-        if(field != null) {
-            return field.getType();
-        }
-	    return loader.loadHasErrorRtti(null,
-	            KijimunaCore.getResourceString("rtti.ognl.OgnlExtensions.3",
-	            new Object[] {  rtti.getQualifiedName(), propertyName }));
+		IRttiPropertyDescriptor prop = rtti.getProperty(propertyName);
+		if ((prop != null) && prop.isReadable()) {
+			return prop.getType();
+		}
+		IRttiFieldDescriptor field = rtti.getField(propertyName, false);
+		if (field != null) {
+			return field.getType();
+		}
+		return loader.loadHasErrorRtti(null, KijimunaCore.getResourceString(
+				"rtti.ognl.OgnlExtensions.3", new Object[] {
+						rtti.getQualifiedName(), propertyName
+				}));
 	}
 
 	public Object getStaticFieldValue(ExecutionEnvironment environment,
 			String targetClassName, String fieldName) throws OgnlException {
 		IRtti rtti = loader.loadRtti(targetClassName);
-		if(rtti instanceof HasErrorRtti) {
-		    return rtti;
+		if (rtti instanceof HasErrorRtti) {
+			return rtti;
 		}
-        IRttiFieldDescriptor field = rtti.getField(fieldName, true);
-        if(field != null) {
-            return field.getType();
-        }
-	    return loader.loadHasErrorRtti(null,
-	            KijimunaCore.getResourceString("rtti.ognl.OgnlExtensions.4",
-	            new Object[] {  rtti.getQualifiedName(), fieldName }));
+		IRttiFieldDescriptor field = rtti.getField(fieldName, true);
+		if (field != null) {
+			return field.getType();
+		}
+		return loader.loadHasErrorRtti(null, KijimunaCore.getResourceString(
+				"rtti.ognl.OgnlExtensions.4", new Object[] {
+						rtti.getQualifiedName(), fieldName
+				}));
 	}
 
-	public void setIndexedPropertyValue(ExecutionEnvironment environment,
-			Object target, Object index, Object value) throws OgnlException {
+	public void setIndexedPropertyValue(ExecutionEnvironment environment, Object target,
+			Object index, Object value) throws OgnlException {
 		throw new OgnlRttiUnprocessable();
 	}
-	
+
 	public void setNamedIndexedPropertyValue(ExecutionEnvironment environment,
 			Object target, String propertyName, Object index, Object value)
 			throws OgnlException {
 		throw new OgnlRttiUnprocessable();
 	}
-	
-	public void setPropertyValue(ExecutionEnvironment environment,
-			Object target, Object property, Object value) throws OgnlException {
+
+	public void setPropertyValue(ExecutionEnvironment environment, Object target,
+			Object property, Object value) throws OgnlException {
 		PropertyAccessor accessor = getPropertyAccessor(target.getClass());
-		if(accessor != null) {
+		if (accessor != null) {
 			accessor.setPropertyValue(environment, target, property, value);
 		} else {
 			IRtti rtti = convert(loader, target);
-			if(rtti instanceof HasErrorRtti) {
-			    return;
+			if (rtti instanceof HasErrorRtti) {
+				return;
 			}
 			String propertyName = property.toString();
 			IRtti rttiValue = convert(loader, value);
-		    IRttiPropertyDescriptor prop = rtti.getProperty(propertyName);
-		    if((prop == null) || !prop.isWritable() || 
-		            prop.getType().isAssignableFrom(rttiValue)) {
-		        IRttiFieldDescriptor field = rtti.getField(propertyName, false);
-		        if((field == null) || (field.isFinal()) ||
-		               !field.getType().isAssignableFrom(rttiValue)) {
-		    		throw new OgnlRttiUnprocessable(KijimunaCore.getResourceString(
-				            "rtti.ognl.OgnlExtensions.5",
-				            new Object[] {  rtti.getQualifiedName(), propertyName }));
-		        }
+			IRttiPropertyDescriptor prop = rtti.getProperty(propertyName);
+			if ((prop == null) || !prop.isWritable()
+					|| prop.getType().isAssignableFrom(rttiValue)) {
+				IRttiFieldDescriptor field = rtti.getField(propertyName, false);
+				if ((field == null) || (field.isFinal())
+						|| !field.getType().isAssignableFrom(rttiValue)) {
+					throw new OgnlRttiUnprocessable(KijimunaCore.getResourceString(
+							"rtti.ognl.OgnlExtensions.5", new Object[] {
+									rtti.getQualifiedName(), propertyName
+							}));
+				}
 			}
 		}
 	}

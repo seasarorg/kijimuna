@@ -22,11 +22,10 @@ import org.seasar.kijimuna.core.rtti.RttiWrapper;
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class DirectAccessedRtti extends RttiWrapper
-		implements IDirectAccessed {
-	
+public class DirectAccessedRtti extends RttiWrapper implements IDirectAccessed {
+
 	public DirectAccessedRtti(IRtti rtti) {
 		super(rtti);
 	}
-	
+
 }

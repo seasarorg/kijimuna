@@ -25,6 +25,7 @@ import java.util.TreeSet;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IStorage;
+
 import org.seasar.kijimuna.core.ConstCore;
 import org.seasar.kijimuna.core.dicon.info.IComponentInfo;
 import org.seasar.kijimuna.core.dicon.info.IComponentKey;
@@ -48,8 +49,8 @@ import org.seasar.kijimuna.core.util.StringUtils;
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class ContainerElement extends DiconElement implements
-		IContainerElement, ConstCore, Comparable {
+public class ContainerElement extends DiconElement implements IContainerElement,
+		ConstCore, Comparable {
 
 	private IRtti s2ContainerRtti;
 	private Map componentDefMap = new HashMap();
@@ -68,26 +69,22 @@ public class ContainerElement extends DiconElement implements
 		componentDefMap.put(interfaceKey, this);
 		containerKeySet.add(interfaceKey);
 
-		addMagicComponent(project, storage, MODEL_NAME_REQUEST,
-				MODEL_INTERFACE_REQUEST);
-		addMagicComponent(project, storage, MODEL_NAME_RESPONSE,
-				MODEL_INTERFACE_RESPONSE);
-		addMagicComponent(project, storage, MODEL_NAME_SESSION,
-				MODEL_INTERFACE_SESSION);
+		addMagicComponent(project, storage, MODEL_NAME_REQUEST, MODEL_INTERFACE_REQUEST);
+		addMagicComponent(project, storage, MODEL_NAME_RESPONSE, MODEL_INTERFACE_RESPONSE);
+		addMagicComponent(project, storage, MODEL_NAME_SESSION, MODEL_INTERFACE_SESSION);
 		addMagicComponent(project, storage, MODEL_NAME_SERVLETCONTEXT,
 				MODEL_INTERFACE_SERVLETCONTEXT);
 	}
 
 	private IRtti getS2ContainerRtti() {
 		if (s2ContainerRtti == null) {
-			s2ContainerRtti = getRttiLoader().loadRtti(
-					MODEL_INTERFACE_S2CONTAINER);
+			s2ContainerRtti = getRttiLoader().loadRtti(MODEL_INTERFACE_S2CONTAINER);
 		}
 		return s2ContainerRtti;
 	}
 
-	private void addMagicComponent(IProject project, IStorage storage,
-			String name, String clazz) {
+	private void addMagicComponent(IProject project, IStorage storage, String name,
+			String clazz) {
 		ComponentElement element = new ComponentElement(project, storage);
 		HashMap property = new HashMap();
 		property.put("name", name);
@@ -183,8 +180,7 @@ public class ContainerElement extends DiconElement implements
 					key.setTooMany(IComponentKey.TOO_MANY_FETAL);
 				}
 				if (registed instanceof TooManyRegistrationHolder) {
-					((TooManyRegistrationHolder) registed)
-							.addComponentElement(component);
+					((TooManyRegistrationHolder) registed).addComponentElement(component);
 				} else {
 					IProject project = (IProject) getAdapter(IProject.class);
 					IStorage storage = (IStorage) getAdapter(IStorage.class);
@@ -201,8 +197,7 @@ public class ContainerElement extends DiconElement implements
 	}
 
 	public IDiconElement findDefinition(IComponentKey componentKey, Stack stack) {
-		IDiconElement element = (IDiconElement) componentDefMap
-				.get(componentKey);
+		IDiconElement element = (IDiconElement) componentDefMap.get(componentKey);
 		if (element != null) {
 			return element;
 		}
@@ -226,8 +221,7 @@ public class ContainerElement extends DiconElement implements
 		IDiconElement element = findDefinition(componentKey, stack);
 		if (element instanceof IContainerElement) {
 			IContainerElement container = (IContainerElement) element;
-			return new ContainerRtti(getS2ContainerRtti(), container,
-					componentKey);
+			return new ContainerRtti(getS2ContainerRtti(), container, componentKey);
 		} else if (element instanceof IComponentElement) {
 			IRtti rtti = (IRtti) element.getAdapter(IRtti.class);
 			if (rtti != null) {
@@ -247,10 +241,10 @@ public class ContainerElement extends DiconElement implements
 		} else if (IComponentInfo.class.equals(adapter)) {
 			if (info == null) {
 				info = new IComponentInfo() {
+
 					public IComponentKey[] getComponentKeys() {
 						return (IComponentKey[]) containerKeySet
-								.toArray(new IComponentKey[containerKeySet
-										.size()]);
+								.toArray(new IComponentKey[containerKeySet.size()]);
 					}
 
 					public IRttiConstructorDesctiptor getAutoInjectedConstructor() {
@@ -284,4 +278,5 @@ public class ContainerElement extends DiconElement implements
 		}
 		return 0;
 	}
+
 }

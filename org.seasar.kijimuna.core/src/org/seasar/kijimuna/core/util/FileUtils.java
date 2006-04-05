@@ -26,6 +26,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.jdt.core.JavaCore;
+
 import org.seasar.kijimuna.core.ConstCore;
 import org.seasar.kijimuna.core.KijimunaCore;
 
@@ -34,60 +35,60 @@ import org.seasar.kijimuna.core.KijimunaCore;
  */
 public class FileUtils implements ConstCore {
 
-    public static IFile createFile(
-    		IPackageFragment pack, String fileName, InputStream contents) {
-    	try {
-    		IContainer folder = (IContainer) pack.getUnderlyingResource();
-    		IFile file = folder.getFile(new Path(fileName));
-    		file.create(contents, false, null);
-    		return file;
-    	} catch (CoreException e) {
-    		KijimunaCore.reportException(e);
-    		return null;
-    	}
-    }
-    
-	public static String getShortName(IStorage storage) {
-	    String name = storage.getName();
-	    int pos = name.indexOf(".");
-	    if(pos != -1) {
-	        name = name.substring(0, pos); 
-	    }
-	    return name;
+	public static IFile createFile(IPackageFragment pack, String fileName,
+			InputStream contents) {
+		try {
+			IContainer folder = (IContainer) pack.getUnderlyingResource();
+			IFile file = folder.getFile(new Path(fileName));
+			file.create(contents, false, null);
+			return file;
+		} catch (CoreException e) {
+			KijimunaCore.reportException(e);
+			return null;
+		}
 	}
 
-    public static boolean isInJavaSourceFolder(IFile file) {
-        IContainer container = file.getParent();
-    	return (container != null) && (JavaCore.create(container) != null);
-    }
+	public static String getShortName(IStorage storage) {
+		String name = storage.getName();
+		int pos = name.indexOf(".");
+		if (pos != -1) {
+			name = name.substring(0, pos);
+		}
+		return name;
+	}
 
-    public static boolean isJavaFile(IStorage storage) {
+	public static boolean isInJavaSourceFolder(IFile file) {
+		IContainer container = file.getParent();
+		return (container != null) && (JavaCore.create(container) != null);
+	}
+
+	public static boolean isJavaFile(IStorage storage) {
 		String fileExt = storage.getFullPath().getFileExtension();
 		return "java".equalsIgnoreCase(fileExt);
-    }
+	}
 
-    public static boolean isDiconFile(IStorage storage) {
+	public static boolean isDiconFile(IStorage storage) {
 		String fileExt = storage.getFullPath().getFileExtension();
 		return EXT_DICON.equalsIgnoreCase(fileExt);
-    }
-    
-    public static void deleteAllFiles(IPath path) {
+	}
+
+	public static void deleteAllFiles(IPath path) {
 		File directory = path.toFile();
-		if(directory.exists()) {
-		    deleteDirectory(directory);
+		if (directory.exists()) {
+			deleteDirectory(directory);
 		}
-    }
-    
-    private static void deleteDirectory(File directory) {
+	}
+
+	private static void deleteDirectory(File directory) {
 		File[] files = directory.listFiles();
-		for(int i = 0; i < files.length; i++) {
-			if(files[i].isDirectory()) {
-			    deleteDirectory(files[i]);
+		for (int i = 0; i < files.length; i++) {
+			if (files[i].isDirectory()) {
+				deleteDirectory(files[i]);
 			} else {
-			    files[i].delete();
+				files[i].delete();
 			}
 		}
 		directory.delete();
-    }
-    
+	}
+
 }

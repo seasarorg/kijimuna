@@ -18,22 +18,18 @@ package org.seasar.kijimuna.core.dtd;
 import junit.framework.TestCase;
 
 import org.seasar.kijimuna.core.KijimunaCore;
-import org.seasar.kijimuna.core.dtd.DtdLoader;
-import org.seasar.kijimuna.core.dtd.IAttributeDef;
-import org.seasar.kijimuna.core.dtd.IDtd;
-import org.seasar.kijimuna.core.dtd.IElementDef;
 
 /**
  * @author Toshitaka Agata (Nulab, Inc.)
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public class DtdLoaderTest extends TestCase {
-	
+
 	public void testLoadDtd() {
 		IDtd dtd = DtdLoader.loadDtd(KijimunaCore.getEntry("/components.dtd"));
 		assertNotNull(dtd);
 		assertEquals(9, dtd.getElementAll().length);
-		
+
 		IElementDef components = dtd.getElement("components");
 		assertEquals("components", components.getName());
 		assertEquals(3, components.getElements().length);
@@ -46,11 +42,11 @@ public class DtdLoaderTest extends TestCase {
 		assertEquals("singleton", component.getAttribute("instance").getDefaultValue());
 		assertFalse(component.isEmpty());
 		assertTrue(component.hasPCData());
-		
+
 		IElementDef include = dtd.getElement("include");
 		assertTrue(include.isEmpty());
 		assertFalse(include.hasPCData());
 		assertEquals(IAttributeDef.REQUIRED, include.getAttribute("path").getDecl());
-	}	
+	}
 
 }

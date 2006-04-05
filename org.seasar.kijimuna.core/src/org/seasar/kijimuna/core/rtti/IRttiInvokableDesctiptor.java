@@ -22,27 +22,26 @@ import org.eclipse.jdt.core.IMember;
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public interface IRttiInvokableDesctiptor 
-		extends Serializable, Comparable {
-	
+public interface IRttiInvokableDesctiptor extends Serializable, Comparable {
+
 	String createDescriptorKey();
-	
-    IMember getMember();
-    
+
+	IMember getMember();
+
 	IRtti getParent();
-	
+
 	String getMethodName();
-	
+
 	IRtti getReturnType();
-	
+
 	IRtti[] getArgs();
 
 	boolean isFinal();
 
 	boolean isStatic();
-	
+
 	IRtti[] getValues();
-	
+
 	void setValues(IRtti[] values);
 
 }

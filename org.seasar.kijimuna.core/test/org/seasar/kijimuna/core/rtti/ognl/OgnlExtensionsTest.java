@@ -17,24 +17,25 @@ package org.seasar.kijimuna.core.rtti.ognl;
 
 import junit.framework.TestCase;
 
-import org.eclipse.jdt.core.IPackageFragment;
 import org.ognl.el.ExecutionEnvironment;
 import org.ognl.el.extensions.DefaultExecutionEnvironment;
+
+import org.eclipse.jdt.core.IPackageFragment;
+
 import org.seasar.kijimuna.core.internal.rtti.ognl.OgnlExtensions;
 import org.seasar.kijimuna.core.rtti.IRtti;
 import org.seasar.kijimuna.core.rtti.RttiLoader;
 import org.seasar.kijimuna.core.test.TestProject;
 
-
 /**
  * @author Masataka Kurihara (Gluegent, Inc)
  */
 public class OgnlExtensionsTest extends TestCase {
-	
+
 	public OgnlExtensionsTest(String arg) {
 		super(arg);
 	}
-	
+
 	private TestProject project;
 	private RttiLoader loader;
 	private IRtti person;
@@ -45,24 +46,24 @@ public class OgnlExtensionsTest extends TestCase {
 		project = new TestProject();
 		IPackageFragment pack = project.createPackage("test");
 		project.createType(pack, "Person.java", 
-			"import java.util.List;" +
-			"public class Person {" +
-			"	public List list;" +
-			"	public static String STATIC = \"satic value\";" +
-			"	public Person getProperty() {" +
-			"		return null;" +
-			"	}" +
-			"	public List listFamily() {" +
-			"		return null;" +
-			"	}" +
-			"	public Person[] findFamily(String name, int age) {" +
-			"		return new Person[0];" +
-			"	}" +
-			"	public static Person newInstance() {" +
-			"		return new Person();" +
-			"	}" +
-			"}"
-		);
+				"import java.util.List;" +
+				"public class Person {" +
+				"	public List list;" +
+				"	public static String STATIC = \"satic value\";" +
+				"	public Person getProperty() {" +
+				"		return null;" +
+				"	}" +
+				"	public List listFamily() {" +
+				"		return null;" +
+				"	}" +
+				"	public Person[] findFamily(String name, int age) {" +
+				"		return new Person[0];" +
+				"	}" +
+				"	public static Person newInstance() {" +
+				"		return new Person();" +
+				"	}" +
+				"}"
+			);
 		loader = new RttiLoader(project.getJavaProject().getElementName(), true);
 		person = loader.loadRtti("test.Person");
 		ext = new OgnlExtensions(loader);
@@ -74,67 +75,67 @@ public class OgnlExtensionsTest extends TestCase {
 	}
 
 	public void testCallArrayConstructor() throws Exception {
-		IRtti rtti = (IRtti)ext.callArrayConstructor(env, "test.Person", null);
+		IRtti rtti = (IRtti) ext.callArrayConstructor(env, "test.Person", null);
 		assertEquals(rtti.getQualifiedName(), "test.Person[]");
 	}
-	
+
 	public void testCallConstructor() throws Exception {
-		IRtti rtti = (IRtti)ext.callConstructor(env, "test.Person", null);
+		IRtti rtti = (IRtti) ext.callConstructor(env, "test.Person", null);
 		assertEquals(rtti.getQualifiedName(), "test.Person");
 	}
-	
+
 	public void testCallMethod1() throws Exception {
-		IRtti rtti = (IRtti)ext.callMethod(env, person, "listFamily", null);
+		IRtti rtti = (IRtti) ext.callMethod(env, person, "listFamily", null);
 		assertEquals(rtti.getQualifiedName(), "java.util.List");
 	}
 
 	public void testCallMethod2() throws Exception {
-		IRtti rtti = (IRtti)ext.callMethod(env, person, "newInstance", null);
+		IRtti rtti = (IRtti) ext.callMethod(env, person, "newInstance", null);
 		assertEquals(rtti.getQualifiedName(), "test.Person");
 	}
 
 	public void testCallMethod4() throws Exception {
 		IRtti arg[] = new IRtti[] {
-				loader.loadRtti("java.lang.String"),
-				loader.loadRtti("int")
+				loader.loadRtti("java.lang.String"), loader.loadRtti("int")
 		};
-		IRtti rtti = (IRtti)ext.callMethod(env, person, "findFamily", arg);
+		IRtti rtti = (IRtti) ext.callMethod(env, person, "findFamily", arg);
 		assertEquals(rtti.getQualifiedName(), "test.Person[]");
 	}
 
 	public void testCallMethod5() throws Exception {
-		IRtti rtti = (IRtti)ext.callMethod(env, person, "hashCode", null);
+		IRtti rtti = (IRtti) ext.callMethod(env, person, "hashCode", null);
 		assertEquals(rtti.getQualifiedName(), "int");
 	}
-	
+
 	public void testCallStaticMethod() throws Exception {
-		IRtti rtti = (IRtti)ext.callStaticMethod(env, "test.Person", "newInstance", null);
+		IRtti rtti = (IRtti) ext
+				.callStaticMethod(env, "test.Person", "newInstance", null);
 		assertEquals(rtti.getQualifiedName(), "test.Person");
 	}
-	
+
 	public void testGetPropertyValue1() throws Exception {
-		IRtti rtti = (IRtti)ext.getPropertyValue(env, person, "property");
+		IRtti rtti = (IRtti) ext.getPropertyValue(env, person, "property");
 		assertEquals(rtti.getQualifiedName(), "test.Person");
 	}
-	
+
 	public void testGetPropertyValue2() throws Exception {
-		IRtti rtti = (IRtti)ext.getPropertyValue(env, person, "list");
+		IRtti rtti = (IRtti) ext.getPropertyValue(env, person, "list");
 		assertEquals(rtti.getQualifiedName(), "java.util.List");
 	}
-	
+
 	public void testGetStaticFieldValue1() throws Exception {
-		IRtti rtti = (IRtti)ext.getStaticFieldValue(env, "test.Person", "STATIC");
+		IRtti rtti = (IRtti) ext.getStaticFieldValue(env, "test.Person", "STATIC");
 		assertEquals(rtti.getQualifiedName(), "java.lang.String");
 	}
 
 	public void testGetStaticFieldValue2() throws Exception {
-		IRtti rtti = (IRtti)ext.getStaticFieldValue(env, "test.Person", "class");
+		IRtti rtti = (IRtti) ext.getStaticFieldValue(env, "test.Person", "class");
 		assertEquals(rtti.getQualifiedName(), "java.lang.Class");
 	}
 
 	public void testGetStaticFieldValue3() throws Exception {
-		IRtti rtti = (IRtti)ext.getStaticFieldValue(env, "java.lang.Boolean", "TRUE");
+		IRtti rtti = (IRtti) ext.getStaticFieldValue(env, "java.lang.Boolean", "TRUE");
 		assertEquals(rtti.getQualifiedName(), "java.lang.Boolean");
 	}
-	
+
 }

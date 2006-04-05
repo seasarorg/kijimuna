@@ -24,11 +24,12 @@ import org.seasar.kijimuna.core.dtd.IElementDef;
  * @author Toshitaka Agata (Nulab, Inc.)
  */
 public class DefaultDtd implements IDtd {
-	
+
 	private LinkedHashMap elementsMap = new LinkedHashMap();
-	
+
 	public IElementDef[] getElementAll() {
-		return (IElementDef[]) elementsMap.values().toArray(new IElementDef[elementsMap.size()]);
+		return (IElementDef[]) elementsMap.values().toArray(
+				new IElementDef[elementsMap.size()]);
 	}
 
 	public void addElement(IElementDef element) {
@@ -38,5 +39,5 @@ public class DefaultDtd implements IDtd {
 	public IElementDef getElement(String name) {
 		return (IElementDef) elementsMap.get(name);
 	}
-	
+
 }

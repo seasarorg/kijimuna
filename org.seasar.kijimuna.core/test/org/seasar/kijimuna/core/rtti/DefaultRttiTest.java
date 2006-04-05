@@ -24,23 +24,18 @@ import junit.framework.TestCase;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IStorage;
 import org.eclipse.jdt.core.IPackageFragment;
-import org.seasar.kijimuna.core.rtti.IRtti;
-import org.seasar.kijimuna.core.rtti.IRttiFieldDescriptor;
-import org.seasar.kijimuna.core.rtti.IRttiMethodDesctiptor;
-import org.seasar.kijimuna.core.rtti.IRttiPropertyDescriptor;
-import org.seasar.kijimuna.core.rtti.RttiLoader;
-import org.seasar.kijimuna.core.test.TestProject;
 
+import org.seasar.kijimuna.core.test.TestProject;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public class DefaultRttiTest extends TestCase {
-	
+
 	public DefaultRttiTest(String arg) {
 		super(arg);
 	}
-	
+
 	private TestProject project;
 	private RttiLoader loader;
 
@@ -103,10 +98,8 @@ public class DefaultRttiTest extends TestCase {
 			"	}" +
 			"}"
 		);
-		project.createType(pack, "DefaultPerson.java", 
-			"public class DefaultPerson extends Person {" +
-			"}"
-		);
+		project.createType(pack, "DefaultPerson.java",
+				"public class DefaultPerson extends Person {" + "}");
 		loader = new RttiLoader(project.getJavaProject().getElementName(), false);
 	}
 
@@ -116,28 +109,29 @@ public class DefaultRttiTest extends TestCase {
 
 	public void testGetFile1() throws Exception {
 		IRtti person = loader.loadRtti("test.Person");
-		IStorage storage = (IStorage)person.getAdapter(IStorage.class);
-		assertEquals(storage.getFullPath().toString(), "/TestProject/src/test/Person.java");
+		IStorage storage = (IStorage) person.getAdapter(IStorage.class);
+		assertEquals(storage.getFullPath().toString(),
+				"/TestProject/src/test/Person.java");
 	}
 
 	public void testGetFile2() throws Exception {
 		IRtti string = loader.loadRtti("java.lang.String");
-		IFile file = (IFile)string.getAdapter(IFile.class);
+		IFile file = (IFile) string.getAdapter(IFile.class);
 		assertNull(file);
 	}
-	
+
 	public void testGetFile3() throws Exception {
-	    project.addJar("org.seasar.kijimuna.core", "/ognl-3.0.0-pre-2.jar");
+		project.addJar("org.seasar.kijimuna.core", "/ognl-3.0.0-pre-2.jar");
 		IRtti extensions = loader.loadRtti("org.ognl.el.Extensions");
-		IFile file = (IFile)extensions.getAdapter(IFile.class);
+		IFile file = (IFile) extensions.getAdapter(IFile.class);
 		assertNull(file);
 	}
-	
+
 	public void testGetShortName1() throws Exception {
 		IRtti primitive = loader.loadRtti("boolean");
 		assertEquals(primitive.getShortName(), "boolean");
 	}
-	
+
 	public void testGetShortName2() throws Exception {
 		IRtti person = loader.loadRtti("test.Person");
 		assertEquals(person.getShortName(), "Person");
@@ -147,7 +141,7 @@ public class DefaultRttiTest extends TestCase {
 		IRtti array = loader.loadRtti("test.Person[]");
 		assertEquals(array.getShortName(), "Person[]");
 	}
-	
+
 	public void testIsInterface1() throws Exception {
 		IRtti i_person = loader.loadRtti("test.IPerson");
 		assertTrue(i_person.isInterface());
@@ -189,12 +183,12 @@ public class DefaultRttiTest extends TestCase {
 		IRtti[] interfaces = a_person.getInterfaces();
 		assertEquals(interfaces.length, 0);
 	}
-	
+
 	public void testIsAssignableFrom1() throws Exception {
 		IRtti person = loader.loadRtti("test.Person");
 		assertTrue(person.isAssignableFrom(person));
 	}
-	
+
 	public void testIsAssignableFrom2() throws Exception {
 		IRtti person = loader.loadRtti("test.Person");
 		IRtti a_person = loader.loadRtti("test.AbstractPerson");
@@ -212,34 +206,34 @@ public class DefaultRttiTest extends TestCase {
 		IRtti person = loader.loadRtti("test.Person");
 		assertFalse(person.isAssignableFrom(i_person));
 	}
-	
+
 	public void testIsAssignableFrom5() throws Exception {
 		IRtti person = loader.loadRtti("test.Person");
 		IRtti a_person = loader.loadRtti("test.AbstractPerson");
 		assertFalse(person.isAssignableFrom(a_person));
 	}
-	
+
 	public void testIsAssignableFrom6() throws Exception {
-	    IRtti longVal = loader.loadRtti("long");
-	    IRtti intVal = loader.loadRtti("int");
-	    assertTrue(longVal.isAssignableFrom(intVal));
-	    assertFalse(intVal.isAssignableFrom(longVal));
+		IRtti longVal = loader.loadRtti("long");
+		IRtti intVal = loader.loadRtti("int");
+		assertTrue(longVal.isAssignableFrom(intVal));
+		assertFalse(intVal.isAssignableFrom(longVal));
 	}
-	
+
 	public void testIsAssignableFrom7() throws Exception {
-	    IRtti obj = loader.loadRtti("java.lang.Object");
-	    IRtti array = loader.loadRtti("int[]");
-	    assertTrue(obj.isAssignableFrom(array));
-	    assertFalse(array.isAssignableFrom(obj));
+		IRtti obj = loader.loadRtti("java.lang.Object");
+		IRtti array = loader.loadRtti("int[]");
+		assertTrue(obj.isAssignableFrom(array));
+		assertFalse(array.isAssignableFrom(obj));
 	}
-	
+
 	public void testIsAssignableFrom8() throws Exception {
-	    IRtti obj = loader.loadRtti("java.lang.Object");
-	    IRtti interf = loader.loadRtti("test.IPerson");
-	    assertTrue(obj.isAssignableFrom(interf));
-	    assertFalse(interf.isAssignableFrom(obj));
+		IRtti obj = loader.loadRtti("java.lang.Object");
+		IRtti interf = loader.loadRtti("test.IPerson");
+		assertTrue(obj.isAssignableFrom(interf));
+		assertFalse(interf.isAssignableFrom(obj));
 	}
-	
+
 	public void testGetField1() throws Exception {
 		IRtti person = loader.loadRtti("test.Person");
 		IRttiFieldDescriptor member = person.getField("parent", false);
@@ -263,7 +257,7 @@ public class DefaultRttiTest extends TestCase {
 		IRttiFieldDescriptor member = person.getField("array", false);
 		assertEquals(member.getType().getQualifiedName(), "char[]");
 	}
-	
+
 	public void testGetField5() throws Exception {
 		IRtti personArray = loader.loadRtti("test.Person[]");
 		IRttiFieldDescriptor member = personArray.getField("length", false);
@@ -281,21 +275,21 @@ public class DefaultRttiTest extends TestCase {
 		IRttiFieldDescriptor member = person.getField("BASE", true);
 		assertEquals(member.getType().getQualifiedName(), "int");
 	}
-	
+
 	public void testGetProperties() throws Exception {
 		IRtti person = loader.loadRtti("test.Person");
 		IRttiPropertyDescriptor[] props = person.getProperties(Pattern.compile(".*"));
 		assertEquals(props.length, 4);
 		Set set = new HashSet();
-		for(int i = 0; i < props.length; i++) {
-		    set.add(props[i].getName());
+		for (int i = 0; i < props.length; i++) {
+			set.add(props[i].getName());
 		}
 		assertTrue(set.contains("parent"));
 		assertTrue(set.contains("list"));
 		assertTrue(set.contains("integer"));
 		assertTrue(set.contains("class"));
 	}
-	
+
 	public void testGetProperty1() throws Exception {
 		IRtti person = loader.loadRtti("test.Person");
 		IRtti type = loader.loadRtti("java.util.List");
@@ -325,7 +319,7 @@ public class DefaultRttiTest extends TestCase {
 		assertTrue(prop.isWritable());
 		assertTrue(prop.isReadable());
 	}
-	
+
 	public void testHasConstructor1() throws Exception {
 		IRtti person = loader.loadRtti("test.Person");
 		IRtti[] args = new IRtti[0];
@@ -335,8 +329,7 @@ public class DefaultRttiTest extends TestCase {
 	public void testHasConstructor2() throws Exception {
 		IRtti person = loader.loadRtti("test.Person");
 		IRtti[] args = new IRtti[] {
-			loader.loadRtti("java.lang.String"),
-			loader.loadRtti("int")
+				loader.loadRtti("java.lang.String"), loader.loadRtti("int")
 		};
 		assertNotNull(person.getConstructor(args));
 	}
@@ -348,61 +341,62 @@ public class DefaultRttiTest extends TestCase {
 		};
 		assertNull(person.getConstructor(args));
 	}
-	
+
 	public void testHasConstructor4() throws Exception {
 		IRtti defaultPerson = loader.loadRtti("test.DefaultPerson");
 		assertNotNull(defaultPerson.getConstructor(null));
 	}
-	
+
 	public void testGetMethods() throws Exception {
 		IRtti person = loader.loadRtti("test.Person");
-		IRttiMethodDesctiptor[] methods = person.getMethods(
-		        Pattern.compile("createPerson"));
+		IRttiMethodDesctiptor[] methods = person.getMethods(Pattern
+				.compile("createPerson"));
 		assertEquals(methods.length, 3);
 		assertEquals(methods[0].getMethodName(), "createPerson");
 		assertEquals(methods[0].getReturnType().getQualifiedName(), "test.Person");
 	}
-	
+
 	public void testGetMethod1() throws Exception {
 		IRtti person = loader.loadRtti("test.Person");
-		IRttiMethodDesctiptor ret1 = 
-		    person.getMethod("createMap", new IRtti[0], false);
+		IRttiMethodDesctiptor ret1 = person.getMethod("createMap", new IRtti[0], false);
 		assertEquals(ret1.getReturnType().getQualifiedName(), "java.util.Map");
 	}
 
 	public void testGetMethod2() throws Exception {
 		IRtti person = loader.loadRtti("test.Person");
-		IRttiMethodDesctiptor ret2 = 
-		    person.getMethod("createLong", new IRtti[0], false);
+		IRttiMethodDesctiptor ret2 = person.getMethod("createLong", new IRtti[0], false);
 		assertEquals(ret2.getReturnType().getQualifiedName(), "long");
 	}
-	
+
 	public void testGetMethod3() throws Exception {
 		IRtti person = loader.loadRtti("test.Person");
-		IRttiMethodDesctiptor ret3 =
-		    person.getMethod("createPerson", new IRtti[0], false);
+		IRttiMethodDesctiptor ret3 = person
+				.getMethod("createPerson", new IRtti[0], false);
 		assertEquals(ret3.getReturnType().getQualifiedName(), "test.Person");
 	}
 
 	public void testGetMethod4() throws Exception {
 		IRtti person = loader.loadRtti("test.Person");
-		IRtti[] args = new IRtti[] { loader.loadRtti("java.lang.String[]") };
+		IRtti[] args = new IRtti[] {
+			loader.loadRtti("java.lang.String[]")
+		};
 		IRttiMethodDesctiptor ret4 = person.getMethod("main", args, false);
 		assertEquals(ret4.getReturnType().getQualifiedName(), "void");
 	}
 
 	public void testGetMethod5() throws Exception {
 		IRtti person = loader.loadRtti("test.Person");
-		IRttiMethodDesctiptor ret5 = 
-		    person.getMethod("createPerson", new IRtti[0], true);
+		IRttiMethodDesctiptor ret5 = person.getMethod("createPerson", new IRtti[0], true);
 		assertNull(ret5);
 	}
-	
+
 	public void testGetMethod6() throws Exception {
 		IRtti person = loader.loadRtti("test.Person");
-		IRtti[] args = new IRtti[] { loader.loadRtti("java.lang.String[]") };
+		IRtti[] args = new IRtti[] {
+			loader.loadRtti("java.lang.String[]")
+		};
 		IRttiMethodDesctiptor ret6 = person.getMethod("main", args, true);
 		assertEquals(ret6.getReturnType().getQualifiedName(), "void");
 	}
-	
+
 }

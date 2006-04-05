@@ -17,16 +17,16 @@ package org.seasar.kijimuna.core.parser;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IStorage;
+
 import org.seasar.kijimuna.core.internal.parser.DefaultElement;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public class ElementFactory {
-	
-	public IElement createElement(
-	        IProject project, IStorage storage, String elementName) {
+
+	public IElement createElement(IProject project, IStorage storage, String elementName) {
 		return new DefaultElement(project, storage, elementName);
 	}
-	
+
 }

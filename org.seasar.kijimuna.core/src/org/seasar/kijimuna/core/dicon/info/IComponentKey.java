@@ -22,23 +22,22 @@ import org.eclipse.core.runtime.IAdaptable;
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public interface IComponentKey 
-		extends Serializable, Comparable, IAdaptable {
+public interface IComponentKey extends Serializable, Comparable, IAdaptable {
 
 	int NOT_TOO_MANY = 0;
 	int TOO_MANY_PROBLEM = 1;
 	int TOO_MANY_FETAL = 2;
-	
-    int UNKNOWN = 0;
-    int INTERFACE = 1;
-    int STRING = 2;
-    
-    String getDisplayName();
 
-    void setTooMany(int tooMany);
+	int UNKNOWN = 0;
+	int INTERFACE = 1;
+	int STRING = 2;
 
-    int getTooMany();
-    
-    int getKeyType();
-    
+	String getDisplayName();
+
+	void setTooMany(int tooMany);
+
+	int getTooMany();
+
+	int getKeyType();
+
 }

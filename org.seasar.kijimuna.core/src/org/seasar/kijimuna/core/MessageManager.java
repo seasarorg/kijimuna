@@ -28,12 +28,12 @@ import org.eclipse.core.runtime.Status;
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public class MessageManager {
-	
+
 	private Plugin plugin;
 	private String resourceBaseName;
 	private String pluginID;
 	private ResourceBundle bundle;
-	
+
 	public MessageManager(Plugin plugin, String resourceBaseName) {
 		this.plugin = plugin;
 		this.resourceBaseName = resourceBaseName;
@@ -43,51 +43,51 @@ public class MessageManager {
 		try {
 			IStatus status = new Status(IStatus.INFO, pluginID, IStatus.OK, message, null);
 			plugin.getLog().log(status);
-        } catch (RuntimeException e1) {
-        }
+		} catch (RuntimeException e1) {
+		}
 	}
-	
+
 	public void reportException(Exception e) {
 		try {
-            IStatus status;
-            if (e instanceof CoreException) {
-            	status = ((CoreException) e).getStatus();
-            } else {
-            	status = new Status(IStatus.ERROR, pluginID, IStatus.OK,
-            	        e.getMessage(), e);
-            }
-            plugin.getLog().log(status);
-        } catch (RuntimeException e1) {
-        }
+			IStatus status;
+			if (e instanceof CoreException) {
+				status = ((CoreException) e).getStatus();
+			} else {
+				status = new Status(IStatus.ERROR, pluginID, IStatus.OK, e.getMessage(),
+						e);
+			}
+			plugin.getLog().log(status);
+		} catch (RuntimeException e1) {
+		}
 	}
 
 	public String getResourceString(String key) {
 		try {
-			if(bundle == null) {
-			    getResourceBundle();
+			if (bundle == null) {
+				getResourceBundle();
 			}
 			return bundle.getString(key);
 		} catch (Exception e) {
 			return "!" + key + "!";
 		}
 	}
-	
+
 	public String getResourceString(String key, Object[] args) {
-	    if(args == null) {
-	        args = new Object[0];
-	    }
-	    return MessageFormat.format(getResourceString(key), args);
+		if (args == null) {
+			args = new Object[0];
+		}
+		return MessageFormat.format(getResourceString(key), args);
 	}
 
 	public ResourceBundle getResourceBundle() {
 		try {
-			if(bundle == null) {
-				bundle = ResourceBundle.getBundle(resourceBaseName, 
-						Locale.getDefault(), plugin.getClass().getClassLoader());
+			if (bundle == null) {
+				bundle = ResourceBundle.getBundle(resourceBaseName, Locale.getDefault(),
+						plugin.getClass().getClassLoader());
 			}
 			return bundle;
 		} catch (Exception e) {
-		    KijimunaCore.reportException(e);
+			KijimunaCore.reportException(e);
 			return null;
 		}
 	}

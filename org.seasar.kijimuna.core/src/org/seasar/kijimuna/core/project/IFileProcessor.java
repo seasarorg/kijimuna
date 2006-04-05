@@ -24,23 +24,23 @@ import org.eclipse.core.runtime.IProgressMonitor;
  * @author Masataka Kurihara (Gluegent, Inc)
  */
 public interface IFileProcessor {
-	
+
 	String getNatureID();
 
-    void processProject(IProject project, IProgressMonitor monitor);
-    
-    void process(IProject project, IStorage storage, IProgressMonitor monitor);
-	
+	void processProject(IProject project, IProgressMonitor monitor);
+
+	void process(IProject project, IStorage storage, IProgressMonitor monitor);
+
 	void handlePrepareFullProcess(IProject project, IProgressMonitor monitor);
 
-    void handleFileAdded(IFile addedFile, boolean fullBuild, IProgressMonitor monitor);
-	
+	void handleFileAdded(IFile addedFile, boolean fullBuild, IProgressMonitor monitor);
+
 	void handleFileRemoved(IFile removedFile, IProgressMonitor monitor);
-	
+
 	void handleFileChanged(IFile changedFile, IProgressMonitor monitor);
-	
+
 	void handleClassPassChanged(IProject project, IProgressMonitor monitor);
-	
+
 	void handleFinish(IProject project, IProgressMonitor monitor);
-	
+
 }

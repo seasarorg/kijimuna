@@ -25,7 +25,7 @@ import org.seasar.kijimuna.core.dtd.IElementDef;
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public class DefaultElementDef implements IElementDef {
-	
+
 	private String name;
 	private LinkedHashMap elementMap = new LinkedHashMap();
 	private LinkedHashMap attributeMap = new LinkedHashMap();
@@ -43,7 +43,8 @@ public class DefaultElementDef implements IElementDef {
 	}
 
 	public IElementDef[] getElements() {
-		return (IElementDef[]) elementMap.values().toArray(new IElementDef[elementMap.size()]);
+		return (IElementDef[]) elementMap.values().toArray(
+				new IElementDef[elementMap.size()]);
 	}
 
 	public void addElement(IElementDef childElement) {
@@ -51,7 +52,8 @@ public class DefaultElementDef implements IElementDef {
 	}
 
 	public IAttributeDef[] getAttributes() {
-		return (IAttributeDef[]) attributeMap.values().toArray(new IAttributeDef[attributeMap.size()]);
+		return (IAttributeDef[]) attributeMap.values().toArray(
+				new IAttributeDef[attributeMap.size()]);
 	}
 
 	public void addAttribute(IAttributeDef attribute) {
@@ -62,12 +64,12 @@ public class DefaultElementDef implements IElementDef {
 		return (IAttributeDef) attributeMap.get(name);
 	}
 
-    public boolean hasPCData() {
-        return pcdata;
-    }
+	public boolean hasPCData() {
+		return pcdata;
+	}
 
-    public boolean isEmpty() {
-        return empty;
-    }
+	public boolean isEmpty() {
+		return empty;
+	}
 
 }

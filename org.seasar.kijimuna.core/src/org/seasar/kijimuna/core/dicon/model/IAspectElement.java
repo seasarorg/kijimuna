@@ -20,6 +20,6 @@ package org.seasar.kijimuna.core.dicon.model;
  */
 public interface IAspectElement extends IComponentHolderElement {
 
-    String getPointcut();
+	String getPointcut();
 
 }

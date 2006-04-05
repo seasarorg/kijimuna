@@ -18,8 +18,8 @@ package org.seasar.kijimuna.core.internal.dicon.validation;
 import org.seasar.kijimuna.core.ConstCore;
 import org.seasar.kijimuna.core.dicon.IValidation;
 import org.seasar.kijimuna.core.dicon.MarkerSetting;
-import org.seasar.kijimuna.core.dicon.info.IComponentNotFound;
 import org.seasar.kijimuna.core.dicon.info.IApplyMethodInfo;
+import org.seasar.kijimuna.core.dicon.info.IComponentNotFound;
 import org.seasar.kijimuna.core.dicon.info.ITooManyRegisted;
 import org.seasar.kijimuna.core.dicon.model.IDiconElement;
 import org.seasar.kijimuna.core.dicon.model.IMethodElement;
@@ -32,57 +32,68 @@ import org.seasar.kijimuna.core.util.StringUtils;
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public class AutoMethodInvoke implements IValidation, ConstCore {
-	
-    public void validation(IDiconElement element) {
-        if(element instanceof IMethodElement) {
-            try {
-            	invoke((IMethodElement)element);
-            } catch(Exception e) {
-            	e.printStackTrace();
-            }
-        }
-    }
+
+	public void validation(IDiconElement element) {
+		if (element instanceof IMethodElement) {
+			try {
+				invoke((IMethodElement) element);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+	}
 
 	private void invoke(IMethodElement method) {
 		String methodName = method.getMethodName();
-		if((StringUtils.noneValue(methodName)) ||
-		        (method.getArgList().size() > 0)) {
+		if ((StringUtils.noneValue(methodName)) || (method.getArgList().size() > 0)) {
 			return;
 		}
 		IRtti component = ModelUtils.getComponentRtti(method);
-		IApplyMethodInfo info = (IApplyMethodInfo)method.getAdapter(IApplyMethodInfo.class);
-		if(info != null) {
-		    IRttiMethodDesctiptor suitable = info.getAutoInjectedMethod();
-		    if(suitable != null) {
-			    IRtti[] suitableArgs = suitable.getArgs();
-			    IRtti[] injectedArgs = suitable.getValues();
+		IApplyMethodInfo info = (IApplyMethodInfo) method
+				.getAdapter(IApplyMethodInfo.class);
+		if (info != null) {
+			IRttiMethodDesctiptor suitable = info.getAutoInjectedMethod();
+			if (suitable != null) {
+				IRtti[] suitableArgs = suitable.getArgs();
+				IRtti[] injectedArgs = suitable.getValues();
 				String display = ModelUtils.getMethodDisplay(suitable, true);
-		        if(injectedArgs != null) {
-		            for(int i = 0; i < suitableArgs.length; i++) {
-		                if(injectedArgs[i] instanceof IComponentNotFound) {
+				if (injectedArgs != null) {
+					for (int i = 0; i < suitableArgs.length; i++) {
+						if (injectedArgs[i] instanceof IComponentNotFound) {
 							MarkerSetting.createDiconMarker(
-							        "dicon.validation.AutoMethodInvoke.2",
-							        method, new Object[] { display, new Integer(i + 1) });
-		                } else if(injectedArgs[i] instanceof ITooManyRegisted) {
+									"dicon.validation.AutoMethodInvoke.2", method,
+									new Object[] {
+											display, new Integer(i + 1)
+									});
+						} else if (injectedArgs[i] instanceof ITooManyRegisted) {
 							MarkerSetting.createDiconMarker(
-							        "dicon.validation.AutoMethodInvoke.4",
-							        method, new Object[] { display, new Integer(i + 1) });
-		                } else if(injectedArgs[i] != null) {
-							MarkerSetting.createDiconMarker(
-		                        "dicon.validation.AutoMethodInvoke.1",
-		                        method, new Object[] {
-		                        	display, new Integer(i + 1),
-		                        	ModelUtils.getInjectedElementName(injectedArgs[i]) });
-		                }
-		            }
-		        }
-		    } else {
-				String display = ModelUtils.getMethodDisplay(
-						component, methodName, new IRtti[0], true);
-				MarkerSetting.createDiconMarker(
-				        "dicon.validation.AutoMethodInvoke.3",
-				        method, new Object[] { display });
-		    }
+									"dicon.validation.AutoMethodInvoke.4", method,
+									new Object[] {
+											display, new Integer(i + 1)
+									});
+						} else if (injectedArgs[i] != null) {
+							MarkerSetting
+									.createDiconMarker(
+											"dicon.validation.AutoMethodInvoke.1",
+											method,
+											new Object[] {
+													display,
+													new Integer(i + 1),
+													ModelUtils
+															.getInjectedElementName(injectedArgs[i])
+											});
+						}
+					}
+				}
+			} else {
+				String display = ModelUtils.getMethodDisplay(component, methodName,
+						new IRtti[0], true);
+				MarkerSetting.createDiconMarker("dicon.validation.AutoMethodInvoke.3",
+						method, new Object[] {
+							display
+						});
+			}
 		}
 	}
+
 }

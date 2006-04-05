@@ -16,13 +16,14 @@
 package org.seasar.kijimuna.core.project;
 
 import org.eclipse.core.resources.IProjectNature;
+
 import org.seasar.kijimuna.core.preference.IPreferences;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public interface IProjectConfiguable extends IProjectNature {
-    
+
 	IPreferences getPreferences();
-	
+
 }

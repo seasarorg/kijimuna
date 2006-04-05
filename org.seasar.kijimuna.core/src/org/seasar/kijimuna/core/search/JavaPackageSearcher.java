@@ -35,6 +35,7 @@ import org.eclipse.jdt.core.search.SearchPattern;
 import org.eclipse.jdt.internal.core.search.JavaSearchScope;
 import org.eclipse.jdt.internal.corext.util.TypeInfo;
 import org.eclipse.jdt.internal.corext.util.TypeInfoRequestor;
+
 import org.seasar.kijimuna.core.KijimunaCore;
 import org.seasar.kijimuna.core.internal.search.DefaultPackageRequestor;
 import org.seasar.kijimuna.core.util.StringUtils;
@@ -43,20 +44,21 @@ import org.seasar.kijimuna.core.util.StringUtils;
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public class JavaPackageSearcher {
+
 	private IProject project;
-	
+
 	public JavaPackageSearcher(IProject project) {
 		this.project = project;
 	}
-	
+
 	public void searchPackagesAndTypes(String prefix, IPackageRequestor requestor) {
 		int lastDot = prefix.lastIndexOf('.');
 		String packageName;
 		String trimedPrefix = "";
-		if(lastDot > 0) {
+		if (lastDot > 0) {
 			packageName = prefix.substring(0, lastDot);
 			trimedPrefix = prefix.substring(lastDot + 1);
-		} else if(lastDot == -1) {
+		} else if (lastDot == -1) {
 			packageName = prefix;
 		} else {
 			return;
@@ -66,24 +68,25 @@ public class JavaPackageSearcher {
 			IPackageFragmentRoot[] roots = javaProject.getAllPackageFragmentRoots();
 
 			// search packages and types
-			for(int i = 0; i < roots.length; i++) {
-			    IJavaElement[] elements = roots[i].getChildren();
-			    for(int k = 0; k < elements.length; k++) {
-				    if(elements[k] instanceof IPackageFragment) {
-						IPackageFragment pack = (IPackageFragment)elements[k];
+			for (int i = 0; i < roots.length; i++) {
+				IJavaElement[] elements = roots[i].getChildren();
+				for (int k = 0; k < elements.length; k++) {
+					if (elements[k] instanceof IPackageFragment) {
+						IPackageFragment pack = (IPackageFragment) elements[k];
 						String currentName = pack.getElementName();
-						if(StringUtils.existValue(currentName) &&
-						        currentName.toLowerCase().startsWith(prefix.toLowerCase())) {
-						    requestor.acceptPackage(pack, roots[i].isArchive());
-						} else if(currentName.equals(packageName)){
-						    if(roots[i].isArchive()) {
-						        handleClassFiles(pack, requestor, trimedPrefix);
-						    } else {
-						        handleCompilationUnits(pack, requestor, trimedPrefix);
-						    }
+						if (StringUtils.existValue(currentName)
+								&& currentName.toLowerCase().startsWith(
+										prefix.toLowerCase())) {
+							requestor.acceptPackage(pack, roots[i].isArchive());
+						} else if (currentName.equals(packageName)) {
+							if (roots[i].isArchive()) {
+								handleClassFiles(pack, requestor, trimedPrefix);
+							} else {
+								handleCompilationUnits(pack, requestor, trimedPrefix);
+							}
 						}
-				    }
-			    }
+					}
+				}
 			}
 
 			// search inner type
@@ -102,7 +105,7 @@ public class JavaPackageSearcher {
 						if (children[i] instanceof IType) {
 							IType innerType = (IType) children[i];
 							int flag = innerType.getFlags();
-							if(Flags.isPublic(flag)) {
+							if (Flags.isPublic(flag)) {
 								requestor.acceptType(innerType);
 							}
 						}
@@ -115,14 +118,18 @@ public class JavaPackageSearcher {
 				char[] prefixCharArray = prefix.toCharArray();
 				ArrayList res = new ArrayList();
 				IPackageFragmentRoot[] pkgs = javaProject.getAllPackageFragmentRoots();
-				JavaSearchScope scope = (JavaSearchScope) SearchEngine.createJavaSearchScope(pkgs);
+				JavaSearchScope scope = (JavaSearchScope) SearchEngine
+						.createJavaSearchScope(pkgs);
 				// TODO: binary not compatible
-				new SearchEngine().searchAllTypeNames(null, prefixCharArray, SearchPattern.R_PREFIX_MATCH, IJavaSearchConstants.TYPE, scope, new TypeInfoRequestor(res), IJavaSearchConstants.FORCE_IMMEDIATE_SEARCH, null);
+				new SearchEngine().searchAllTypeNames(null, prefixCharArray,
+						SearchPattern.R_PREFIX_MATCH, IJavaSearchConstants.TYPE, scope,
+						new TypeInfoRequestor(res),
+						IJavaSearchConstants.FORCE_IMMEDIATE_SEARCH, null);
 				for (int i = 0; i < res.size(); i++) {
 					TypeInfo typeInfo = (TypeInfo) res.get(i);
 					IType type = typeInfo.resolveType(scope);
 					int flag = type.getFlags();
-					if(Flags.isPublic(flag)) {
+					if (Flags.isPublic(flag)) {
 						requestor.acceptType(type);
 					}
 				}
@@ -132,52 +139,53 @@ public class JavaPackageSearcher {
 		}
 	}
 
-	private void handleClassFiles(
-	        IPackageFragment pack, IPackageRequestor requestor, String trimedPrefix) {
+	private void handleClassFiles(IPackageFragment pack, IPackageRequestor requestor,
+			String trimedPrefix) {
 		try {
-		    IClassFile[] classes = pack.getClassFiles();
-		    for(int i = 0; i < classes.length; i++) {
-		        IType type = classes[i].getType();
+			IClassFile[] classes = pack.getClassFiles();
+			for (int i = 0; i < classes.length; i++) {
+				IType type = classes[i].getType();
 				String fullName = type.getFullyQualifiedName();
 				if (fullName.indexOf('$') == -1) {
-			        String currentName = type.getElementName(); 
-					if(currentName.toLowerCase().startsWith(trimedPrefix.toLowerCase())) {
-				        int flag = type.getFlags();
-					    if(Flags.isPublic(flag)) {
-					        requestor.acceptType(type);
-					    }
+					String currentName = type.getElementName();
+					if (currentName.toLowerCase().startsWith(trimedPrefix.toLowerCase())) {
+						int flag = type.getFlags();
+						if (Flags.isPublic(flag)) {
+							requestor.acceptType(type);
+						}
 					}
 				}
-		    }
+			}
 		} catch (JavaModelException e) {
 			KijimunaCore.reportException(e);
 		}
-	}	
-	
-	private void handleCompilationUnits(
-			IPackageFragment pack, IPackageRequestor requestor, String trimedPrefix) {
+	}
+
+	private void handleCompilationUnits(IPackageFragment pack,
+			IPackageRequestor requestor, String trimedPrefix) {
 		try {
-		    ICompilationUnit[] units = pack.getCompilationUnits();
-		    for(int i = 0; i < units.length; i++) {
-		        IType[] types = units[i].getAllTypes();
-				for(int k = 0; k < types.length; k ++) {
+			ICompilationUnit[] units = pack.getCompilationUnits();
+			for (int i = 0; i < units.length; i++) {
+				IType[] types = units[i].getAllTypes();
+				for (int k = 0; k < types.length; k++) {
 					String fullName = types[k].getFullyQualifiedName();
 					if (fullName.indexOf('$') == -1) {
-				        String currentName = types[k].getElementName(); 
-						if(currentName.toLowerCase().startsWith(trimedPrefix.toLowerCase())) {
+						String currentName = types[k].getElementName();
+						if (currentName.toLowerCase().startsWith(
+								trimedPrefix.toLowerCase())) {
 							int flag = types[k].getFlags();
-							if(Flags.isPublic(flag)) {
+							if (Flags.isPublic(flag)) {
 								requestor.acceptType(types[k]);
 							}
 						}
 					}
 				}
-		    }
+			}
 		} catch (JavaModelException e) {
 			KijimunaCore.reportException(e);
 		}
 	}
-	
+
 	public IPackageRequestor createDefaultRequestor(Collection collection) {
 		return new DefaultPackageRequestor(collection);
 	}

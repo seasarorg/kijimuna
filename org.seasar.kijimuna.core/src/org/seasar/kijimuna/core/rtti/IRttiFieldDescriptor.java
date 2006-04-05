@@ -22,16 +22,16 @@ import org.eclipse.core.runtime.IAdaptable;
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public interface IRttiFieldDescriptor extends IAdaptable,  Serializable {
+public interface IRttiFieldDescriptor extends IAdaptable, Serializable {
 
 	boolean isFinal();
 
 	boolean isStatic();
 
 	IRtti getParent();
-	
-    IRtti getType();
-    
-    String getName();
+
+	IRtti getType();
+
+	String getName();
 
 }

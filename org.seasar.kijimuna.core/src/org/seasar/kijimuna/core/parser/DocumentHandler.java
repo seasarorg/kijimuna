@@ -20,20 +20,22 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Stack;
 
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IStorage;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.seasar.kijimuna.core.ConstCore;
-import org.seasar.kijimuna.core.KijimunaCore;
-import org.seasar.kijimuna.core.internal.parser.DefaultParseResult;
-import org.seasar.kijimuna.core.util.MarkerUtils;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
 import org.xml.sax.Locator;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 import org.xml.sax.helpers.DefaultHandler;
+
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IStorage;
+import org.eclipse.core.runtime.IProgressMonitor;
+
+import org.seasar.kijimuna.core.ConstCore;
+import org.seasar.kijimuna.core.KijimunaCore;
+import org.seasar.kijimuna.core.internal.parser.DefaultParseResult;
+import org.seasar.kijimuna.core.util.MarkerUtils;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
@@ -54,11 +56,11 @@ public class DocumentHandler extends DefaultHandler implements ConstCore {
 	private String publicId;
 
 	public DocumentHandler(ElementFactory factory) {
-	    this(factory, null, MARKER_SEVERITY_IGNORE, MARKER_SEVERITY_IGNORE);
+		this(factory, null, MARKER_SEVERITY_IGNORE, MARKER_SEVERITY_IGNORE);
 	}
 
-	public DocumentHandler(ElementFactory factory, 
-	        String markerType, int errorSeverity, int warningSeverity) {
+	public DocumentHandler(ElementFactory factory, String markerType, int errorSeverity,
+			int warningSeverity) {
 		stack = new Stack();
 		setDocumentLocator(locator);
 		dtdMap = new HashMap();
@@ -80,7 +82,7 @@ public class DocumentHandler extends DefaultHandler implements ConstCore {
 	public void putDtdPath(String publicId, String path) {
 		dtdMap.put(publicId, path);
 	}
-	
+
 	public void setDocumentLocator(Locator locator) {
 		this.locator = locator;
 	}
@@ -91,10 +93,10 @@ public class DocumentHandler extends DefaultHandler implements ConstCore {
 			String dtdPath = (String) dtdMap.get(publicId);
 			if (dtdPath != null) {
 				try {
-				    InputSource source = new InputSource(
-				            KijimunaCore.getEntry(dtdPath).openStream());
-				    this.publicId = publicId;
-				    return source;
+					InputSource source = new InputSource(KijimunaCore.getEntry(dtdPath)
+							.openStream());
+					this.publicId = publicId;
+					return source;
 				} catch (IOException ignore) {
 				}
 			}
@@ -103,13 +105,13 @@ public class DocumentHandler extends DefaultHandler implements ConstCore {
 	}
 
 	public void startDocument() throws SAXException {
-		if(factory == null) {
+		if (factory == null) {
 			factory = new ElementFactory();
 		}
 	}
 
-	public void startElement(String namespaceURI, String localName,
-			String qName, Attributes attributes) {
+	public void startElement(String namespaceURI, String localName, String qName,
+			Attributes attributes) {
 		if (monitor != null) {
 			monitor.worked(1);
 		}
@@ -119,10 +121,11 @@ public class DocumentHandler extends DefaultHandler implements ConstCore {
 			property.put(attributes.getQName(i), attributes.getValue(i));
 		}
 		IElement element = factory.createElement(project, storage, qName);
-		element.setStartLocation(depth, locator.getLineNumber(), locator.getColumnNumber());
+		element.setStartLocation(depth, locator.getLineNumber(), locator
+				.getColumnNumber());
 		element.setAttributes(property);
 		if (depth == 1) {
-		    result = element;
+			result = element;
 			element.setRootElement(element);
 		} else {
 			element.setRootElement(result);
@@ -136,10 +139,10 @@ public class DocumentHandler extends DefaultHandler implements ConstCore {
 		if (monitor != null) {
 			monitor.worked(1);
 		}
-		IElement element = (IElement)stack.peek();
+		IElement element = (IElement) stack.peek();
 		StringBuffer body = new StringBuffer();
 		String old = element.getBody();
-		if(old != null) {
+		if (old != null) {
 			body.append(old);
 		}
 		body.append(new String(buffer, start, length));
@@ -154,8 +157,7 @@ public class DocumentHandler extends DefaultHandler implements ConstCore {
 		element.setEndLocation(locator.getLineNumber(), locator.getColumnNumber());
 	}
 
-	public void ignorableWhitespace(char[] ch, int start, int length)
-			throws SAXException {
+	public void ignorableWhitespace(char[] ch, int start, int length) throws SAXException {
 	}
 
 	public void fatalError(SAXParseException exception) throws SAXException {
@@ -166,25 +168,25 @@ public class DocumentHandler extends DefaultHandler implements ConstCore {
 	public void error(SAXParseException exception) throws SAXException {
 		if ((storage != null) && (storage instanceof IFile) && (markerType != null)) {
 			MarkerUtils.createMarker(markerType, MARKER_SEVERITY_XML_ERROR,
-					errorSeverity, (IFile)storage, exception.getLineNumber(), 
-					"[XML]" + exception.getMessage());
+					errorSeverity, (IFile) storage, exception.getLineNumber(), "[XML]"
+							+ exception.getMessage());
 		}
 	}
 
 	public void warning(SAXParseException exception) throws SAXException {
 		if ((storage != null) && (storage instanceof IFile) && (markerType != null)) {
-			MarkerUtils.createMarker(markerType, MARKER_SEVERITY_XML_WARNING, 
-					warningSeverity, (IFile)storage, exception.getLineNumber(),
-					"[XML]" + exception.getMessage());
+			MarkerUtils.createMarker(markerType, MARKER_SEVERITY_XML_WARNING,
+					warningSeverity, (IFile) storage, exception.getLineNumber(), "[XML]"
+							+ exception.getMessage());
 		}
 	}
 
 	public IParseResult getResult() {
-	    IElement lastStack = null;
-	    if(!stack.isEmpty()) {
-	        lastStack = (IElement)stack.peek();
-	    }
-	    return new DefaultParseResult(publicId, result, lastStack);
+		IElement lastStack = null;
+		if (!stack.isEmpty()) {
+			lastStack = (IElement) stack.peek();
+		}
+		return new DefaultParseResult(publicId, result, lastStack);
 	}
 
 }

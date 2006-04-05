@@ -22,6 +22,6 @@ import org.seasar.kijimuna.core.rtti.IRtti;
  */
 public interface IComponentNotFound extends IRtti {
 
-    String getErrorMessage();
+	String getErrorMessage();
 
 }

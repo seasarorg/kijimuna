@@ -16,6 +16,7 @@
 package org.seasar.kijimuna.core.internal.rtti;
 
 import org.eclipse.jdt.core.IMember;
+
 import org.seasar.kijimuna.core.rtti.IRtti;
 import org.seasar.kijimuna.core.rtti.IRttiConstructorDesctiptor;
 
@@ -25,23 +26,23 @@ import org.seasar.kijimuna.core.rtti.IRttiConstructorDesctiptor;
 public class DefaultRttiConstructorDescriptor extends AbstractRttiInvokableDescriptor
 		implements IRttiConstructorDesctiptor {
 
-	private boolean defaultConstructor; 
-	
-	public DefaultRttiConstructorDescriptor(
-	        IMember member, IRtti parent, boolean defaultConstructor) {
-	    super(member, parent);
-        this.defaultConstructor = defaultConstructor;
+	private boolean defaultConstructor;
+
+	public DefaultRttiConstructorDescriptor(IMember member, IRtti parent,
+			boolean defaultConstructor) {
+		super(member, parent);
+		this.defaultConstructor = defaultConstructor;
 	}
 
 	public IMember getMember() {
-	    if(defaultConstructor) {
-	        return getParent().getType();
-	    }
-	    return super.getMember();
+		if (defaultConstructor) {
+			return getParent().getType();
+		}
+		return super.getMember();
 	}
-	
+
 	public boolean isDefaultConstructor() {
-	    return defaultConstructor;
+		return defaultConstructor;
 	}
 
 }

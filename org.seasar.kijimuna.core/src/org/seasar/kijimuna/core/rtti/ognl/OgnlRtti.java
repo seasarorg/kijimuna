@@ -20,6 +20,7 @@ import org.ognl.el.ExpressionSyntaxException;
 import org.ognl.el.OgnlException;
 import org.ognl.el.PropertyAccessor;
 import org.ognl.el.extensions.DefaultExecutionEnvironment;
+
 import org.seasar.kijimuna.core.KijimunaCore;
 import org.seasar.kijimuna.core.internal.rtti.ognl.OgnlExtensions;
 import org.seasar.kijimuna.core.internal.rtti.ognl.OgnlRttiUnprocessable;
@@ -34,45 +35,46 @@ public class OgnlRtti {
 	private DefaultExecutionEnvironment environment;
 	private OgnlExtensions extensions;
 	private RttiLoader rootLoader;
-	
+
 	public OgnlRtti(RttiLoader rootLoader) {
 		this.rootLoader = rootLoader;
 		extensions = new OgnlExtensions(rootLoader);
 		environment = new DefaultExecutionEnvironment();
 		environment.setExtensions(extensions);
 	}
-	
+
 	public void setVariableValue(String key, Object value) {
 		environment.setVariableValue(key, value);
 	}
 
-	public void setPropertyAccessor(
-			Class clazz, PropertyAccessor accessor) {
+	public void setPropertyAccessor(Class clazz, PropertyAccessor accessor) {
 		extensions.setPropertyAccessor(clazz, accessor);
 	}
-	
+
 	public RttiLoader getRttiLoader() {
-	    return rootLoader;
+		return rootLoader;
 	}
-	
+
 	public IRtti getValue(Object root, String el) {
 		try {
-		    Expression expression = environment.parseExpression(el);
+			Expression expression = environment.parseExpression(el);
 			Object ret = environment.getValue(expression, root);
-			if(ret != null) {
-				if(ret instanceof IRtti) {
-					return (IRtti)ret;
+			if (ret != null) {
+				if (ret instanceof IRtti) {
+					return (IRtti) ret;
 				}
 				return rootLoader.loadRtti(ret.getClass());
 			}
-		} catch(OgnlRttiUnprocessable e) {
-		} catch(ExpressionSyntaxException e) {
+		} catch (OgnlRttiUnprocessable e) {
+		} catch (ExpressionSyntaxException e) {
 			return rootLoader.loadHasErrorRtti(null, KijimunaCore.getResourceString(
-			        "rtti.ognl.OgnlRtti.1", new Object[] { el }));
-		} catch(OgnlException e) {
-		    return rootLoader.loadHasErrorRtti(null, e.getMessage());
+					"rtti.ognl.OgnlRtti.1", new Object[] {
+						el
+					}));
+		} catch (OgnlException e) {
+			return rootLoader.loadHasErrorRtti(null, e.getMessage());
 		}
-	    return null;
+		return null;
 	}
 
 }

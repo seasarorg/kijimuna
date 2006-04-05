@@ -37,30 +37,30 @@ import org.seasar.kijimuna.core.internal.dicon.validation.PropertyValidation;
  */
 public class DiconValidationFactory {
 
-    public static IValidation[] createValidation() {
-        return new IValidation[] {
-                new AspectAssemble(),
-                new AspectValidation(),
-                new AutoConstructorInvoke(),
-                new AutoMethodInvoke(),
-                new AutoSetterInjection(),
-                new ComponentHolderValidation(),
-                new ComponentValidation(),
-                new DestroyMethodValidation(),
-                new ExpressionMethodInvoke(),
-                new IncludeValidation(),
-                new ManualConstructorInvoke(),
-                new ManualMethodInvoke(),
-                new ManualSetterInjection(),
-                new MethodValidation(),
-                new PropertyValidation()
-        };
-    }
-    
-    public static IProjectValidation[] createProjectValidation() {
-        return new IProjectValidation[] {
-                new ClasspathValidation()
-        };
-    }
-    
+	public static IValidation[] createValidation() {
+		return new IValidation[] {
+				new AspectAssemble(),
+				new AspectValidation(),
+				new AutoConstructorInvoke(),
+				new AutoMethodInvoke(),
+				new AutoSetterInjection(),
+				new ComponentHolderValidation(),
+				new ComponentValidation(),
+				new DestroyMethodValidation(),
+				new ExpressionMethodInvoke(),
+				new IncludeValidation(),
+				new ManualConstructorInvoke(),
+				new ManualMethodInvoke(),
+				new ManualSetterInjection(),
+				new MethodValidation(),
+				new PropertyValidation()
+		};
+	}
+
+	public static IProjectValidation[] createProjectValidation() {
+		return new IProjectValidation[] {
+			new ClasspathValidation()
+		};
+	}
+
 }

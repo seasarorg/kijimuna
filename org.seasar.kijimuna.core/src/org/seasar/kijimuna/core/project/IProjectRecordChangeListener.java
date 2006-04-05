@@ -21,5 +21,5 @@ package org.seasar.kijimuna.core.project;
 public interface IProjectRecordChangeListener {
 
 	void finishChanged();
-	
+
 }

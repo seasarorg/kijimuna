@@ -26,6 +26,7 @@ import org.eclipse.core.resources.IProjectNature;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
+
 import org.seasar.kijimuna.core.ConstCore;
 import org.seasar.kijimuna.core.KijimunaCore;
 import org.seasar.kijimuna.core.KijimunaPreferences;
@@ -40,130 +41,128 @@ import org.seasar.kijimuna.core.util.ProjectUtils;
 /**
  * @author Masataka Kurihara (Gluegent, Inc)
  */
-public class DiconNature implements IProjectNature, IProjectConfiguable, 
-	IProjectRecordable, ConstCore {
+public class DiconNature implements IProjectNature, IProjectConfiguable,
+		IProjectRecordable, ConstCore {
 
-    private static final String[] BUILDERS = 
-        new String[] {
-            ID_PROCESSOR_DICON_BUILDER, 
-            ID_PROCESSOR_DICON_VALIDATOR
-    	};
+	private static final String[] BUILDERS = new String[] {
+			ID_PROCESSOR_DICON_BUILDER,
+			ID_PROCESSOR_DICON_VALIDATOR
+	};
 
 	public static DiconNature getInstance(IProject project) {
-        if(project != null) {
-		    try {
-	            IProjectNature nature = project.getNature(ID_NATURE_DICON);
-	            if(nature instanceof DiconNature) {
-	                return (DiconNature)nature;
-	            }
-	        } catch (CoreException e) {
-	            KijimunaCore.reportException(e);
-	        }
-        }
-        return null;
+		if (project != null) {
+			try {
+				IProjectNature nature = project.getNature(ID_NATURE_DICON);
+				if (nature instanceof DiconNature) {
+					return (DiconNature) nature;
+				}
+			} catch (CoreException e) {
+				KijimunaCore.reportException(e);
+			}
+		}
+		return null;
 	}
 
-	//------------------------------------------------------------
-	
+	// ------------------------------------------------------------
+
 	private ModelManager model = new ModelManager();
 	private RttiLoader rootLoader;
 	private IProject project;
 	private IPreferences pref;
-	
+
 	public IProject getProject() {
 		return project;
 	}
-	
+
 	public void setProject(IProject project) {
 		this.project = project;
 		model.setProjectName(project.getName());
 	}
-	
+
 	public IRttiCache getRttiCache() {
 		return getRttiLoader().getRttiCache();
 	}
-	
+
 	public ModelManager getModel() {
 		return model;
 	}
-	
+
 	public void configure() throws CoreException {
 		ProjectUtils.addBuilders(getProject(), BUILDERS);
 	}
 
 	public void deconfigure() throws CoreException {
-	    ProjectUtils.removeBuilders(getProject(), BUILDERS);
+		ProjectUtils.removeBuilders(getProject(), BUILDERS);
 		MarkerUtils.deleteMarker(getProject(), ID_MARKER);
 		KijimunaCore.getProjectRecorder().cleanup(getProject(), null);
 	}
 
 	public RttiLoader getRttiLoader() {
-		if(rootLoader == null) {
+		if (rootLoader == null) {
 			rootLoader = new RttiLoader(getProject().getName(), true);
 		}
 		return rootLoader;
 	}
-  
-    public void initProjectRecords(IProgressMonitor monitor) {
-    	model.init(monitor);
-    }
 
-    public boolean restoreProjectRecords(
-    		IPath recorderPath, IProgressMonitor monitor) {
-        File file = recorderPath.append(getProject().getName()
-        		).addFileExtension(RECORDER_EXT_MODEL).toFile();
-        boolean success = false;
-        if(file.exists()) {
-	        try {
-				ObjectInputStream stream = 
-					new ObjectInputStream(new FileInputStream(file));
+	public void initProjectRecords(IProgressMonitor monitor) {
+		model.init(monitor);
+	}
+
+	public boolean restoreProjectRecords(IPath recorderPath, IProgressMonitor monitor) {
+		File file = recorderPath.append(getProject().getName()).addFileExtension(
+				RECORDER_EXT_MODEL).toFile();
+		boolean success = false;
+		if (file.exists()) {
+			try {
+				ObjectInputStream stream = new ObjectInputStream(
+						new FileInputStream(file));
 				Object obj = stream.readObject();
-				if(obj instanceof ModelManager) {
-					synchronized(model) {
-						model = (ModelManager)obj;
+				if (obj instanceof ModelManager) {
+					synchronized (model) {
+						model = (ModelManager) obj;
 						model.afterRestoring();
 					}
 					success = true;
 				} else {
-				    KijimunaCore.reportInfo(KijimunaCore.getResourceString("dicon.DiconNature.1"));
+					KijimunaCore.reportInfo(KijimunaCore
+							.getResourceString("dicon.DiconNature.1"));
 				}
-			} catch (Exception e) {
-				KijimunaCore.reportException(e);
-			}
-        }
-        return success;
-    }
-    
-    public boolean saveProjectRecords(
-    		IPath recorderPath, IProgressMonitor monitor) {
-    	boolean success = false;
-		if(model.isDirty()) {
-	        File file = recorderPath.append(getProject().getName()
-	        		).addFileExtension(RECORDER_EXT_MODEL).toFile();
-	        try {
-	        	ObjectOutputStream stream = new ObjectOutputStream(
-	        			new FileOutputStream(file));
-	        	model.prepareStoraging();
-        		stream.writeObject(model);
-	        	success = true;
 			} catch (Exception e) {
 				KijimunaCore.reportException(e);
 			}
 		}
 		return success;
-    }
-    
-    public void customProcess(int type, IPath recorderPath, IProgressMonitor monitor) {
-        if(type == RECORDER_VALIDATE) {
-            model.validate(monitor);
-        }
-    }
-	
+	}
+
+	public boolean saveProjectRecords(IPath recorderPath, IProgressMonitor monitor) {
+		boolean success = false;
+		if (model.isDirty()) {
+			File file = recorderPath.append(getProject().getName()).addFileExtension(
+					RECORDER_EXT_MODEL).toFile();
+			try {
+				ObjectOutputStream stream = new ObjectOutputStream(new FileOutputStream(
+						file));
+				model.prepareStoraging();
+				stream.writeObject(model);
+				success = true;
+			} catch (Exception e) {
+				KijimunaCore.reportException(e);
+			}
+		}
+		return success;
+	}
+
+	public void customProcess(int type, IPath recorderPath, IProgressMonitor monitor) {
+		if (type == RECORDER_VALIDATE) {
+			model.validate(monitor);
+		}
+	}
+
 	public IPreferences getPreferences() {
-		if(pref == null) {
+		if (pref == null) {
 			pref = new KijimunaPreferences(project.getName());
 		}
 		return pref;
 	}
- 
+
 }

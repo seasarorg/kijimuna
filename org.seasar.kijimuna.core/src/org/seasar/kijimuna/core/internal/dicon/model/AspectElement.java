@@ -21,6 +21,7 @@ import java.util.List;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IStorage;
+
 import org.seasar.kijimuna.core.ConstCore;
 import org.seasar.kijimuna.core.dicon.info.IAspectInfo;
 import org.seasar.kijimuna.core.dicon.info.IPointcut;
@@ -31,46 +32,49 @@ import org.seasar.kijimuna.core.util.StringUtils;
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class AspectElement extends ComponentHolderElement
-		implements IAspectElement, ConstCore {
-    
-    private IPointcut[] pointcuts;
-    
+public class AspectElement extends ComponentHolderElement implements IAspectElement,
+		ConstCore {
+
+	private IPointcut[] pointcuts;
+
 	public AspectElement(IProject project, IStorage storage) {
 		super(project, storage, DICON_TAG_ASPECT);
 	}
-	
+
 	public String getPointcut() {
 		return getAttribute(DICON_ATTR_POINTCUT);
 	}
-	
+
 	private IPointcut[] createPointcuts() {
-	    if(pointcuts == null) {
-	        String attribute = getPointcut();
-	        if(StringUtils.existValue(attribute)) {
-		        List list = new ArrayList();
-		        String[] regexps = attribute.split(",");
-		        for(int i = 0; i < regexps.length; i++) {
-		            list.add(new Pointcut(this, regexps[i].trim()));
-		        }
-			    Collections.sort(list);
-			    pointcuts = (IPointcut[])list.toArray(new IPointcut[list.size()]);
-	        } else {
-	            pointcuts = new IPointcut[] { new Pointcut(this, null) };
-	        }
-	    }
-	    return pointcuts;
+		if (pointcuts == null) {
+			String attribute = getPointcut();
+			if (StringUtils.existValue(attribute)) {
+				List list = new ArrayList();
+				String[] regexps = attribute.split(",");
+				for (int i = 0; i < regexps.length; i++) {
+					list.add(new Pointcut(this, regexps[i].trim()));
+				}
+				Collections.sort(list);
+				pointcuts = (IPointcut[]) list.toArray(new IPointcut[list.size()]);
+			} else {
+				pointcuts = new IPointcut[] {
+					new Pointcut(this, null)
+				};
+			}
+		}
+		return pointcuts;
 	}
-	
+
 	public Object getAdapter(Class adapter) {
-	    if(IAspectInfo.class.equals(adapter)) {
-	        return new IAspectInfo() {
-	            public IPointcut[] getPointcuts() {
-	                return createPointcuts();
-	            }
-	        };
-	    }
-	    return super.getAdapter(adapter);
+		if (IAspectInfo.class.equals(adapter)) {
+			return new IAspectInfo() {
+
+				public IPointcut[] getPointcuts() {
+					return createPointcuts();
+				}
+			};
+		}
+		return super.getAdapter(adapter);
 	}
-	
+
 }

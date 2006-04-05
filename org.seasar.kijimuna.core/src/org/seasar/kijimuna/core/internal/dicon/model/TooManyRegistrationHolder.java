@@ -20,6 +20,7 @@ import java.util.Set;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IStorage;
+
 import org.seasar.kijimuna.core.dicon.info.IComponentKey;
 import org.seasar.kijimuna.core.dicon.model.IDiconElement;
 import org.seasar.kijimuna.core.internal.dicon.info.TooManyRegistedRtti;
@@ -29,31 +30,29 @@ import org.seasar.kijimuna.core.rtti.IRtti;
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public class TooManyRegistrationHolder extends ComponentElement {
-	
+
 	private IComponentKey componentKey;
 	private Set components = new HashSet();
-	
-	public TooManyRegistrationHolder(
-	        IProject project, IStorage storage, IComponentKey componentKey) {
+
+	public TooManyRegistrationHolder(IProject project, IStorage storage,
+			IComponentKey componentKey) {
 		super(project, storage);
-	    this.componentKey = componentKey;
+		this.componentKey = componentKey;
 	}
 
 	public void addComponentElement(IDiconElement element) {
-	    components.add(element);
+		components.add(element);
 	}
-	
+
 	private IDiconElement[] getComponents() {
-	    return (IDiconElement[])components.toArray(
-	            new IDiconElement[components.size()]);
+		return (IDiconElement[]) components.toArray(new IDiconElement[components.size()]);
 	}
-	
-    public Object getAdapter(Class adapter) {
-        if(IRtti.class.equals(adapter)) {
-            return new TooManyRegistedRtti(componentKey, 
-                    getComponents());
-        }
-        return super.getAdapter(adapter);
-    }
+
+	public Object getAdapter(Class adapter) {
+		if (IRtti.class.equals(adapter)) {
+			return new TooManyRegistedRtti(componentKey, getComponents());
+		}
+		return super.getAdapter(adapter);
+	}
 
 }

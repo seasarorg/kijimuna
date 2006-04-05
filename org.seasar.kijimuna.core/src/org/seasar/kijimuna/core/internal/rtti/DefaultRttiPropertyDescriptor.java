@@ -24,62 +24,63 @@ import org.seasar.kijimuna.core.rtti.IRttiPropertyDescriptor;
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class DefaultRttiPropertyDescriptor extends AbstractRttiValuableDescriptor 
-	implements IRttiPropertyDescriptor {
+public class DefaultRttiPropertyDescriptor extends AbstractRttiValuableDescriptor
+		implements IRttiPropertyDescriptor {
 
-    private Set writableType;
-    private boolean readable;
-    private boolean writable;
-    
-    public DefaultRttiPropertyDescriptor(
-            IRtti parent, String name, IRtti type, boolean isReadable) {
-        super(parent, name, type);
-        writableType = new HashSet();
-        if(isReadable) {
-            readable = true;
-        } else {
-            writable = true;
-            writableType.add(type);
-        }
-    }
-    
-    public void doReadable(IRtti type) {
-        if(!readable || type.getQualifiedName().equals("boolean")) {
-            setType(type);
-        }
-        readable = true;
-        writable = writableType.contains(type);
-    }
-    
-    public void doWritable(IRtti type) {
-        if((readable) && getType().equals(type)) {
-            writable = true;
-        }
-        writableType.add(type);
-    }
+	private Set writableType;
+	private boolean readable;
+	private boolean writable;
+
+	public DefaultRttiPropertyDescriptor(IRtti parent, String name, IRtti type,
+			boolean isReadable) {
+		super(parent, name, type);
+		writableType = new HashSet();
+		if (isReadable) {
+			readable = true;
+		} else {
+			writable = true;
+			writableType.add(type);
+		}
+	}
+
+	public void doReadable(IRtti type) {
+		if (!readable || type.getQualifiedName().equals("boolean")) {
+			setType(type);
+		}
+		readable = true;
+		writable = writableType.contains(type);
+	}
+
+	public void doWritable(IRtti type) {
+		if ((readable) && getType().equals(type)) {
+			writable = true;
+		}
+		writableType.add(type);
+	}
 
 	public boolean equals(Object test) {
-        if(test instanceof IRttiPropertyDescriptor) {
-            IRttiPropertyDescriptor desc = (IRttiPropertyDescriptor)test;
-            return getParent().equals(desc.getParent()) &&
-            	getName().equals(desc.getName());
-        }
-        return false;
-    }
-    
-    public boolean isReadable() {
-        return readable;
-    }
+		if (test instanceof IRttiPropertyDescriptor) {
+			IRttiPropertyDescriptor desc = (IRttiPropertyDescriptor) test;
+			return getParent().equals(desc.getParent())
+					&& getName().equals(desc.getName());
+		}
+		return false;
+	}
 
-    public boolean isWritable() {
-        return writable;
-    }
-    
-    public int compareTo(Object test) {
-        if(test instanceof IRttiPropertyDescriptor) {
-        	IRttiPropertyDescriptor prop = (IRttiPropertyDescriptor)test;
-        	return getName().compareTo(prop.getName());
-        }
-        return 1;
-    }
+	public boolean isReadable() {
+		return readable;
+	}
+
+	public boolean isWritable() {
+		return writable;
+	}
+
+	public int compareTo(Object test) {
+		if (test instanceof IRttiPropertyDescriptor) {
+			IRttiPropertyDescriptor prop = (IRttiPropertyDescriptor) test;
+			return getName().compareTo(prop.getName());
+		}
+		return 1;
+	}
+
 }

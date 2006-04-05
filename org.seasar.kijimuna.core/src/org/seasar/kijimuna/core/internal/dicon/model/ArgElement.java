@@ -17,17 +17,17 @@ package org.seasar.kijimuna.core.internal.dicon.model;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IStorage;
+
 import org.seasar.kijimuna.core.ConstCore;
 import org.seasar.kijimuna.core.dicon.model.IArgElement;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class ArgElement extends ComponentHolderElement
-	implements IArgElement, ConstCore {
-	
+public class ArgElement extends ComponentHolderElement implements IArgElement, ConstCore {
+
 	public ArgElement(IProject project, IStorage storage) {
 		super(project, storage, DICON_TAG_ARG);
 	}
-	
+
 }

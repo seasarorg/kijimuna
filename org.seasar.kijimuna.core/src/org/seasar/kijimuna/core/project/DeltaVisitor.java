@@ -21,10 +21,10 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.resources.IResourceDeltaVisitor;
-import org.eclipse.core.resources.IStorage;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
+
 import org.seasar.kijimuna.core.util.FileUtils;
 import org.seasar.kijimuna.core.util.ProjectUtils;
 
@@ -34,12 +34,12 @@ import org.seasar.kijimuna.core.util.ProjectUtils;
 public class DeltaVisitor implements IResourceDeltaVisitor {
 
 	private String natureID;
-    private IFileProcessor builder;
+	private IFileProcessor builder;
 	private IProgressMonitor monitor;
 
 	public DeltaVisitor(String natureID, IFileProcessor builder, IProgressMonitor monitor) {
 		this.natureID = natureID;
-	    this.builder = builder;
+		this.builder = builder;
 		this.monitor = monitor;
 	}
 
@@ -47,31 +47,28 @@ public class DeltaVisitor implements IResourceDeltaVisitor {
 		IResource resource = delta.getResource();
 		if (resource instanceof IProject) {
 			IProject project = (IProject) resource;
-			return (project.isOpen() &&
-			        (ProjectUtils.getNature(project, natureID) != null));
+			return (project.isOpen() && (ProjectUtils.getNature(project, natureID) != null));
 		} else if (resource instanceof IFolder) {
 			return true;
 		} else if (resource instanceof IFile) {
-		    ProjectUtils.clearDiconStorageWithCash(resource.getProject());
-		    IPath path = resource.getFullPath();
-		    if((path.segmentCount() == 2) &&
-		            path.lastSegment().equals(".classpath")){
-		        builder.handleClassPassChanged(resource.getProject(), monitor);
-		    }
-		    if(FileUtils.isInJavaSourceFolder((IFile) resource)) {
+			ProjectUtils.clearDiconStorageWithCash(resource.getProject());
+			IPath path = resource.getFullPath();
+			if ((path.segmentCount() == 2) && path.lastSegment().equals(".classpath")) {
+				builder.handleClassPassChanged(resource.getProject(), monitor);
+			}
+			if (FileUtils.isInJavaSourceFolder((IFile) resource)) {
 				int kind = delta.getKind();
 				IFile file = (IFile) resource;
-				if(kind == IResourceDelta.REMOVED) {
+				if (kind == IResourceDelta.REMOVED) {
 					builder.handleFileRemoved(file, monitor);
 				} else if (kind == IResourceDelta.ADDED) {
-			        builder.handleFileAdded(file, false, monitor);
+					builder.handleFileAdded(file, false, monitor);
 				} else if (kind == IResourceDelta.CHANGED) {
 					builder.handleFileChanged(file, monitor);
 				}
-		    }
+			}
 		}
 		return false;
 	}
 
 }
-

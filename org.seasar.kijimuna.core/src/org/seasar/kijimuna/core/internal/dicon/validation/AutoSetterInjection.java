@@ -32,47 +32,50 @@ import org.seasar.kijimuna.core.util.ModelUtils;
  */
 public class AutoSetterInjection implements IValidation, ConstCore {
 
-    public void validation(IDiconElement element) {
-        if(element instanceof IComponentElement) {
-            IComponentElement component = (IComponentElement)element;
-		    String autoBinding = component.getAutoBindingMode();
-	        if (autoBinding.equals(DICON_VAL_AUTO_BINDING_AUTO)
-	                || autoBinding.equals(DICON_VAL_AUTO_BINDING_PROPERTY)) {
-	            autoInjection(component);
-	        }
-        }
-    }
+	public void validation(IDiconElement element) {
+		if (element instanceof IComponentElement) {
+			IComponentElement component = (IComponentElement) element;
+			String autoBinding = component.getAutoBindingMode();
+			if (autoBinding.equals(DICON_VAL_AUTO_BINDING_AUTO)
+					|| autoBinding.equals(DICON_VAL_AUTO_BINDING_PROPERTY)) {
+				autoInjection(component);
+			}
+		}
+	}
 
-	// é©ìÆÉZÉbÉ^Å[ÉCÉìÉWÉFÉNÉVÉáÉì
+	// Ëá™Âãï„Çª„ÉÉ„Çø„Éº„Ç§„É≥„Ç∏„Çß„ÇØ„Ç∑„Éß„É≥ÔøΩCÔøΩÔøΩÔøΩWÔøΩFÔøΩNÔøΩVÔøΩÔøΩÔøΩÔøΩ
 	private void autoInjection(IComponentElement component) {
-	    IComponentInfo info = (IComponentInfo)component.getAdapter(IComponentInfo.class);
-	    if(info != null) {
-	    	IRttiPropertyDescriptor[] autoInjected = info.getAutoInjectedProperties();
-	    	for(int i = 0; i < autoInjected.length; i++) {
-	    		IRtti value = autoInjected[i].getValue();
-	    		if(value instanceof IComponentNotFound) {
-		            MarkerSetting.createDiconMarker(
-		                    "dicon.validation.AutoSetterInjection.2",
-		                    component, new Object[] { 
-		                    	autoInjected[i].getParent().getQualifiedName(), 
-		                    	autoInjected[i].getName() });
-	    		} else if(value instanceof ITooManyRegisted) {
-		            MarkerSetting.createDiconMarker(
-		                    "dicon.validation.AutoSetterInjection.3",
-		                    component, new Object[] {
-		                    	autoInjected[i].getParent().getQualifiedName(),
-		                    	autoInjected[i].getName(),
-		                    	ModelUtils.getInjectedElementName(value) });
-	    		} else if(value != null) {
-		            MarkerSetting.createDiconMarker(
-		                    "dicon.validation.AutoSetterInjection.1",
-		                    component, new Object[] {
-		                    	autoInjected[i].getParent().getQualifiedName(),
-		                    	autoInjected[i].getName(),
-		                    	ModelUtils.getInjectedElementName(value) });
-	    		}
-	    	}
-	    }
+		IComponentInfo info = (IComponentInfo) component.getAdapter(IComponentInfo.class);
+		if (info != null) {
+			IRttiPropertyDescriptor[] autoInjected = info.getAutoInjectedProperties();
+			for (int i = 0; i < autoInjected.length; i++) {
+				IRtti value = autoInjected[i].getValue();
+				if (value instanceof IComponentNotFound) {
+					MarkerSetting.createDiconMarker(
+							"dicon.validation.AutoSetterInjection.2", component,
+							new Object[] {
+									autoInjected[i].getParent().getQualifiedName(),
+									autoInjected[i].getName()
+							});
+				} else if (value instanceof ITooManyRegisted) {
+					MarkerSetting.createDiconMarker(
+							"dicon.validation.AutoSetterInjection.3", component,
+							new Object[] {
+									autoInjected[i].getParent().getQualifiedName(),
+									autoInjected[i].getName(),
+									ModelUtils.getInjectedElementName(value)
+							});
+				} else if (value != null) {
+					MarkerSetting.createDiconMarker(
+							"dicon.validation.AutoSetterInjection.1", component,
+							new Object[] {
+									autoInjected[i].getParent().getQualifiedName(),
+									autoInjected[i].getName(),
+									ModelUtils.getInjectedElementName(value)
+							});
+				}
+			}
+		}
 	}
 
 }

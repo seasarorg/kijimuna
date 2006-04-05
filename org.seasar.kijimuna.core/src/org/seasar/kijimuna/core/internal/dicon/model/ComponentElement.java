@@ -25,6 +25,7 @@ import java.util.regex.Pattern;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IStorage;
 import org.eclipse.core.runtime.IAdaptable;
+
 import org.seasar.kijimuna.core.ConstCore;
 import org.seasar.kijimuna.core.KijimunaCore;
 import org.seasar.kijimuna.core.dicon.info.IComponentInfo;
@@ -42,148 +43,148 @@ import org.seasar.kijimuna.core.util.StringUtils;
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class ComponentElement extends AbstractExpressionElement
-		implements IComponentElement, ConstCore {
+public class ComponentElement extends AbstractExpressionElement implements
+		IComponentElement, ConstCore {
 
-    private Set componentKeySet;
-    private IComponentInfo info;
-    private IRttiConstructorDesctiptor suitableConstructor;
-    
+	private Set componentKeySet;
+	private IComponentInfo info;
+	private IRttiConstructorDesctiptor suitableConstructor;
+
 	public ComponentElement(IProject project, IStorage storage) {
 		super(project, storage, DICON_TAG_COMPONENT);
 	}
-	
+
 	private IRttiConstructorDesctiptor getConstructorDescriptor() {
 		String className = getComponentClassName();
-		if(StringUtils.existValue(className) && (suitableConstructor == null)) {
-		    IRtti rtti = (IRtti)getAdapter(IRtti.class);
-		    if((rtti != null) && !(rtti instanceof HasErrorRtti)) {
-		        if(getArgList().size() == 0) {
-		            suitableConstructor = findAutoInjectedConstructor();
-			    } else {
-			        suitableConstructor = rtti.getConstructor(
-			                ModelUtils.convertArray(getArgList().toArray()));
-			    }
-		    }
+		if (StringUtils.existValue(className) && (suitableConstructor == null)) {
+			IRtti rtti = (IRtti) getAdapter(IRtti.class);
+			if ((rtti != null) && !(rtti instanceof HasErrorRtti)) {
+				if (getArgList().size() == 0) {
+					suitableConstructor = findAutoInjectedConstructor();
+				} else {
+					suitableConstructor = rtti.getConstructor(ModelUtils
+							.convertArray(getArgList().toArray()));
+				}
+			}
 		}
 		return suitableConstructor;
 	}
-	
+
 	protected IRtti getNonExpressionValue() {
 		String className = getComponentClassName();
 		RttiLoader loader = getRttiLoader();
-		if(StringUtils.existValue(className)) {
-		    return loader.loadRtti(className); 
-		} else if(isOuterInjection()) {
+		if (StringUtils.existValue(className)) {
+			return loader.loadRtti(className);
+		} else if (isOuterInjection()) {
 			return null;
 		} else {
-		    return loader.loadHasErrorRtti(null,
-		            KijimunaCore.getResourceString("dicon.model.ComponentElement.1"));
+			return loader.loadHasErrorRtti(null, KijimunaCore
+					.getResourceString("dicon.model.ComponentElement.1"));
 		}
 	}
-	
+
 	public String getComponentName() {
 		return getAttribute(DICON_ATTR_NAME);
 	}
-	
+
 	public String getComponentClassName() {
 		return getAttribute(DICON_ATTR_CLASS);
 	}
-	
+
 	public String getAutoBindingMode() {
 		String autoBinding = getAttribute(DICON_ATTR_AUTOBINDING);
-		if(StringUtils.noneValue(autoBinding)) {
+		if (StringUtils.noneValue(autoBinding)) {
 			autoBinding = DICON_VAL_AUTO_BINDING_AUTO;
 		}
 		return autoBinding;
 	}
-	
+
 	public String getInstanceMode() {
 		String instance = getAttribute(DICON_ATTR_INSTANCE);
-		if(instance == null) {
+		if (instance == null) {
 			instance = DICON_VAL_INSTANCE_SINGLETON;
 		}
 		return instance;
 	}
-	
+
 	private synchronized Set createKeys() {
-	    if((componentKeySet == null) || !isLocking()) {
-	        IContainerElement container = getContainerElement();
-		    componentKeySet = new TreeSet();
+		if ((componentKeySet == null) || !isLocking()) {
+			IContainerElement container = getContainerElement();
+			componentKeySet = new TreeSet();
 			String componentName = getComponentName();
-			if(StringUtils.existValue(componentName)) {
-			    IComponentKey nameKey = 
-			        container.createComponentKey(componentName);
-			    componentKeySet.add(nameKey);
+			if (StringUtils.existValue(componentName)) {
+				IComponentKey nameKey = container.createComponentKey(componentName);
+				componentKeySet.add(nameKey);
 			}
-		    if(StringUtils.existValue(getComponentClassName())) {
+			if (StringUtils.existValue(getComponentClassName())) {
 				String instance = getInstanceMode();
 				if (!DICON_VAL_INSTANCE_OUTER.equals(instance)) {
-				    setLocking(true);
-				    IRtti rtti = (IRtti)getAdapter(IRtti.class);
+					setLocking(true);
+					IRtti rtti = (IRtti) getAdapter(IRtti.class);
 					setLocking(false);
-					if (rtti != null && "java.lang.Object".equals(rtti.getQualifiedName()) == false) {
+					if (rtti != null
+							&& "java.lang.Object".equals(rtti.getQualifiedName()) == false) {
 						do {
-						    IComponentKey classKey = 
-						        container.createComponentKey(rtti);
-						    componentKeySet.add(classKey);
+							IComponentKey classKey = container.createComponentKey(rtti);
+							componentKeySet.add(classKey);
 							IRtti interfaces[] = rtti.getInterfaces();
 							for (int i = 0; i < interfaces.length; i++) {
-							    IComponentKey interfaceKey = 
-							        container.createComponentKey(interfaces[i]);
-							    componentKeySet.add(interfaceKey);
+								IComponentKey interfaceKey = container
+										.createComponentKey(interfaces[i]);
+								componentKeySet.add(interfaceKey);
 							}
 							rtti = rtti.getSuperClass();
-						} while (rtti != null && "java.lang.Object".equals(rtti.getQualifiedName()) == false);
+						} while (rtti != null
+								&& "java.lang.Object".equals(rtti.getQualifiedName()) == false);
 					}
 				}
-		    }
-	    }
-	    return componentKeySet;
+			}
+		}
+		return componentKeySet;
 	}
-	
+
 	public List getArgList() {
-	    return getChildren(DICON_TAG_ARG);
+		return getChildren(DICON_TAG_ARG);
 	}
-	
+
 	public List getAspectList() {
-	    return getChildren(DICON_TAG_ASPECT);
+		return getChildren(DICON_TAG_ASPECT);
 	}
-	
+
 	public List getPropertyList() {
-	    return getChildren(DICON_TAG_PROPERTY);
+		return getChildren(DICON_TAG_PROPERTY);
 	}
-	
+
 	public List getInitMethodList() {
-	    return getChildren(DICON_TAG_INITMETHOD);
+		return getChildren(DICON_TAG_INITMETHOD);
 	}
-	
+
 	public List getDestroyMethodList() {
-	    return getChildren(DICON_TAG_DESTROYMETHOD);
+		return getChildren(DICON_TAG_DESTROYMETHOD);
 	}
-	
+
 	private boolean isOuterInjection() {
-	    return DICON_VAL_INSTANCE_OUTER.equals(getInstanceMode());
+		return DICON_VAL_INSTANCE_OUTER.equals(getInstanceMode());
 	}
 
 	private IRttiConstructorDesctiptor getSuitableConstructor(IRtti rtti) {
 		int size = -1;
 		IRttiConstructorDesctiptor suitable = null;
 		IRttiConstructorDesctiptor[] constructors = rtti.getConstructors();
-		for(int i = 0; i < constructors.length; i++) {
+		for (int i = 0; i < constructors.length; i++) {
 			IRtti[] rttiArgs = constructors[i].getArgs();
-			if(rttiArgs.length == 0) {
-			    return constructors[i];
+			if (rttiArgs.length == 0) {
+				return constructors[i];
 			}
-			if(size < rttiArgs.length) {
+			if (size < rttiArgs.length) {
 				boolean flag = true;
-				for(int k = 0; k < rttiArgs.length; k++) {
-					if(!rttiArgs[k].isInterface()) {
+				for (int k = 0; k < rttiArgs.length; k++) {
+					if (!rttiArgs[k].isInterface()) {
 						flag = false;
 						break;
 					}
 				}
-				if(flag) {
+				if (flag) {
 					size = rttiArgs.length;
 					suitable = constructors[i];
 				}
@@ -191,142 +192,147 @@ public class ComponentElement extends AbstractExpressionElement
 		}
 		return suitable;
 	}
-	
+
 	private IRttiConstructorDesctiptor findAutoInjectedConstructor() {
-	    String el = getExpression();
-        if((getArgList().size() == 0) && StringUtils.noneValue(el)) {
-            if(suitableConstructor == null) {
-	            String autoBinding = getAutoBindingMode();
-        	    IRtti rtti = getRttiLoader().loadRtti(getComponentClassName()); 
-        		if((rtti != null) && !(rtti instanceof HasErrorRtti)) {
-		            if(autoBinding.equals(DICON_VAL_AUTO_BINDING_AUTO) || 
-		                    autoBinding.equals(DICON_VAL_AUTO_BINDING_CONSTRUCTOR)) {
-	        			IRttiConstructorDesctiptor suitable = getSuitableConstructor(rtti);
-	        			if(suitable != null) {
-	        			    IRtti[] suitableArgs = suitable.getArgs();
-	        			    IRtti[] injectedArgs = new IRtti[suitableArgs.length];
-	        				for(int i = 0; i < suitableArgs.length; i++) {
-	    			            IContainerElement container = getContainerElement();
-	    			            IComponentKey key = 
-	    			            	container.createComponentKey(suitableArgs[i]);
-	    			            if(ModelUtils.doDesignTimeAutoBinding(suitableArgs[i])) {
-	    			            	injectedArgs[i] = container.getComponent(key);
-	    			            }
-	        			    }
-	        				suitable.setValues(injectedArgs);
-	        				suitableConstructor = suitable;
-	        			}
-	        		} else {
-		                suitableConstructor = rtti.getConstructor(new IRtti[0]);
-		            }
-	            } 
-            }
-            return suitableConstructor;
-        }
-    	return null;
+		String el = getExpression();
+		if ((getArgList().size() == 0) && StringUtils.noneValue(el)) {
+			if (suitableConstructor == null) {
+				String autoBinding = getAutoBindingMode();
+				IRtti rtti = getRttiLoader().loadRtti(getComponentClassName());
+				if ((rtti != null) && !(rtti instanceof HasErrorRtti)) {
+					if (autoBinding.equals(DICON_VAL_AUTO_BINDING_AUTO)
+							|| autoBinding.equals(DICON_VAL_AUTO_BINDING_CONSTRUCTOR)) {
+						IRttiConstructorDesctiptor suitable = getSuitableConstructor(rtti);
+						if (suitable != null) {
+							IRtti[] suitableArgs = suitable.getArgs();
+							IRtti[] injectedArgs = new IRtti[suitableArgs.length];
+							for (int i = 0; i < suitableArgs.length; i++) {
+								IContainerElement container = getContainerElement();
+								IComponentKey key = container
+										.createComponentKey(suitableArgs[i]);
+								if (ModelUtils.doDesignTimeAutoBinding(suitableArgs[i])) {
+									injectedArgs[i] = container.getComponent(key);
+								}
+							}
+							suitable.setValues(injectedArgs);
+							suitableConstructor = suitable;
+						}
+					} else {
+						suitableConstructor = rtti.getConstructor(new IRtti[0]);
+					}
+				}
+			}
+			return suitableConstructor;
+		}
+		return null;
 	}
-	
+
 	private IRttiPropertyDescriptor[] autoInjectedProperties() {
-	    String autoBinding = getAutoBindingMode();
-        if (autoBinding.equals(DICON_VAL_AUTO_BINDING_AUTO)
-                || autoBinding.equals(DICON_VAL_AUTO_BINDING_PROPERTY)) {
-    	    IRtti rtti = (IRtti)getAdapter(IRtti.class);
-    	    if(rtti != null) {
-        	    List list = new ArrayList();
-    	        IRttiPropertyDescriptor[] props = rtti.getProperties(Pattern.compile(".*"));
-    	        for(int i = 0; i < props.length; i++) {
-    	            String name = props[i].getName();
-    	            if(props[i].getType().isInterface() && props[i].isWritable()) {
-    		            if(!ModelUtils.hasPropertyElement(this, name)) {
-				            IContainerElement container = getContainerElement();
-				            IComponentKey key = 
-				            	container.createComponentKey(props[i].getType());
-    			            if(ModelUtils.doDesignTimeAutoBinding(props[i].getType())) {
-					            IRtti inject = container.getComponent(key);
-					    		props[i].setValue(inject);
-    			            }
-				        	list.add(props[i]);
-    		            }
-    	            }
-    	        }
-    	        return (IRttiPropertyDescriptor[])list.toArray(
-    	                new IRttiPropertyDescriptor[list.size()]);
-    	    }
-        }
-    	return new IRttiPropertyDescriptor[0];
+		String autoBinding = getAutoBindingMode();
+		if (autoBinding.equals(DICON_VAL_AUTO_BINDING_AUTO)
+				|| autoBinding.equals(DICON_VAL_AUTO_BINDING_PROPERTY)) {
+			IRtti rtti = (IRtti) getAdapter(IRtti.class);
+			if (rtti != null) {
+				List list = new ArrayList();
+				IRttiPropertyDescriptor[] props = rtti.getProperties(Pattern
+						.compile(".*"));
+				for (int i = 0; i < props.length; i++) {
+					String name = props[i].getName();
+					if (props[i].getType().isInterface() && props[i].isWritable()) {
+						if (!ModelUtils.hasPropertyElement(this, name)) {
+							IContainerElement container = getContainerElement();
+							IComponentKey key = container.createComponentKey(props[i]
+									.getType());
+							if (ModelUtils.doDesignTimeAutoBinding(props[i].getType())) {
+								IRtti inject = container.getComponent(key);
+								props[i].setValue(inject);
+							}
+							list.add(props[i]);
+						}
+					}
+				}
+				return (IRttiPropertyDescriptor[]) list
+						.toArray(new IRttiPropertyDescriptor[list.size()]);
+			}
+		}
+		return new IRttiPropertyDescriptor[0];
 	}
-	
-    public Object getAdapter(Class adapter) {
-        if(IComponentInfo.class.equals(adapter)) {
-        	if(info == null) {
-        		info = new IComponentInfo() {
-	            	public IComponentKey[] getComponentKeys() {
-	            		if(getDepth() == 2) {
-		            		Set keys = createKeys();
-		            	    return (IComponentKey[])keys.toArray(
-		            	            new IComponentKey[keys.size()]);
-	            		}
-	            		return new IComponentKey[0];
-	            	}
-                    public IRttiConstructorDesctiptor getAutoInjectedConstructor() {
-                    	return findAutoInjectedConstructor();
-                    }
-                    public IRttiPropertyDescriptor[] getAutoInjectedProperties() {
-                    	return autoInjectedProperties();
-                    }
-	            };
-        	}
-        	return info;
-        } else if(IRttiConstructorDesctiptor.class.equals(adapter)) {
-            getAdapter(IRtti.class);
-            return getConstructorDescriptor();
-        }
-        return super.getAdapter(adapter);
-    }
-    
+
+	public Object getAdapter(Class adapter) {
+		if (IComponentInfo.class.equals(adapter)) {
+			if (info == null) {
+				info = new IComponentInfo() {
+
+					public IComponentKey[] getComponentKeys() {
+						if (getDepth() == 2) {
+							Set keys = createKeys();
+							return (IComponentKey[]) keys.toArray(new IComponentKey[keys
+									.size()]);
+						}
+						return new IComponentKey[0];
+					}
+
+					public IRttiConstructorDesctiptor getAutoInjectedConstructor() {
+						return findAutoInjectedConstructor();
+					}
+
+					public IRttiPropertyDescriptor[] getAutoInjectedProperties() {
+						return autoInjectedProperties();
+					}
+				};
+			}
+			return info;
+		} else if (IRttiConstructorDesctiptor.class.equals(adapter)) {
+			getAdapter(IRtti.class);
+			return getConstructorDescriptor();
+		}
+		return super.getAdapter(adapter);
+	}
+
 	public boolean isOGNL() {
-	    if(isOuterInjection()) {
-	        return false;
-	    } else if(StringUtils.noneValue(getComponentClassName())) {
-	        Object rtti = getAdapter(IRtti.class);
-	        if(rtti != null) {
-	            IComponentElement component = (IComponentElement)
-	                ((IAdaptable)rtti).getAdapter(IComponentElement.class);
-	            if(component != null) {
-	                return component.isOGNL();
-	            }
-	        }
-	        return true;
-	    } else {
-	        return super.isOGNL();
-	    }
+		if (isOuterInjection()) {
+			return false;
+		} else if (StringUtils.noneValue(getComponentClassName())) {
+			Object rtti = getAdapter(IRtti.class);
+			if (rtti != null) {
+				IComponentElement component = (IComponentElement) ((IAdaptable) rtti)
+						.getAdapter(IComponentElement.class);
+				if (component != null) {
+					return component.isOGNL();
+				}
+			}
+			return true;
+		} else {
+			return super.isOGNL();
+		}
 	}
-	
+
 	public String getDisplayName() {
-	    StringBuffer buffer = new StringBuffer();
-	    if(isOuterInjection() && StringUtils.noneValue(getComponentClassName())) {
-	        buffer.append(
-	                KijimunaCore.getResourceString("dicon.model.ComponentElement.2"));
-	    } else {
-	        buffer.append(super.getDisplayName());
-	    }
-	    String name = getComponentName();
-	    if(StringUtils.existValue(name)) {
-	        buffer.append("<").append(name).append(">");
-	    }
-	    return buffer.toString();
+		StringBuffer buffer = new StringBuffer();
+		if (isOuterInjection() && StringUtils.noneValue(getComponentClassName())) {
+			buffer.append(KijimunaCore
+					.getResourceString("dicon.model.ComponentElement.2"));
+		} else {
+			buffer.append(super.getDisplayName());
+		}
+		String name = getComponentName();
+		if (StringUtils.existValue(name)) {
+			buffer.append("<").append(name).append(">");
+		}
+		return buffer.toString();
 	}
 
 	public IComponentKey[] getTooManyComponentKeyArray(int tooMany) {
 		List tooManyKey = new ArrayList();
-    	if (componentKeySet != null && componentKeySet.isEmpty() == false) {
-    		for (Iterator iterator = componentKeySet.iterator(); iterator.hasNext(); ) {
-    			IComponentKey key = (IComponentKey) iterator.next();
-    			if (key.getTooMany() == tooMany) {
-    				tooManyKey.add(key);
-    			}
-    		}
-    	}
-    	return (IComponentKey[]) tooManyKey.toArray(new IComponentKey[tooManyKey.size()]);
+		if (componentKeySet != null && componentKeySet.isEmpty() == false) {
+			for (Iterator iterator = componentKeySet.iterator(); iterator.hasNext();) {
+				IComponentKey key = (IComponentKey) iterator.next();
+				if (key.getTooMany() == tooMany) {
+					tooManyKey.add(key);
+				}
+			}
+		}
+		return (IComponentKey[]) tooManyKey.toArray(new IComponentKey[tooManyKey.size()]);
 	}
+
 }

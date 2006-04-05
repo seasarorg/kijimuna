@@ -22,6 +22,6 @@ import java.io.Serializable;
  */
 public interface IAspectInfo extends Serializable {
 
-    IPointcut[] getPointcuts();
-    
+	IPointcut[] getPointcuts();
+
 }

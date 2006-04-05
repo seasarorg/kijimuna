@@ -21,34 +21,34 @@ import org.seasar.kijimuna.core.rtti.IRttiFieldDescriptor;
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class DefaultRttiFieldDescriptor 
-	extends AbstractRttiValuableDescriptor implements IRttiFieldDescriptor {
+public class DefaultRttiFieldDescriptor extends AbstractRttiValuableDescriptor implements
+		IRttiFieldDescriptor {
 
 	private boolean fFinal;
 	private boolean fStatic;
-    
+
 	public DefaultRttiFieldDescriptor(IRtti parent, String name, IRtti type,
-            boolean fFinal, boolean fStatic) {
-        super(parent, name, type);
-        this.fFinal = fFinal; 
-        this.fStatic = fStatic;
-    }
+			boolean fFinal, boolean fStatic) {
+		super(parent, name, type);
+		this.fFinal = fFinal;
+		this.fStatic = fStatic;
+	}
 
 	public boolean equals(Object test) {
-        if(test instanceof IRttiFieldDescriptor) {
-            IRttiFieldDescriptor desc = (IRttiFieldDescriptor)test;
-            return getParent().equals(desc.getParent()) &&
-            	getName().equals(desc.getName());
-        }
-        return false;
-    }
-    
+		if (test instanceof IRttiFieldDescriptor) {
+			IRttiFieldDescriptor desc = (IRttiFieldDescriptor) test;
+			return getParent().equals(desc.getParent())
+					&& getName().equals(desc.getName());
+		}
+		return false;
+	}
+
 	public boolean isFinal() {
-	    return fFinal;
+		return fFinal;
 	}
 
 	public boolean isStatic() {
-	    return fStatic;
+		return fStatic;
 	}
 
 }

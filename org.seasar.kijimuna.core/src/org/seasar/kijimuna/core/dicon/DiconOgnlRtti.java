@@ -28,20 +28,20 @@ import org.seasar.kijimuna.core.rtti.ognl.OgnlRtti;
  */
 public class DiconOgnlRtti extends OgnlRtti {
 
-    private static ContainerPropertyAccessor accessor = new ContainerPropertyAccessor();
-    
-    public DiconOgnlRtti(RttiLoader loader) {
-        super(loader);
+	private static ContainerPropertyAccessor accessor = new ContainerPropertyAccessor();
+
+	public DiconOgnlRtti(RttiLoader loader) {
+		super(loader);
 		setPropertyAccessor(IContainerElement.class, accessor);
 		setPropertyAccessor(ContainerRtti.class, accessor);
-    }
+	}
 
-    public void setComponent(IComponentElement component) {
-	    IRtti rtti = (IRtti)component.getAdapter(IRtti.class);
-        setVariableValue("self", rtti);
+	public void setComponent(IComponentElement component) {
+		IRtti rtti = (IRtti) component.getAdapter(IRtti.class);
+		setVariableValue("self", rtti);
 		IRtti printStream = getRttiLoader().loadRtti("java.io.PrintStream");
 		setVariableValue("out", printStream);
 		setVariableValue("err", printStream);
-    }
-    
+	}
+
 }

@@ -17,27 +17,28 @@ package org.seasar.kijimuna.core.internal.dicon.model;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IStorage;
+
 import org.seasar.kijimuna.core.ConstCore;
 import org.seasar.kijimuna.core.dicon.model.IDescriptionElement;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class DescriptionElement extends DiconElement 
-		implements IDescriptionElement, ConstCore {
-	
+public class DescriptionElement extends DiconElement implements IDescriptionElement,
+		ConstCore {
+
 	public DescriptionElement(IProject project, IStorage storage) {
 		super(project, storage, DICON_TAG_DESCRIPTION);
 	}
 
 	public String getDescription() {
 		String description = getBody();
-		if(description == null) {
-		    description = "";
+		if (description == null) {
+			description = "";
 		}
 		return description;
 	}
-	
+
 	public String getDisplayName() {
 		return getDescription();
 	}

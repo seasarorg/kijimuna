@@ -20,6 +20,6 @@ package org.seasar.kijimuna.core.dicon.model;
  */
 public interface IPropertyElement extends IComponentHolderElement {
 
-    String getPropertyName();
+	String getPropertyName();
 
 }

@@ -27,36 +27,36 @@ import org.eclipse.core.runtime.IAdaptable;
  */
 public interface IElement extends IAdaptable {
 
-    void addChild(IElement child);
-    
-    IElement getParent();
-    
-    void setRootElement(IElement root);
-    
-    void setParent(IElement parent);
-    
-    void setStartLocation(int depth, int startLine, int startColumn);
-    
-    int getStartLine();
-    
-    void setEndLocation(int endLine, int endColumn);
-    
-    int getEndLine();
-    
-    void setAttributes(Map properties);
-    
-    String getElementName();
+	void addChild(IElement child);
 
-    String getBody();
+	IElement getParent();
 
-    void setBody(String body); 
-    
-    String getAttribute(String name);
-    
-    List getChildren();
+	void setRootElement(IElement root);
 
-    IStorage getStorage();
+	void setParent(IElement parent);
 
-    IProject getProject();
+	void setStartLocation(int depth, int startLine, int startColumn);
+
+	int getStartLine();
+
+	void setEndLocation(int endLine, int endColumn);
+
+	int getEndLine();
+
+	void setAttributes(Map properties);
+
+	String getElementName();
+
+	String getBody();
+
+	void setBody(String body);
+
+	String getAttribute(String name);
+
+	List getChildren();
+
+	IStorage getStorage();
+
+	IProject getProject();
 
 }

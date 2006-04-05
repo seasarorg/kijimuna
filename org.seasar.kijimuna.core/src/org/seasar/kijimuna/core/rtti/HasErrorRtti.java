@@ -23,24 +23,24 @@ import org.seasar.kijimuna.core.util.StringUtils;
  */
 public class HasErrorRtti extends RttiWrapper {
 
-    private String qualifiedName;
-    private String message;
-    
-    public HasErrorRtti(String qualifiedName, String message) {
-        super(null);
-        this.qualifiedName = qualifiedName;
-        this.message = message;
-    }
-    
-    public String getQualifiedName() {
-        if(StringUtils.existValue(qualifiedName)) {
-            return qualifiedName;
-        }
-        return KijimunaCore.getResourceString("rtti.HasErrorRtti.1");
-    }
-   
-    public String getErrorMessage() {
-        return message;
-    }
-    
+	private String qualifiedName;
+	private String message;
+
+	public HasErrorRtti(String qualifiedName, String message) {
+		super(null);
+		this.qualifiedName = qualifiedName;
+		this.message = message;
+	}
+
+	public String getQualifiedName() {
+		if (StringUtils.existValue(qualifiedName)) {
+			return qualifiedName;
+		}
+		return KijimunaCore.getResourceString("rtti.HasErrorRtti.1");
+	}
+
+	public String getErrorMessage() {
+		return message;
+	}
+
 }

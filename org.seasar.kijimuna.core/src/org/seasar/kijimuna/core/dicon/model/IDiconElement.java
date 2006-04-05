@@ -23,14 +23,14 @@ import org.seasar.kijimuna.core.rtti.RttiLoader;
  */
 public interface IDiconElement extends IElement {
 
-    RttiLoader getRttiLoader();
-    
-    IContainerElement getContainerElement();
-    
-    int getMarkerSeverity();
-    
-    void setMarkerServerity(int severity);
-    
-    String getDisplayName();
-    
+	RttiLoader getRttiLoader();
+
+	IContainerElement getContainerElement();
+
+	int getMarkerSeverity();
+
+	void setMarkerServerity(int severity);
+
+	String getDisplayName();
+
 }

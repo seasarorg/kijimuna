@@ -27,19 +27,18 @@ import org.seasar.kijimuna.core.util.StringUtils;
  */
 public class PropertyValidation implements IValidation, ConstCore {
 
-    public void validation(IDiconElement element) {
-        if(element instanceof IPropertyElement) {
-            validProperty((IPropertyElement)element);
-        }
-    }
-    
-    private void validProperty(IPropertyElement property) {
-		String propertyName = property.getPropertyName();
-		if(!StringUtils.existValue(propertyName)) {
-			MarkerSetting.createDiconMarker(
-			        "dicon.validation.PropertyValidation.1",
-			        property);
+	public void validation(IDiconElement element) {
+		if (element instanceof IPropertyElement) {
+			validProperty((IPropertyElement) element);
 		}
-    }
+	}
+
+	private void validProperty(IPropertyElement property) {
+		String propertyName = property.getPropertyName();
+		if (!StringUtils.existValue(propertyName)) {
+			MarkerSetting.createDiconMarker("dicon.validation.PropertyValidation.1",
+					property);
+		}
+	}
 
 }

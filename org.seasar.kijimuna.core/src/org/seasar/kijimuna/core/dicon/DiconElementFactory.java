@@ -17,6 +17,7 @@ package org.seasar.kijimuna.core.dicon;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IStorage;
+
 import org.seasar.kijimuna.core.ConstCore;
 import org.seasar.kijimuna.core.internal.dicon.model.ArgElement;
 import org.seasar.kijimuna.core.internal.dicon.model.AspectElement;
@@ -34,11 +35,9 @@ import org.seasar.kijimuna.core.parser.IElement;
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class DiconElementFactory extends ElementFactory
-		implements ConstCore {
+public class DiconElementFactory extends ElementFactory implements ConstCore {
 
-	public IElement createElement(
-	        IProject project, IStorage storage, String elementName) {
+	public IElement createElement(IProject project, IStorage storage, String elementName) {
 		IElement element = null;
 		if (DICON_TAG_ARG.equals(elementName)) {
 			element = new ArgElement(project, storage);
@@ -47,8 +46,8 @@ public class DiconElementFactory extends ElementFactory
 		} else if (DICON_TAG_COMPONENT.equals(elementName)) {
 			element = new ComponentElement(project, storage);
 		} else if (DICON_TAG_CONTAINER.equals(elementName)) {
-				element = new ContainerElement(project, storage);
-		} else if(DICON_TAG_DESCRIPTION.equals(elementName)){
+			element = new ContainerElement(project, storage);
+		} else if (DICON_TAG_DESCRIPTION.equals(elementName)) {
 			element = new DescriptionElement(project, storage);
 		} else if (DICON_TAG_DESTROYMETHOD.equals(elementName)) {
 			element = new DestroyMethodElement(project, storage);

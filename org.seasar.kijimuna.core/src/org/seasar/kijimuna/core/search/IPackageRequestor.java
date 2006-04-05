@@ -24,7 +24,7 @@ import org.eclipse.jdt.core.IType;
 public interface IPackageRequestor {
 
 	void acceptPackage(IPackageFragment pack, boolean archive);
-	
+
 	void acceptType(IType type);
 
 }

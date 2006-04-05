@@ -36,6 +36,7 @@ import org.eclipse.jdt.core.IMethod;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.Signature;
+
 import org.seasar.kijimuna.core.rtti.IRtti;
 import org.seasar.kijimuna.core.rtti.IRttiConstructorDesctiptor;
 import org.seasar.kijimuna.core.rtti.IRttiFieldDescriptor;
@@ -63,29 +64,35 @@ public class DefaultRtti implements IRtti {
 		WRAPPERS.put("java.lang.Short", "short");
 		WRAPPERS.put("java.lang.Void", "void");
 	}
-	
+
 	private class RttiInfo {
-	    private DefaultRtti rtti;	    
-	    RttiInfo(DefaultRtti rtti) {
-	        this.rtti = rtti;
-	    }
+
+		private DefaultRtti rtti;
+
+		RttiInfo(DefaultRtti rtti) {
+			this.rtti = rtti;
+		}
+
 		boolean isArray() {
-		    return rtti.isArray();
+			return rtti.isArray();
 		}
+
 		boolean isPrimitive() {
-		    return rtti.isPrimitive();
+			return rtti.isPrimitive();
 		}
+
 		String getWrapperName() {
-		    return rtti.getWrapperName();
+			return rtti.getWrapperName();
 		}
+
 		IRtti getArrayItemClass() {
-		    return rtti.getArrayItemClass();
+			return rtti.getArrayItemClass();
 		}
 	}
-    
-    public static boolean isMatchArgs(IRtti[] source, IRtti[] test) {
-		if(test == null) {
-		    test = new IRtti[0];
+
+	public static boolean isMatchArgs(IRtti[] source, IRtti[] test) {
+		if (test == null) {
+			test = new IRtti[0];
 		}
 		if (source.length == test.length) {
 			boolean match = true;
@@ -100,10 +107,10 @@ public class DefaultRtti implements IRtti {
 			}
 		}
 		return false;
-    }
-	
+	}
+
 	private transient IType thisType;
-		
+
 	private RttiLoader loader;
 	private String projectName;
 	private String qualifiedName;
@@ -152,14 +159,15 @@ public class DefaultRtti implements IRtti {
 		if (genericTypeName == null || genericTypeName.indexOf('.') < 0) {
 			IRtti rtti = getSuperClass();
 			if (rtti instanceof DefaultRtti) {
-				String superGenericTypeName = ((DefaultRtti) rtti).getGenericTypeName(genericName);
+				String superGenericTypeName = ((DefaultRtti) rtti)
+						.getGenericTypeName(genericName);
 				if (superGenericTypeName != null) {
 					genericTypeName = superGenericTypeName;
 				}
 			}
 		}
 		if (genericTypeName != null && genericTypeName.indexOf('.') < 0) {
-			String parentGenericTypeName =getGenericTypeName(genericTypeName);
+			String parentGenericTypeName = getGenericTypeName(genericTypeName);
 			if (parentGenericTypeName != null) {
 				genericTypeName = parentGenericTypeName;
 			}
@@ -174,9 +182,9 @@ public class DefaultRtti implements IRtti {
 	private boolean isArray() {
 		return arrayDepth > 0;
 	}
-	
+
 	private boolean isPrimitive() {
-	    return primitive;
+		return primitive;
 	}
 
 	private String getWrapperName() {
@@ -191,248 +199,247 @@ public class DefaultRtti implements IRtti {
 	}
 
 	private boolean isWideningPrimitiveConversion(IRtti testRtti) {
-	    String thisQName = getQualifiedName();
-	    String testQName = testRtti.getQualifiedName();
-	    if(autoConvert) {
-		    if(WRAPPERS.containsKey(thisQName)) {	
-		    	thisQName = WRAPPERS.get(thisQName).toString();
-		    }
-		    if(WRAPPERS.containsKey(testQName)) {	
-		    	testQName = WRAPPERS.get(testQName).toString();
-		    }
-	    }
-	    if(testQName.equals("byte")) {
-	        return "short,int,long,float,double".indexOf(thisQName) != -1;
-	    } else if(testQName.equals("short")) {
-	        return "int,long,float,double".indexOf(thisQName) != -1;
-	    } else if(testQName.equals("char")) {
-	        return "int,long,float,double".indexOf(thisQName) != -1;
-	    } else if(testQName.equals("int")) {
-	        return "long,float,double".indexOf(thisQName) != -1;
-	    } else if(testQName.equals("long")) {
-	        return "float,double".indexOf(thisQName) != -1;
-	    } else if(testQName.equals("float")) {
-	        return "double".indexOf(thisQName) != -1;
-	    } else {
-	        return false;
-	    }
+		String thisQName = getQualifiedName();
+		String testQName = testRtti.getQualifiedName();
+		if (autoConvert) {
+			if (WRAPPERS.containsKey(thisQName)) {
+				thisQName = WRAPPERS.get(thisQName).toString();
+			}
+			if (WRAPPERS.containsKey(testQName)) {
+				testQName = WRAPPERS.get(testQName).toString();
+			}
+		}
+		if (testQName.equals("byte")) {
+			return "short,int,long,float,double".indexOf(thisQName) != -1;
+		} else if (testQName.equals("short")) {
+			return "int,long,float,double".indexOf(thisQName) != -1;
+		} else if (testQName.equals("char")) {
+			return "int,long,float,double".indexOf(thisQName) != -1;
+		} else if (testQName.equals("int")) {
+			return "long,float,double".indexOf(thisQName) != -1;
+		} else if (testQName.equals("long")) {
+			return "float,double".indexOf(thisQName) != -1;
+		} else if (testQName.equals("float")) {
+			return "double".indexOf(thisQName) != -1;
+		} else {
+			return false;
+		}
 	}
 
 	private boolean isWideningArrayConversion(IRtti testRtti) {
-	    String thisQName = getQualifiedName();
-	    if(thisQName.equals("java.lang.Object") ||
-	            thisQName.equals("java.lang.Cloneable") ||
-	            thisQName.equals("java.io.Serializable")) {
-	        return true;
-	    }
-        IRtti thisArray = getArrayItemClass();
-		RttiInfo testInfo = (RttiInfo)testRtti.getAdapter(RttiInfo.class);
-        IRtti testArray = testInfo.getArrayItemClass();
-        return (thisArray != null) && (testArray != null) &&
-        	thisArray.isAssignableFrom(testArray);
+		String thisQName = getQualifiedName();
+		if (thisQName.equals("java.lang.Object")
+				|| thisQName.equals("java.lang.Cloneable")
+				|| thisQName.equals("java.io.Serializable")) {
+			return true;
+		}
+		IRtti thisArray = getArrayItemClass();
+		RttiInfo testInfo = (RttiInfo) testRtti.getAdapter(RttiInfo.class);
+		IRtti testArray = testInfo.getArrayItemClass();
+		return (thisArray != null) && (testArray != null)
+				&& thisArray.isAssignableFrom(testArray);
 	}
 
 	private boolean isPublicMember(IMember member) {
-		if(!isInterface()) {
-		    try {
-                int flags = member.getFlags();
-                if(!Flags.isPublic(flags)) {
-                    return false;
-                }
-            } catch (JavaModelException e) {
-            }
+		if (!isInterface()) {
+			try {
+				int flags = member.getFlags();
+				if (!Flags.isPublic(flags)) {
+					return false;
+				}
+			} catch (JavaModelException e) {
+			}
 		}
 		return true;
 	}
-	
-    private Map getInvokableMap(Pattern pattern, boolean isConstructor) {
-    	Map descriptors = new HashMap();
-		if(isTypeAvailable()) {
+
+	private Map getInvokableMap(Pattern pattern, boolean isConstructor) {
+		Map descriptors = new HashMap();
+		if (isTypeAvailable()) {
 			try {
 				IMethod[] methods = getType().getMethods();
-				for(int i = 0; i < methods.length; i++) {
-				    if(isPublicMember(methods[i])) {
-				        String methodName = methods[i].getElementName();
-			            if(pattern.matcher(methodName).matches()) {
-				    		IRttiInvokableDesctiptor descriptor;
-			                if(isConstructor) {
-		                		descriptor = createConstructorDescriptor(methods[i]);
-			                } else {
-			                	if(methodName.equals(getShortName())) {
-			                		continue;
-			                	}
-			                	descriptor = createMethodDescriptor(methods[i]);
-			                }
-			                descriptors.put(descriptor.createDescriptorKey(), descriptor);
-				        }
+				for (int i = 0; i < methods.length; i++) {
+					if (isPublicMember(methods[i])) {
+						String methodName = methods[i].getElementName();
+						if (pattern.matcher(methodName).matches()) {
+							IRttiInvokableDesctiptor descriptor;
+							if (isConstructor) {
+								descriptor = createConstructorDescriptor(methods[i]);
+							} else {
+								if (methodName.equals(getShortName())) {
+									continue;
+								}
+								descriptor = createMethodDescriptor(methods[i]);
+							}
+							descriptors.put(descriptor.createDescriptorKey(), descriptor);
+						}
 					}
 				}
-				if(!isConstructor) {
-					DefaultRtti superClass = (DefaultRtti)getSuperClass();
+				if (!isConstructor) {
+					DefaultRtti superClass = (DefaultRtti) getSuperClass();
 					if (superClass != null) {
-					    Map superMethods = superClass.getInvokableMap(pattern, isConstructor);
-					    for(Iterator it = superMethods.keySet().iterator(); it.hasNext();) {
-					        String key = (String)it.next();
-					        if(!descriptors.containsKey(key)) {
-					            descriptors.put(key, superMethods.get(key));
-					        }
+						Map superMethods = superClass.getInvokableMap(pattern,
+								isConstructor);
+						for (Iterator it = superMethods.keySet().iterator(); it.hasNext();) {
+							String key = (String) it.next();
+							if (!descriptors.containsKey(key)) {
+								descriptors.put(key, superMethods.get(key));
+							}
 						}
 					}
 				}
 			} catch (JavaModelException ignore) {
 			}
 		}
-		return descriptors;	
-    }
-    
-    private List getSortedInvokableList(Pattern pattern, boolean isConstructor) {
-    	List list = new ArrayList();
-    	Map descriptors = getInvokableMap(pattern, isConstructor);
-        for(Iterator it = descriptors.entrySet().iterator(); it.hasNext();) {
-            Map.Entry entry = (Map.Entry)it.next();
-            list.add(entry.getValue());
-        }
-        Collections.sort(list);
-        return list;
-    }
+		return descriptors;
+	}
 
-    private IRttiConstructorDesctiptor createConstructorDescriptor(
-    		IMethod constructor) {
+	private List getSortedInvokableList(Pattern pattern, boolean isConstructor) {
+		List list = new ArrayList();
+		Map descriptors = getInvokableMap(pattern, isConstructor);
+		for (Iterator it = descriptors.entrySet().iterator(); it.hasNext();) {
+			Map.Entry entry = (Map.Entry) it.next();
+			list.add(entry.getValue());
+		}
+		Collections.sort(list);
+		return list;
+	}
+
+	private IRttiConstructorDesctiptor createConstructorDescriptor(IMethod constructor) {
 		return new DefaultRttiConstructorDescriptor(constructor, this, false);
-    }
-    
-    private IRttiMethodDesctiptor createMethodDescriptor(IMethod method) {
+	}
+
+	private IRttiMethodDesctiptor createMethodDescriptor(IMethod method) {
 		return new DefaultRttiMethodDescriptor(method, this);
-    }
-    
+	}
+
 	private IRttiConstructorDesctiptor createDefaultConstructor() {
 		try {
-            IMethod[] methods = getType().getMethods();
-            String shortName = getShortName();
-            for(int i = 0; i < methods.length; i++) {
-                if((methods[i].getElementName().equals(shortName) &&
-                        methods[i].getParameterTypes().length == 0)) {
-                    return null;
-                }
-            }
-    	    return new DefaultRttiConstructorDescriptor(getType(), this, true);
-        } catch (JavaModelException e) {
-            return null;
-        }
+			IMethod[] methods = getType().getMethods();
+			String shortName = getShortName();
+			for (int i = 0; i < methods.length; i++) {
+				if ((methods[i].getElementName().equals(shortName) && methods[i]
+						.getParameterTypes().length == 0)) {
+					return null;
+				}
+			}
+			return new DefaultRttiConstructorDescriptor(getType(), this, true);
+		} catch (JavaModelException e) {
+			return null;
+		}
 	}
-	
-	private String getPropertyType(
-	        IMethod method, String returnType, int parameterNum) {
-        try {
-	        String[] args = method.getParameterTypes();
-	        if(args.length == parameterNum) {
-	            if(parameterNum == 0) {
-	                String ret = Signature.toString(method.getReturnType());
-	                if((returnType == null) || returnType.equals(ret)) {
-	                    return ret;
-	                }
-	            } else {
-	                return Signature.toString(args[0]);
-	            }
-	        }
-        } catch (Exception e) {
-        }
-        return null;
+
+	private String getPropertyType(IMethod method, String returnType, int parameterNum) {
+		try {
+			String[] args = method.getParameterTypes();
+			if (args.length == parameterNum) {
+				if (parameterNum == 0) {
+					String ret = Signature.toString(method.getReturnType());
+					if ((returnType == null) || returnType.equals(ret)) {
+						return ret;
+					}
+				} else {
+					return Signature.toString(args[0]);
+				}
+			}
+		} catch (Exception e) {
+		}
+		return null;
 	}
-	
-	private DefaultRttiPropertyDescriptor getPropertyDescriptor(
-			IMethod method, Pattern pattern) {
-	    String methodName = method.getElementName();
-	    String propertyName;
-	    boolean isReader;
-	    String propertyType;
-	    if(methodName.startsWith("set")) {
-	        propertyName = methodName.substring(3);
-	        isReader = false;
-	        propertyType = getPropertyType(method, "void", 1);
-	    } else if(methodName.startsWith("get")) {
-	        propertyName = methodName.substring(3);
-	        isReader = true;
-	        propertyType = getPropertyType(method, null, 0);
-	    } else if(methodName.startsWith("is")) {
-	        propertyName = methodName.substring(2);
-	        isReader = true;
-	        propertyType = getPropertyType(method, "boolean", 0);
-	    } else {
-	        return null;
-	    }
-        if(propertyType == null) {
-            return null;
-        }
-	    if((propertyName.length() == 0) || Character.isLowerCase(propertyName.charAt(0))) {
-            return null;
-        }
-        if((propertyName.length() == 1) || (Character.isLowerCase(propertyName.charAt(1)))) {
-            char[] chars = propertyName.toCharArray();
-            chars[0] = Character.toLowerCase(chars[0]);
-            propertyName = new String(chars);
-        }
-        if(!pattern.matcher(propertyName).matches()) {
-        	return null;
-        }
+
+	private DefaultRttiPropertyDescriptor getPropertyDescriptor(IMethod method,
+			Pattern pattern) {
+		String methodName = method.getElementName();
+		String propertyName;
+		boolean isReader;
+		String propertyType;
+		if (methodName.startsWith("set")) {
+			propertyName = methodName.substring(3);
+			isReader = false;
+			propertyType = getPropertyType(method, "void", 1);
+		} else if (methodName.startsWith("get")) {
+			propertyName = methodName.substring(3);
+			isReader = true;
+			propertyType = getPropertyType(method, null, 0);
+		} else if (methodName.startsWith("is")) {
+			propertyName = methodName.substring(2);
+			isReader = true;
+			propertyType = getPropertyType(method, "boolean", 0);
+		} else {
+			return null;
+		}
+		if (propertyType == null) {
+			return null;
+		}
+		if ((propertyName.length() == 0) || Character.isLowerCase(propertyName.charAt(0))) {
+			return null;
+		}
+		if ((propertyName.length() == 1)
+				|| (Character.isLowerCase(propertyName.charAt(1)))) {
+			char[] chars = propertyName.toCharArray();
+			chars[0] = Character.toLowerCase(chars[0]);
+			propertyName = new String(chars);
+		}
+		if (!pattern.matcher(propertyName).matches()) {
+			return null;
+		}
 		IRtti propertyRtti = loader.loadRtti(propertyType);
-	    return new DefaultRttiPropertyDescriptor(
-	            this, propertyName, propertyRtti, isReader);
+		return new DefaultRttiPropertyDescriptor(this, propertyName, propertyRtti,
+				isReader);
 	}
-	
-	private void margePropertyDescriptor(
-	        Map map, DefaultRttiPropertyDescriptor descriptor) {
-        String propertyName = descriptor.getName();
-	    DefaultRttiPropertyDescriptor old = 
-	        (DefaultRttiPropertyDescriptor)map.get(propertyName);
-	    if(old != null) {
-		    IRtti propertyType = descriptor.getType();
-		    boolean isReadable = descriptor.isReadable();
-		    boolean isWritable = descriptor.isWritable();
-		    if(propertyType.equals(old.getType())) {
-		        if(isReadable) {
-		            old.doReadable(propertyType);
-	            }
-		        if(isWritable) {
-		            old.doWritable(propertyType);
-		        }
-		    }
-	    } else {
-	        map.put(propertyName, descriptor);
-	    }
+
+	private void margePropertyDescriptor(Map map, DefaultRttiPropertyDescriptor descriptor) {
+		String propertyName = descriptor.getName();
+		DefaultRttiPropertyDescriptor old = (DefaultRttiPropertyDescriptor) map
+				.get(propertyName);
+		if (old != null) {
+			IRtti propertyType = descriptor.getType();
+			boolean isReadable = descriptor.isReadable();
+			boolean isWritable = descriptor.isWritable();
+			if (propertyType.equals(old.getType())) {
+				if (isReadable) {
+					old.doReadable(propertyType);
+				}
+				if (isWritable) {
+					old.doWritable(propertyType);
+				}
+			}
+		} else {
+			map.put(propertyName, descriptor);
+		}
 	}
 
 	private Map getPropertyMap(Pattern pattern) {
-	    if(isTypeAvailable()) {
+		if (isTypeAvailable()) {
 			try {
 				IMethod[] methods = getType().getMethods();
 				Map map = new HashMap();
-				for(int i = 0; i < methods.length; i++) {
-				    if(isPublicMember(methods[i])) {
-				        DefaultRttiPropertyDescriptor descriptor =
-				            getPropertyDescriptor(methods[i], pattern);
-				        if(descriptor != null) {
-				            margePropertyDescriptor(map, descriptor);
-				        }
-				    }
+				for (int i = 0; i < methods.length; i++) {
+					if (isPublicMember(methods[i])) {
+						DefaultRttiPropertyDescriptor descriptor = getPropertyDescriptor(
+								methods[i], pattern);
+						if (descriptor != null) {
+							margePropertyDescriptor(map, descriptor);
+						}
+					}
 				}
 				IRtti parent = getSuperClass();
-				if(parent != null) {
-				    IRttiPropertyDescriptor[] props = parent.getProperties(pattern);
-				    if(props != null) {
-					    for(int i = 0; i < props.length; i++) {
-						    margePropertyDescriptor(map, 
-						            (DefaultRttiPropertyDescriptor)props[i]);
-					    }
-				    }
+				if (parent != null) {
+					IRttiPropertyDescriptor[] props = parent.getProperties(pattern);
+					if (props != null) {
+						for (int i = 0; i < props.length; i++) {
+							margePropertyDescriptor(map,
+									(DefaultRttiPropertyDescriptor) props[i]);
+						}
+					}
 				}
 				return map;
 			} catch (JavaModelException ignore) {
 			}
 		}
-		return new HashMap();	
+		return new HashMap();
 	}
-    
+
 	private IRtti[] getInterfaces(boolean includeThis) {
 		if (isTypeAvailable()) {
 			try {
@@ -442,24 +449,24 @@ public class DefaultRtti implements IRtti {
 					IRtti rtti = loader.loadRtti(interfaces[i]);
 					ret.add(rtti);
 					IRtti[] rttis = rtti.getInterfaces();
-					for(int j=0;j<rttis.length;j++){
+					for (int j = 0; j < rttis.length; j++) {
 						ret.add(rttis[j]);
 					}
 				}
-				if(includeThis && isInterface()) {
-				    ret.add(this);
+				if (includeThis && isInterface()) {
+					ret.add(this);
 				}
-				return (IRtti[])ret.toArray(new IRtti[ret.size()]);
+				return (IRtti[]) ret.toArray(new IRtti[ret.size()]);
 			} catch (Exception ignore) {
 			}
 		}
 		return new IRtti[0];
 	}
-	
+
 	public boolean equals(Object test) {
-		if((test != null) && (test instanceof IRtti)) {
+		if ((test != null) && (test instanceof IRtti)) {
 			IRtti testRtti = (IRtti) test;
-			RttiInfo testInfo = (RttiInfo)testRtti.getAdapter(RttiInfo.class);
+			RttiInfo testInfo = (RttiInfo) testRtti.getAdapter(RttiInfo.class);
 			if (autoConvert && (isPrimitive() || testInfo.isPrimitive())) {
 				if (getWrapperName().equals(testInfo.getWrapperName())) {
 					return true;
@@ -481,53 +488,53 @@ public class DefaultRtti implements IRtti {
 		}
 		return false;
 	}
-    
+
 	public String toString() {
 		return getQualifiedName();
 	}
-	
-    public int compareTo(Object test) {
-        if(test instanceof IRtti) {
-            IRtti testRtti = (IRtti)test;
-            return getQualifiedName().compareTo(testRtti.getQualifiedName());
-        }
-        return 1;
-    }
 
-    public Object getAdapter(Class adapter) {
-        if(RttiInfo.class.equals(adapter)) {
-            return new RttiInfo(this);
-        } else if(IStorage.class.equals(adapter)) {
-            if(isTypeAvailable()) {
-                IType type = getType();
-                if(type != null) {
-                    IResource resource = type.getResource();
-                    if(resource != null) {
-                        return resource;
-                    }
-                }
-            }
-        } else if(IProject.class.equals(adapter)) {
-            return ProjectUtils.getProject(projectName);
-        } else if(IRtti.class.equals(adapter)){
-            return this;
-        }
-        return null;
-    }
-	
-	public IType getType() {
-	    if(thisType == null) {
-	        IJavaProject project = ProjectUtils.getJavaProject(projectName);
-	        try {
-                thisType = project.findType(qualifiedName.replace('$', '.'));
-            } catch (JavaModelException e) {
-            }
-	    }
-	    return thisType;
+	public int compareTo(Object test) {
+		if (test instanceof IRtti) {
+			IRtti testRtti = (IRtti) test;
+			return getQualifiedName().compareTo(testRtti.getQualifiedName());
+		}
+		return 1;
 	}
-	
+
+	public Object getAdapter(Class adapter) {
+		if (RttiInfo.class.equals(adapter)) {
+			return new RttiInfo(this);
+		} else if (IStorage.class.equals(adapter)) {
+			if (isTypeAvailable()) {
+				IType type = getType();
+				if (type != null) {
+					IResource resource = type.getResource();
+					if (resource != null) {
+						return resource;
+					}
+				}
+			}
+		} else if (IProject.class.equals(adapter)) {
+			return ProjectUtils.getProject(projectName);
+		} else if (IRtti.class.equals(adapter)) {
+			return this;
+		}
+		return null;
+	}
+
+	public IType getType() {
+		if (thisType == null) {
+			IJavaProject project = ProjectUtils.getJavaProject(projectName);
+			try {
+				thisType = project.findType(qualifiedName.replace('$', '.'));
+			} catch (JavaModelException e) {
+			}
+		}
+		return thisType;
+	}
+
 	public RttiLoader getRttiLoader() {
-	    return loader;
+		return loader;
 	}
 
 	public boolean isInterface() {
@@ -551,18 +558,18 @@ public class DefaultRtti implements IRtti {
 	}
 
 	public boolean isAssignableFrom(IRtti testRtti) {
-		if(testRtti == null) {
-		    return true;
+		if (testRtti == null) {
+			return true;
 		}
 		if (equals(testRtti)) {
 			return true;
 		}
-		RttiInfo testInfo = (RttiInfo)testRtti.getAdapter(RttiInfo.class);
+		RttiInfo testInfo = (RttiInfo) testRtti.getAdapter(RttiInfo.class);
 		if (isPrimitive() || testInfo.isPrimitive()) {
-		    // widening primitive conversion
-		    return isWideningPrimitiveConversion(testRtti);
-		} else if(testInfo.isArray()) {
-		    return isWideningArrayConversion(testRtti);
+			// widening primitive conversion
+			return isWideningPrimitiveConversion(testRtti);
+		} else if (testInfo.isArray()) {
+			return isWideningArrayConversion(testRtti);
 		} else {
 			if (isInterface()) {
 				IRtti[] superInterfaces = testRtti.getInterfaces();
@@ -573,16 +580,16 @@ public class DefaultRtti implements IRtti {
 				}
 			}
 			if (testRtti.isInterface()) {
-			    return getQualifiedName().equals("java.lang.Object");
+				return getQualifiedName().equals("java.lang.Object");
 			}
-		    IRtti superClass = testRtti.getSuperClass();
+			IRtti superClass = testRtti.getSuperClass();
 			if (superClass == null) {
 				return false;
 			}
 			return isAssignableFrom(superClass);
 		}
 	}
-	
+
 	public String getQualifiedName() {
 		if (isArray()) {
 			StringBuffer buffer = new StringBuffer(arrayItem.getQualifiedName());
@@ -612,9 +619,9 @@ public class DefaultRtti implements IRtti {
 	}
 
 	public IRtti[] getInterfaces() {
-	    return getInterfaces(true);
+		return getInterfaces(true);
 	}
-	
+
 	public IRtti getSuperClass() {
 		if (isTypeAvailable() && !isInterface()
 				&& !getQualifiedName().equals("java.lang.Object")) {
@@ -631,140 +638,144 @@ public class DefaultRtti implements IRtti {
 	}
 
 	public IRttiFieldDescriptor getField(String name, boolean staticAccess) {
-	    IRttiFieldDescriptor[] fields = getFields(Pattern.compile(name));
-	    if(fields.length == 1) {
-	        if(!staticAccess || fields[0].isStatic()) {
-	            return fields[0];
-	        }
-	    }
-	    return null;
+		IRttiFieldDescriptor[] fields = getFields(Pattern.compile(name));
+		if (fields.length == 1) {
+			if (!staticAccess || fields[0].isStatic()) {
+				return fields[0];
+			}
+		}
+		return null;
 	}
-	
+
 	private void addAllFields(Map ret, Pattern pattern) {
 		if (isTypeAvailable()) {
 			try {
-                IField[] fields = getType().getFields();
-                for(int i = 0 ; i < fields.length; i++) {
-                    String name = fields[i].getElementName();
-                    if(!ret.containsKey(name) && pattern.matcher(name).matches()) {
-                		if (isPublicMember(fields[i])) {
-                			int flags = fields[i].getFlags();
-                			String typeSignature = Signature.toString(fields[i].getTypeSignature());
-                			ret.put(name, new DefaultRttiFieldDescriptor(
-                			        this, name, loader.loadRtti(typeSignature),
-                			        Flags.isFinal(flags), Flags.isStatic(flags)));
-                		}
-                    }
-                }
-            } catch (JavaModelException e) {
-            } catch (IllegalArgumentException e) {
-            }
+				IField[] fields = getType().getFields();
+				for (int i = 0; i < fields.length; i++) {
+					String name = fields[i].getElementName();
+					if (!ret.containsKey(name) && pattern.matcher(name).matches()) {
+						if (isPublicMember(fields[i])) {
+							int flags = fields[i].getFlags();
+							String typeSignature = Signature.toString(fields[i]
+									.getTypeSignature());
+							ret.put(name, new DefaultRttiFieldDescriptor(this, name,
+									loader.loadRtti(typeSignature), Flags.isFinal(flags),
+									Flags.isStatic(flags)));
+						}
+					}
+				}
+			} catch (JavaModelException e) {
+			} catch (IllegalArgumentException e) {
+			}
 			IRtti[] interfaces = getInterfaces(false);
 			for (int i = 0; i < interfaces.length; i++) {
-			    if(interfaces[i] instanceof DefaultRtti) {
-			        ((DefaultRtti)interfaces[i]).addAllFields(ret, pattern);
-			    }
+				if (interfaces[i] instanceof DefaultRtti) {
+					((DefaultRtti) interfaces[i]).addAllFields(ret, pattern);
+				}
 			}
 			IRtti superClass = getSuperClass();
 			if ((superClass != null) && (superClass instanceof DefaultRtti)) {
-		        ((DefaultRtti)superClass).addAllFields(ret, pattern);
+				((DefaultRtti) superClass).addAllFields(ret, pattern);
 			}
 		}
-	}
-	
-	public IRttiFieldDescriptor[] getFields(Pattern pattern) {
-	    Map ret = new HashMap();
-		try {
-		    if(pattern.matcher("class").matches()) {
-		        ret.put("class", new DefaultRttiFieldDescriptor(
-		                this, "class", loader.loadRtti("java.lang.Class"), true, true));
-		    }
-		    if(isArray() && pattern.matcher("length").matches()) {
-				ret.put("length", new DefaultRttiFieldDescriptor( 
-				        this, "length", loader.loadRtti("int"), true, false)); 
-			}
-		    addAllFields(ret, pattern);
-		} catch (Exception ignore) {
-		}
-	    return (IRttiFieldDescriptor[])ret.values().toArray(new IRttiFieldDescriptor[ret.size()]);
-	}
-	
-	public IRttiConstructorDesctiptor getConstructor(IRtti[] args) {
-		IRttiConstructorDesctiptor[] constructors = getConstructors();
-	    if(constructors.length > 0) {
-	    	for(int i = 0; i < constructors.length; i++) {
-	    		IRtti[] rttiArgs = constructors[i].getArgs();
-	    		if(isMatchArgs(rttiArgs, args)) {
-	    			return constructors[i];
-	    		}
-	    	}
-	    } else if((args == null) || (args.length == 0)) {
-	        return createDefaultConstructor();
-	    }
-	    return null;
-	}
-	
-	public IRttiConstructorDesctiptor[] getConstructors() {
-	    Pattern pattern = Pattern.compile(getShortName());
-        List descriptors = getSortedInvokableList(pattern, true);
-        if(descriptors.size() == 0) {
-	    	IRttiConstructorDesctiptor def = createDefaultConstructor();
-	        if(def != null) {
-	            return new IRttiConstructorDesctiptor[] { def };
-	        }
-	        return new IRttiConstructorDesctiptor[0];
-        }
-        return (IRttiConstructorDesctiptor[])descriptors.toArray(
-        		new IRttiConstructorDesctiptor[descriptors.size()]);
 	}
 
-	public IRttiMethodDesctiptor getMethod(
-	        String methodName, IRtti[] args, boolean staticAccess) {
-		Pattern pattern = Pattern.compile(methodName); 
-		IRttiMethodDesctiptor[] methods = getMethods(pattern);
-	    if(methods.length > 0) {
-	    	for(int i = 0; i < methods.length; i++) {
-	    		if(staticAccess && !methods[i].isStatic()) {
-	    			continue;
-	    		}
-	    		IRtti[] rttiArgs = methods[i].getArgs();
-	    		if(isMatchArgs(rttiArgs, args)) {
-	    			return methods[i];
-	    		}
-	    	}
-	    }	    
+	public IRttiFieldDescriptor[] getFields(Pattern pattern) {
+		Map ret = new HashMap();
+		try {
+			if (pattern.matcher("class").matches()) {
+				ret.put("class", new DefaultRttiFieldDescriptor(this, "class", loader
+						.loadRtti("java.lang.Class"), true, true));
+			}
+			if (isArray() && pattern.matcher("length").matches()) {
+				ret.put("length", new DefaultRttiFieldDescriptor(this, "length", loader
+						.loadRtti("int"), true, false));
+			}
+			addAllFields(ret, pattern);
+		} catch (Exception ignore) {
+		}
+		return (IRttiFieldDescriptor[]) ret.values().toArray(
+				new IRttiFieldDescriptor[ret.size()]);
+	}
+
+	public IRttiConstructorDesctiptor getConstructor(IRtti[] args) {
+		IRttiConstructorDesctiptor[] constructors = getConstructors();
+		if (constructors.length > 0) {
+			for (int i = 0; i < constructors.length; i++) {
+				IRtti[] rttiArgs = constructors[i].getArgs();
+				if (isMatchArgs(rttiArgs, args)) {
+					return constructors[i];
+				}
+			}
+		} else if ((args == null) || (args.length == 0)) {
+			return createDefaultConstructor();
+		}
 		return null;
 	}
-	
+
+	public IRttiConstructorDesctiptor[] getConstructors() {
+		Pattern pattern = Pattern.compile(getShortName());
+		List descriptors = getSortedInvokableList(pattern, true);
+		if (descriptors.size() == 0) {
+			IRttiConstructorDesctiptor def = createDefaultConstructor();
+			if (def != null) {
+				return new IRttiConstructorDesctiptor[] {
+					def
+				};
+			}
+			return new IRttiConstructorDesctiptor[0];
+		}
+		return (IRttiConstructorDesctiptor[]) descriptors
+				.toArray(new IRttiConstructorDesctiptor[descriptors.size()]);
+	}
+
+	public IRttiMethodDesctiptor getMethod(String methodName, IRtti[] args,
+			boolean staticAccess) {
+		Pattern pattern = Pattern.compile(methodName);
+		IRttiMethodDesctiptor[] methods = getMethods(pattern);
+		if (methods.length > 0) {
+			for (int i = 0; i < methods.length; i++) {
+				if (staticAccess && !methods[i].isStatic()) {
+					continue;
+				}
+				IRtti[] rttiArgs = methods[i].getArgs();
+				if (isMatchArgs(rttiArgs, args)) {
+					return methods[i];
+				}
+			}
+		}
+		return null;
+	}
+
 	public IRttiMethodDesctiptor[] getMethods(Pattern pattern) {
 		List descriptors = getSortedInvokableList(pattern, false);
-        return (IRttiMethodDesctiptor[])descriptors.toArray(
-        		new IRttiMethodDesctiptor[descriptors.size()]);
+		return (IRttiMethodDesctiptor[]) descriptors
+				.toArray(new IRttiMethodDesctiptor[descriptors.size()]);
 	}
 
 	public IRttiPropertyDescriptor getProperty(String name) {
-	    if(isTypeAvailable()) {
-		    Map map = getPropertyMap(Pattern.compile(name));
-		    return (IRttiPropertyDescriptor)map.get(name);
-	    }
-	    return null;
+		if (isTypeAvailable()) {
+			Map map = getPropertyMap(Pattern.compile(name));
+			return (IRttiPropertyDescriptor) map.get(name);
+		}
+		return null;
 	}
-	
+
 	public IRttiPropertyDescriptor[] getProperties(Pattern pattern) {
-	    if(isTypeAvailable()) {
-		    Map map = getPropertyMap(pattern);
-		    List ret = new ArrayList();
-		    for(Iterator it = map.values().iterator(); it.hasNext();) {
-		    	IRttiPropertyDescriptor desc = (IRttiPropertyDescriptor)it.next();
-		    	String propertyName = desc.getName();
-		    	if(pattern.matcher(propertyName).matches()) {
-		    		ret.add(desc);
-		    	}
-		    }
-			return (IRttiPropertyDescriptor[])ret.toArray(
-					new IRttiPropertyDescriptor[ret.size()]);
-	    }
-	    return new IRttiPropertyDescriptor[0]; 	        
+		if (isTypeAvailable()) {
+			Map map = getPropertyMap(pattern);
+			List ret = new ArrayList();
+			for (Iterator it = map.values().iterator(); it.hasNext();) {
+				IRttiPropertyDescriptor desc = (IRttiPropertyDescriptor) it.next();
+				String propertyName = desc.getName();
+				if (pattern.matcher(propertyName).matches()) {
+					ret.add(desc);
+				}
+			}
+			return (IRttiPropertyDescriptor[]) ret
+					.toArray(new IRttiPropertyDescriptor[ret.size()]);
+		}
+		return new IRttiPropertyDescriptor[0];
 	}
-	
+
 }

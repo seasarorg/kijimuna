@@ -20,7 +20,7 @@ package org.seasar.kijimuna.core.dtd;
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public interface IElementDef {
-	
+
 	String getName();
 
 	IElementDef[] getElements();
@@ -32,6 +32,7 @@ public interface IElementDef {
 	IAttributeDef getAttribute(String name);
 
 	boolean isEmpty();
-	
+
 	boolean hasPCData();
+
 }

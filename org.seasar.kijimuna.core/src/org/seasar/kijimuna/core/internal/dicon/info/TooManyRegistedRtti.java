@@ -25,47 +25,47 @@ import org.seasar.kijimuna.core.rtti.IRtti;
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class TooManyRegistedRtti extends HasErrorRtti
-		implements ITooManyRegisted {
-    
-    private IComponentKey key;
-    private IDiconElement[] components;
-    
-    private static String getKeysDisplay(
-            IComponentKey key, IDiconElement[] components) {
-        StringBuffer buffer = new StringBuffer();
-        for(int i = 0; i < components.length; i++) {
-            if(i != 0) {
-                buffer.append(", ");
-            }
-            buffer.append(components[i].getDisplayName());
-        }
-        return buffer.toString();
-    }
-    
-    public TooManyRegistedRtti(IComponentKey key, IDiconElement[] components) {
-        super(key.getDisplayName(),
-                KijimunaCore.getResourceString("dicon.tools.TooManyRegistedRtti.1", 
-                new Object[] { key, getKeysDisplay(key, components) }));
-        this.key = key;
-        this.components = components;
-    }
-    
-    public IDiconElement[] getRegistedComponents() {
-        return components;
-    }
-    
-    protected IRtti getWrappedRtti() {
-        if(key instanceof IRtti) {
-           return (IRtti)key; 
-        }
-        return null;
-    }
-    
-    public Object getAdapter(Class adapter) {
-        if(IComponentKey.class.equals(adapter)) {
-            return key;
-        }
-        return super.getAdapter(adapter);
-    }
+public class TooManyRegistedRtti extends HasErrorRtti implements ITooManyRegisted {
+
+	private IComponentKey key;
+	private IDiconElement[] components;
+
+	private static String getKeysDisplay(IComponentKey key, IDiconElement[] components) {
+		StringBuffer buffer = new StringBuffer();
+		for (int i = 0; i < components.length; i++) {
+			if (i != 0) {
+				buffer.append(", ");
+			}
+			buffer.append(components[i].getDisplayName());
+		}
+		return buffer.toString();
+	}
+
+	public TooManyRegistedRtti(IComponentKey key, IDiconElement[] components) {
+		super(key.getDisplayName(), KijimunaCore.getResourceString(
+				"dicon.tools.TooManyRegistedRtti.1", new Object[] {
+						key, getKeysDisplay(key, components)
+				}));
+		this.key = key;
+		this.components = components;
+	}
+
+	public IDiconElement[] getRegistedComponents() {
+		return components;
+	}
+
+	protected IRtti getWrappedRtti() {
+		if (key instanceof IRtti) {
+			return (IRtti) key;
+		}
+		return null;
+	}
+
+	public Object getAdapter(Class adapter) {
+		if (IComponentKey.class.equals(adapter)) {
+			return key;
+		}
+		return super.getAdapter(adapter);
+	}
+
 }

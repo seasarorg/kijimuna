@@ -29,38 +29,39 @@ import org.seasar.kijimuna.core.util.StringUtils;
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class IncludeValidation  implements IValidation, ConstCore {
+public class IncludeValidation implements IValidation, ConstCore {
 
-    public void validation(IDiconElement element) {
-        if(element instanceof IIncludeElement) {
-            validInclude((IIncludeElement)element);
-        }
-    }
-    
-    private void validInclude(IIncludeElement include) {
-        String path = include.getPath();
-        if(StringUtils.noneValue(path)) {
-            MarkerSetting.createDiconMarker(
-                    "dicon.validation.IncludeValidation.1",
-                    include);
-            return;
-        }
-        IContainerElement containerElement = include.getChildContainer();
-        if(containerElement == null) {
-            MarkerSetting.createDiconMarker(
-                    "dicon.validation.IncludeValidation.2",
-                    include, new Object[]{ path });
-            return;
-        }
-        if (isRoopInclude(containerElement, new Stack())) {
-            MarkerSetting.createDiconMarker(
-                    "dicon.validation.IncludeValidation.3",
-                    include, new Object[]{ path });
-            return;
-        }
-    }
+	public void validation(IDiconElement element) {
+		if (element instanceof IIncludeElement) {
+			validInclude((IIncludeElement) element);
+		}
+	}
 
-    private boolean isRoopInclude(IContainerElement containerElement, Stack stack) {
+	private void validInclude(IIncludeElement include) {
+		String path = include.getPath();
+		if (StringUtils.noneValue(path)) {
+			MarkerSetting.createDiconMarker("dicon.validation.IncludeValidation.1",
+					include);
+			return;
+		}
+		IContainerElement containerElement = include.getChildContainer();
+		if (containerElement == null) {
+			MarkerSetting.createDiconMarker("dicon.validation.IncludeValidation.2",
+					include, new Object[] {
+						path
+					});
+			return;
+		}
+		if (isRoopInclude(containerElement, new Stack())) {
+			MarkerSetting.createDiconMarker("dicon.validation.IncludeValidation.3",
+					include, new Object[] {
+						path
+					});
+			return;
+		}
+	}
+
+	private boolean isRoopInclude(IContainerElement containerElement, Stack stack) {
 		for (Iterator it = containerElement.getIncludeList().iterator(); it.hasNext();) {
 			IIncludeElement incl = (IIncludeElement) it.next();
 			IContainerElement childContainer = incl.getChildContainer();
@@ -78,5 +79,6 @@ public class IncludeValidation  implements IValidation, ConstCore {
 			}
 		}
 		return false;
-    }
+	}
+
 }

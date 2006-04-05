@@ -25,6 +25,5 @@ public class DtdException extends RuntimeException {
 	public DtdException(String message, IOException e) {
 		super(message, e);
 	}
-	
-}
 
+}

@@ -22,6 +22,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.core.resources.IStorage;
+
 import org.seasar.kijimuna.core.rtti.IRtti;
 import org.seasar.kijimuna.core.rtti.IRttiCache;
 
@@ -31,35 +32,35 @@ import org.seasar.kijimuna.core.rtti.IRttiCache;
 public class DefaultRttiCache implements IRttiCache {
 
 	private Map rttiMap = new HashMap();
-	
+
 	public DefaultRttiCache() {
 	}
-	
-    public IRtti getRttiFromCache(String key) {
-        return (IRtti)rttiMap.get(key);
-    }
-    
-    public void putRttiToCache(String key, IRtti rtti) {
-        rttiMap.put(key, rtti);
-    }
-   
-    public void removeRttiFromCache(IStorage storage) {
-        Set set = new HashSet();
-        for(Iterator it = rttiMap.entrySet().iterator(); it.hasNext();) {
-            Map.Entry entry = (Map.Entry)it.next();
-            IRtti rtti = (IRtti)entry.getValue();
-            IStorage rttiStorage = (IStorage)rtti.getAdapter(IStorage.class);
-            if((rttiStorage != null) && (rttiStorage.equals(storage))) {
-                set.add(entry.getKey());
-            }
-        }
-        for(Iterator it = set.iterator(); it.hasNext();) {
-            rttiMap.remove(it.next());
-        }
-    }
-    
-    public void clearRttiCache() {
-        rttiMap.clear();
-    }
-	
+
+	public IRtti getRttiFromCache(String key) {
+		return (IRtti) rttiMap.get(key);
+	}
+
+	public void putRttiToCache(String key, IRtti rtti) {
+		rttiMap.put(key, rtti);
+	}
+
+	public void removeRttiFromCache(IStorage storage) {
+		Set set = new HashSet();
+		for (Iterator it = rttiMap.entrySet().iterator(); it.hasNext();) {
+			Map.Entry entry = (Map.Entry) it.next();
+			IRtti rtti = (IRtti) entry.getValue();
+			IStorage rttiStorage = (IStorage) rtti.getAdapter(IStorage.class);
+			if ((rttiStorage != null) && (rttiStorage.equals(storage))) {
+				set.add(entry.getKey());
+			}
+		}
+		for (Iterator it = set.iterator(); it.hasNext();) {
+			rttiMap.remove(it.next());
+		}
+	}
+
+	public void clearRttiCache() {
+		rttiMap.clear();
+	}
+
 }

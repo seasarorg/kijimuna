@@ -20,8 +20,8 @@ package org.seasar.kijimuna.core.dicon.model;
  */
 public interface IIncludeElement extends IDiconElement {
 
-    String getPath();
+	String getPath();
 
-    IContainerElement getChildContainer();
+	IContainerElement getChildContainer();
 
 }

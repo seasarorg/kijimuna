@@ -23,8 +23,8 @@ import junit.framework.TestCase;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.jdt.core.IPackageFragment;
+
 import org.seasar.kijimuna.core.ConstCore;
-import org.seasar.kijimuna.core.util.FileUtils;
 import org.seasar.kijimuna.core.test.TestProject;
 
 /**
@@ -33,12 +33,12 @@ import org.seasar.kijimuna.core.test.TestProject;
 public class FileUtilsTest extends TestCase implements ConstCore {
 
 	private TestProject testProject;
-    private IPackageFragment pack;
-    
-    public FileUtilsTest(String arg) {
-        super(arg);
-    }
- 
+	private IPackageFragment pack;
+
+	public FileUtilsTest(String arg) {
+		super(arg);
+	}
+
 	protected void setUp() throws Exception {
 		testProject = new TestProject();
 		pack = testProject.createPackage("test");
@@ -47,21 +47,21 @@ public class FileUtilsTest extends TestCase implements ConstCore {
 	protected void tearDown() throws Exception {
 		testProject.dispose();
 	}
-    
+
 	private String contents =
 		"<?xml=\"1.0\" encoding=\"UTF-8\"?>\r\n" +
 		"<conponents>\r\n" +
 		"	<component class=\"java.util.ArrayList\"/>\r\n" +
 		"</components>";
-	
+
 	public void testCreateFile() throws Exception {
-	    InputStream stream = new ByteArrayInputStream(contents.getBytes());
+		InputStream stream = new ByteArrayInputStream(contents.getBytes());
 		FileUtils.createFile(pack, "test.dicon", stream);
 		IPath path = pack.getPath().append("test.dicon");
 		IFile file = testProject.getProject().getFile(path);
-		
+
 		// TODO: not implement
-//		assertTrue(file.exists());
+		// assertTrue(file.exists());
 	}
 
 }

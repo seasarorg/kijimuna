@@ -22,6 +22,6 @@ import org.eclipse.core.resources.IProject;
  */
 public interface IProjectValidation {
 
-    void validation(IProject project);
-    
+	void validation(IProject project);
+
 }

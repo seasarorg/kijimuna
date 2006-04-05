@@ -27,7 +27,7 @@ public class ContainerRtti extends RttiWrapper {
 
 	private IContainerElement container;
 	private IComponentKey key;
-	
+
 	public ContainerRtti(IRtti rtti, IContainerElement container, IComponentKey key) {
 		super(rtti);
 		this.container = container;
@@ -35,12 +35,12 @@ public class ContainerRtti extends RttiWrapper {
 	}
 
 	public Object getAdapter(Class adapter) {
-		if(IContainerElement.class.equals(adapter)) {
+		if (IContainerElement.class.equals(adapter)) {
 			return container;
-		} else if(IComponentKey.class.equals(adapter)) {
-		    return key;
+		} else if (IComponentKey.class.equals(adapter)) {
+			return key;
 		}
 		return super.getAdapter(adapter);
 	}
-	
+
 }

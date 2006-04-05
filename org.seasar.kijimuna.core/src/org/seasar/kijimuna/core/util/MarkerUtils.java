@@ -23,6 +23,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+
 import org.seasar.kijimuna.core.ConstCore;
 import org.seasar.kijimuna.core.KijimunaCore;
 
@@ -30,71 +31,69 @@ import org.seasar.kijimuna.core.KijimunaCore;
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public class MarkerUtils implements ConstCore {
-    
-    private static int getSystemSeverity(int severity) {
-        switch(severity) {
-        	case MARKER_SEVERITY_ERROR:
-        	    return IMarker.SEVERITY_ERROR;
-        	case MARKER_SEVERITY_WARNING:
-        	    return IMarker.SEVERITY_WARNING;
-        	case MARKER_SEVERITY_INFO:
-        	    return IMarker.SEVERITY_INFO;
-        	default:
-        	    return -1;
-        }
-    }
-    
-    public static void createMarker(String type, String category, int severity,
-            IResource resource, int line, String message) {
-        if(resource != null) {
-	        if(		(severity == MARKER_SEVERITY_ERROR) ||
-	                (severity == MARKER_SEVERITY_WARNING) ||
-	                (severity == MARKER_SEVERITY_INFO)) {
-		        try {
-		    		IMarker marker = resource.createMarker(type);
-		    		Map map = new HashMap(4);
-		    		int systemSeverity = getSystemSeverity(severity);
-		    		map.put(IMarker.SEVERITY, new Integer(systemSeverity));
-		    		if (line < 1) {
-		    		    line = 1;
-		    		}
-	    			map.put(IMarker.LINE_NUMBER, new Integer(line));
-		    		map.put(MARKER_ATTR_CATEGORY, category);
-		    		map.put(IMarker.MESSAGE, message);
-		    		marker.setAttributes(map);
-		    	} catch (CoreException e) {
-		    		KijimunaCore.reportException(e);
-		    	}
-	    	}
-        }
-    }
-    
+
+	private static int getSystemSeverity(int severity) {
+		switch (severity) {
+		case MARKER_SEVERITY_ERROR:
+			return IMarker.SEVERITY_ERROR;
+		case MARKER_SEVERITY_WARNING:
+			return IMarker.SEVERITY_WARNING;
+		case MARKER_SEVERITY_INFO:
+			return IMarker.SEVERITY_INFO;
+		default:
+			return -1;
+		}
+	}
+
+	public static void createMarker(String type, String category, int severity,
+			IResource resource, int line, String message) {
+		if (resource != null) {
+			if ((severity == MARKER_SEVERITY_ERROR)
+					|| (severity == MARKER_SEVERITY_WARNING)
+					|| (severity == MARKER_SEVERITY_INFO)) {
+				try {
+					IMarker marker = resource.createMarker(type);
+					Map map = new HashMap(4);
+					int systemSeverity = getSystemSeverity(severity);
+					map.put(IMarker.SEVERITY, new Integer(systemSeverity));
+					if (line < 1) {
+						line = 1;
+					}
+					map.put(IMarker.LINE_NUMBER, new Integer(line));
+					map.put(MARKER_ATTR_CATEGORY, category);
+					map.put(IMarker.MESSAGE, message);
+					marker.setAttributes(map);
+				} catch (CoreException e) {
+					KijimunaCore.reportException(e);
+				}
+			}
+		}
+	}
+
 	public static void deleteMarker(IResource resource, String type) {
-        if(resource != null) {
-	    	try {
-	    		resource.deleteMarkers(
-	    		        type, true, IResource.DEPTH_INFINITE);
-	    	} catch (CoreException e) {
-	    		KijimunaCore.reportException(e);
-	    	}
-        }
-    }
+		if (resource != null) {
+			try {
+				resource.deleteMarkers(type, true, IResource.DEPTH_INFINITE);
+			} catch (CoreException e) {
+				KijimunaCore.reportException(e);
+			}
+		}
+	}
 
 	public static void removeAllMarker(String type) {
-	    IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
+		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
 		deleteMarker(root, type);
 	}
 
-    public static IMarker[] findMarker(IResource resource, String type) {
-        if(resource != null) {
-	        try {
-	    		return resource.findMarkers(
-	    		        type, true, IResource.DEPTH_INFINITE);
-	    	} catch (CoreException e) {
-	    		KijimunaCore.reportException(e);
-	    	}
-        }
+	public static IMarker[] findMarker(IResource resource, String type) {
+		if (resource != null) {
+			try {
+				return resource.findMarkers(type, true, IResource.DEPTH_INFINITE);
+			} catch (CoreException e) {
+				KijimunaCore.reportException(e);
+			}
+		}
 		return new IMarker[0];
-    }
+	}
 
 }

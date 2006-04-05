@@ -22,7 +22,7 @@ import java.util.Map;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaModelException;
-import org.eclipse.jdt.core.Signature;
+
 import org.seasar.kijimuna.core.KijimunaCore;
 import org.seasar.kijimuna.core.internal.rtti.DefaultRtti;
 import org.seasar.kijimuna.core.internal.rtti.DefaultRttiCache;
@@ -56,30 +56,29 @@ public class RttiLoader implements Serializable {
 	private transient IJavaProject project;
 	private transient IType host;
 	private transient Map qualifyNamesCashe;
-	
+
 	private IRttiCache cache;
 
-	public RttiLoader(String projectName,
-	        boolean autoConvert) {
+	public RttiLoader(String projectName, boolean autoConvert) {
 		this(projectName, autoConvert, new DefaultRttiCache(), null);
 	}
 
-	private RttiLoader(String projectName,
-	        boolean autoConvert, IRttiCache cache, String hostName) {
-	    this.projectName = projectName;
+	private RttiLoader(String projectName, boolean autoConvert, IRttiCache cache,
+			String hostName) {
+		this.projectName = projectName;
 		this.autoConvert = autoConvert;
 		this.hostName = hostName;
 		this.cache = cache;
 		this.qualifyNamesCashe = new HashMap();
 	}
-	
+
 	public IRttiCache getRttiCache() {
-	    return cache;
+		return cache;
 	}
-	
+
 	public IJavaProject getProject() {
-		if(project == null) {
-		    project = ProjectUtils.getJavaProject(projectName);
+		if (project == null) {
+			project = ProjectUtils.getJavaProject(projectName);
 		}
 		return project;
 	}
@@ -95,8 +94,8 @@ public class RttiLoader implements Serializable {
 
 	public IRtti loadRtti(String declareName) {
 		if (declareName == null) {
-			return loadHasErrorRtti(null,
-			        KijimunaCore.getResourceString("rtti.RttiLoader.1"));
+			return loadHasErrorRtti(null, KijimunaCore
+					.getResourceString("rtti.RttiLoader.1"));
 		}
 		declareName = removeIgnorableWhitespace(declareName);
 		declareName = removeGeneric(declareName);
@@ -104,15 +103,15 @@ public class RttiLoader implements Serializable {
 		boolean primitive = isPrimitive(declareName);
 		int arrayDepth = 0;
 		String loaderHostName = null;
-		
+
 		if (primitive) {
 			qualifiedName = getWrapperName(declareName);
 			loaderHostName = declareName;
 		} else {
 			arrayDepth = getArrayDepth(declareName);
 			if (arrayDepth == ERROR) {
-			    return loadHasErrorRtti(null,
-			            KijimunaCore.getResourceString("rtti.RttiLoader.2"));
+				return loadHasErrorRtti(null, KijimunaCore
+						.getResourceString("rtti.RttiLoader.2"));
 			} else if (arrayDepth > 0) {
 				qualifiedName = "java.lang.Object";
 				loaderHostName = getArrayItemName(declareName);
@@ -122,9 +121,9 @@ public class RttiLoader implements Serializable {
 			}
 		}
 		IRtti cached = cacheGet(qualifiedName, primitive, arrayDepth, loaderHostName);
-		if(cached == null) {
+		if (cached == null) {
 			IRtti arrayItemRtti = null;
-			if(arrayDepth > 0) {
+			if (arrayDepth > 0) {
 				arrayItemRtti = getArrayRtti(loaderHostName, arrayDepth - 1);
 			}
 			IType newType = null;
@@ -132,43 +131,45 @@ public class RttiLoader implements Serializable {
 				newType = getProject().findType(qualifiedName.replace('$', '.'));
 			} catch (JavaModelException ignore) {
 			}
-			if(newType == null) {
-			    return loadHasErrorRtti(qualifiedName, KijimunaCore.getResourceString(
-			            "rtti.RttiLoader.3", new Object[]{ qualifiedName }));
+			if (newType == null) {
+				return loadHasErrorRtti(qualifiedName, KijimunaCore.getResourceString(
+						"rtti.RttiLoader.3", new Object[] {
+							qualifiedName
+						}));
 			}
-			RttiLoader childLoader = new RttiLoader(
-			        projectName, autoConvert, getRttiCache(), qualifiedName);
-			cached = new DefaultRtti(childLoader, newType,
-					qualifiedName, primitive, arrayDepth, arrayItemRtti, autoConvert);
+			RttiLoader childLoader = new RttiLoader(projectName, autoConvert,
+					getRttiCache(), qualifiedName);
+			cached = new DefaultRtti(childLoader, newType, qualifiedName, primitive,
+					arrayDepth, arrayItemRtti, autoConvert);
 			cachePut(qualifiedName, primitive, arrayDepth, loaderHostName, cached);
 		}
 		return cached;
 	}
-	
+
 	public HasErrorRtti loadHasErrorRtti(String qualifiedName, String message) {
-	    return new HasErrorRtti(qualifiedName, message);
+		return new HasErrorRtti(qualifiedName, message);
 	}
-	
-	private String createKey(String fullQualifiedName,
-			boolean primitive, int arrayDepth, String loaderHostName) {
+
+	private String createKey(String fullQualifiedName, boolean primitive, int arrayDepth,
+			String loaderHostName) {
 		StringBuffer buffer = new StringBuffer(fullQualifiedName);
 		buffer.append("/").append(primitive);
-		if(arrayDepth > 0) {
+		if (arrayDepth > 0) {
 			buffer.append("/").append(arrayDepth).append("/").append(loaderHostName);
 		}
 		return buffer.toString();
 	}
-	
-	private IRtti cacheGet(String fullQualifiedName,
-			boolean primitive, int arrayDepth, String loaderHostName) {
-        String key = createKey(fullQualifiedName, primitive, arrayDepth, loaderHostName);
-        return getRttiCache().getRttiFromCache(key);
+
+	private IRtti cacheGet(String fullQualifiedName, boolean primitive, int arrayDepth,
+			String loaderHostName) {
+		String key = createKey(fullQualifiedName, primitive, arrayDepth, loaderHostName);
+		return getRttiCache().getRttiFromCache(key);
 	}
 
-	private void cachePut(String fullQualifiedName, 
-			boolean primitive, int arrayDepth, String loaderHostName, IRtti rtti) {
-	    String key = createKey(fullQualifiedName, primitive, arrayDepth, loaderHostName);
-	    getRttiCache().putRttiToCache(key, rtti);
+	private void cachePut(String fullQualifiedName, boolean primitive, int arrayDepth,
+			String loaderHostName, IRtti rtti) {
+		String key = createKey(fullQualifiedName, primitive, arrayDepth, loaderHostName);
+		getRttiCache().putRttiToCache(key, rtti);
 	}
 
 	private String removeIgnorableWhitespace(String declareName) {
@@ -180,7 +181,7 @@ public class RttiLoader implements Serializable {
 	}
 
 	private String removeGeneric(String declareName) {
-		int index = declareName.indexOf('<'); 
+		int index = declareName.indexOf('<');
 		if (0 <= index) {
 			declareName = declareName.substring(0, index);
 		}
@@ -188,13 +189,13 @@ public class RttiLoader implements Serializable {
 	}
 
 	private String qualifyName(String declareName) {
-	    if((host == null) && StringUtils.existValue(hostName)) {
-	        try {
-                host = getProject().findType(hostName.replace('$', '.'));
-            } catch (JavaModelException e) {
-            }
-	    }
-		if (host!= null) {
+		if ((host == null) && StringUtils.existValue(hostName)) {
+			try {
+				host = getProject().findType(hostName.replace('$', '.'));
+			} catch (JavaModelException e) {
+			}
+		}
+		if (host != null) {
 			String qualifyName = (String) qualifyNamesCashe.get(declareName);
 			if (qualifyName != null) {
 				return qualifyName;
@@ -224,7 +225,7 @@ public class RttiLoader implements Serializable {
 		String declareItemName = declareName.substring(0, pos);
 		return qualifyName(declareItemName);
 	}
-	
+
 	private int getArrayDepth(String declareName) {
 		int depth = 0;
 		int pos = declareName.indexOf("[");
@@ -249,7 +250,7 @@ public class RttiLoader implements Serializable {
 
 	private IRtti getArrayRtti(String itemQualifiedName, int depth) {
 		StringBuffer name = new StringBuffer(itemQualifiedName);
-		for(int i = 0; i < depth; i++) {
+		for (int i = 0; i < depth; i++) {
 			name.append("[]");
 		}
 		return loadRtti(name.toString());
@@ -262,6 +263,5 @@ public class RttiLoader implements Serializable {
 	private String getWrapperName(String declareName) {
 		return (String) PRIMITIVES.get(declareName);
 	}
-
 
 }

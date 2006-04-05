@@ -21,19 +21,17 @@ import java.net.URL;
 import junit.framework.TestCase;
 
 import org.eclipse.core.resources.IProject;
-import org.seasar.kijimuna.core.ConstCore;
-import org.seasar.kijimuna.core.KijimunaCore;
-import org.seasar.kijimuna.core.util.ProjectUtils;
-import org.seasar.kijimuna.core.test.TestProject;
 
+import org.seasar.kijimuna.core.test.TestProject;
+import org.seasar.kijimuna.core.util.ProjectUtils;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc)
  */
-public class KijimunaTest extends TestCase  implements ConstCore {
+public class KijimunaTest extends TestCase implements ConstCore {
 
 	private TestProject project;
-	
+
 	public KijimunaTest(String name) {
 		super(name);
 	}
@@ -45,7 +43,7 @@ public class KijimunaTest extends TestCase  implements ConstCore {
 	protected void tearDown() throws Exception {
 		project.dispose();
 	}
-	
+
 	public void testOperateDiconNature() throws Exception {
 		IProject proj = project.getProject();
 		ProjectUtils.addNature(proj, ID_NATURE_DICON);
@@ -53,12 +51,12 @@ public class KijimunaTest extends TestCase  implements ConstCore {
 		ProjectUtils.removeNature(proj, ID_NATURE_DICON);
 		assertTrue(ProjectUtils.getNature(proj, ID_NATURE_DICON) == null);
 	}
-	
+
 	public void testGetEntry() throws Exception {
 		URL url = KijimunaCore.getEntry("/components.dtd");
 		InputStream in = url.openStream();
 		int i = in.read();
-		assertEquals((char)i, '<');
+		assertEquals((char) i, '<');
 	}
-	
+
 }

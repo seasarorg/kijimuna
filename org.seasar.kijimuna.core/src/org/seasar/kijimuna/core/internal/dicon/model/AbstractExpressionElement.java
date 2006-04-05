@@ -17,6 +17,7 @@ package org.seasar.kijimuna.core.internal.dicon.model;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IStorage;
+
 import org.seasar.kijimuna.core.KijimunaCore;
 import org.seasar.kijimuna.core.dicon.DiconOgnlRtti;
 import org.seasar.kijimuna.core.dicon.ModelManager;
@@ -29,71 +30,70 @@ import org.seasar.kijimuna.core.util.StringUtils;
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-abstract class AbstractExpressionElement
-		extends DiconElement implements IExpressionElement {
+abstract class AbstractExpressionElement extends DiconElement implements
+		IExpressionElement {
 
 	protected IRtti rtti;
-    private boolean locking;
+	private boolean locking;
 
-	
 	public boolean isLocking() {
-	    return locking;
+		return locking;
 	}
-	
+
 	public void setLocking(boolean validating) {
-	    this.locking = validating;
+		this.locking = validating;
 	}
-	
-	protected AbstractExpressionElement(
-	        IProject project, IStorage storage, String elementName) {
+
+	protected AbstractExpressionElement(IProject project, IStorage storage,
+			String elementName) {
 		super(project, storage, elementName);
 	}
-	
+
 	public String getExpression() {
 		return StringUtils.replaceIgnorableChars(getBody());
 	}
-	
+
 	protected abstract IRtti getNonExpressionValue();
 
 	protected IRtti getExpressionValue(String el) {
 		DiconOgnlRtti ognlRtti = new DiconOgnlRtti(getRttiLoader());
 		return ognlRtti.getValue(getContainerElement(), el);
 	}
-	
-    public Object getAdapter(Class adapter) {
-        if(IRtti.class.equals(adapter)) {
-            if((rtti == null) || !isLocking()) {
-	    		String el = getExpression();
-    		    if(StringUtils.existValue(el)) {
-    				rtti = getExpressionValue(el);
-    			} else {
-    			    rtti = getNonExpressionValue();
-    			}
-    		    if(rtti != null) {
-	    		    IStorage storage = (IStorage)rtti.getAdapter(IStorage.class);
-	    		    if(storage != null) {
-	    		        ModelManager model = getNature().getModel();
-	    		        model.addContainerAndRelatedFile(getContainerElement(), storage);
-	    		    }
-    		    }
-            }
-    		return rtti;
-        }
-        return super.getAdapter(adapter);
-    }
+
+	public Object getAdapter(Class adapter) {
+		if (IRtti.class.equals(adapter)) {
+			if ((rtti == null) || !isLocking()) {
+				String el = getExpression();
+				if (StringUtils.existValue(el)) {
+					rtti = getExpressionValue(el);
+				} else {
+					rtti = getNonExpressionValue();
+				}
+				if (rtti != null) {
+					IStorage storage = (IStorage) rtti.getAdapter(IStorage.class);
+					if (storage != null) {
+						ModelManager model = getNature().getModel();
+						model.addContainerAndRelatedFile(getContainerElement(), storage);
+					}
+				}
+			}
+			return rtti;
+		}
+		return super.getAdapter(adapter);
+	}
 
 	public String getDisplayName() {
 		StringBuffer buffer = new StringBuffer();
-		if(isOGNL()) {
+		if (isOGNL()) {
 			String expression = getExpression();
 			buffer.append("[").append(expression).append("]");
 		} else {
-			IRtti value = (IRtti)getAdapter(IRtti.class);
-			if(value != null) {
-			    buffer.append(value.getQualifiedName());
+			IRtti value = (IRtti) getAdapter(IRtti.class);
+			if (value != null) {
+				buffer.append(value.getQualifiedName());
 			} else {
-			    buffer.append(KijimunaCore.getResourceString(
-			            "dicon.model.AbstractExpressionElement.1"));
+				buffer.append(KijimunaCore
+						.getResourceString("dicon.model.AbstractExpressionElement.1"));
 			}
 		}
 		return buffer.toString();
@@ -101,15 +101,15 @@ abstract class AbstractExpressionElement
 
 	public boolean isOGNL() {
 		String expression = getExpression();
-	    if(StringUtils.existValue(expression)) {
-			IRtti value = (IRtti)getAdapter(IRtti.class);
-			if(value instanceof HasErrorRtti) {
-	            return false;
-	        } else if(!(value instanceof IDirectAccessed)) {
-	            return true;
-	        }
-	    }
-	    return false;	
+		if (StringUtils.existValue(expression)) {
+			IRtti value = (IRtti) getAdapter(IRtti.class);
+			if (value instanceof HasErrorRtti) {
+				return false;
+			} else if (!(value instanceof IDirectAccessed)) {
+				return true;
+			}
+		}
+		return false;
 	}
-	
+
 }

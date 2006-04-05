@@ -19,10 +19,9 @@ import junit.framework.TestCase;
 
 import org.eclipse.core.resources.ICommand;
 import org.eclipse.core.resources.IProject;
-import org.seasar.kijimuna.core.ConstCore;
-import org.seasar.kijimuna.core.dicon.DiconNature;
-import org.seasar.kijimuna.core.test.TestProject;
 
+import org.seasar.kijimuna.core.ConstCore;
+import org.seasar.kijimuna.core.test.TestProject;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc)
@@ -30,11 +29,11 @@ import org.seasar.kijimuna.core.test.TestProject;
 public class DiconNatureTest extends TestCase implements ConstCore {
 
 	private TestProject testProject;
-	
+
 	public DiconNatureTest(String arg) {
 		super(arg);
 	}
-	
+
 	protected void setUp() throws Exception {
 		testProject = new TestProject();
 	}
@@ -42,18 +41,18 @@ public class DiconNatureTest extends TestCase implements ConstCore {
 	protected void tearDown() throws Exception {
 		testProject.dispose();
 	}
- 
+
 	private int countBuilder(ICommand[] builders) {
 		int num = 0;
-		for(int i = 0; i < builders.length; i++) {
+		for (int i = 0; i < builders.length; i++) {
 			String name = builders[i].getBuilderName();
-			if(name.equals(ID_PROCESSOR_DICON_BUILDER)) {
+			if (name.equals(ID_PROCESSOR_DICON_BUILDER)) {
 				num++;
 			}
 		}
 		return num;
 	}
-	
+
 	public void testConfigureDeconfigure() throws Exception {
 		IProject project = testProject.getProject();
 		DiconNature nature = new DiconNature();

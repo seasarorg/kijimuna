@@ -25,21 +25,22 @@ import org.seasar.kijimuna.core.rtti.RttiWrapper;
  */
 public class InjectedRtti extends RttiWrapper {
 
-    private IComponentElement component;
-    private IComponentKey key;
-    
-    public InjectedRtti(IRtti rtti, IComponentElement component, IComponentKey key) {
-        super(rtti);
-        this.component = component;
-        this.key = key;
-    }
+	private IComponentElement component;
+	private IComponentKey key;
+
+	public InjectedRtti(IRtti rtti, IComponentElement component, IComponentKey key) {
+		super(rtti);
+		this.component = component;
+		this.key = key;
+	}
 
 	public Object getAdapter(Class adapter) {
-		if(IComponentElement.class.equals(adapter)) {
+		if (IComponentElement.class.equals(adapter)) {
 			return component;
-		} else if(IComponentKey.class.equals(adapter)) {
-		    return key;
+		} else if (IComponentKey.class.equals(adapter)) {
+			return key;
 		}
 		return super.getAdapter(adapter);
 	}
+
 }

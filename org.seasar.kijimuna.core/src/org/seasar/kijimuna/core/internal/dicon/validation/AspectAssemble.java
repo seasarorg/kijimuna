@@ -20,8 +20,8 @@ import java.util.List;
 import org.seasar.kijimuna.core.ConstCore;
 import org.seasar.kijimuna.core.dicon.IValidation;
 import org.seasar.kijimuna.core.dicon.MarkerSetting;
-import org.seasar.kijimuna.core.dicon.model.IDiconElement;
 import org.seasar.kijimuna.core.dicon.model.IComponentElement;
+import org.seasar.kijimuna.core.dicon.model.IDiconElement;
 import org.seasar.kijimuna.core.rtti.IRtti;
 
 /**
@@ -29,23 +29,25 @@ import org.seasar.kijimuna.core.rtti.IRtti;
  */
 public class AspectAssemble implements IValidation, ConstCore {
 
-    public void validation(IDiconElement element) {
-        if(element instanceof IComponentElement) {
-            assemble((IComponentElement)element);
-        }
-    }
+	public void validation(IDiconElement element) {
+		if (element instanceof IComponentElement) {
+			assemble((IComponentElement) element);
+		}
+	}
 
-    private void assemble(IComponentElement component) {
-        IRtti rtti = (IRtti)component.getAdapter(IRtti.class);
-        if(rtti != null) {
-            if(rtti.isInterface()) {
-                List aspects = component.getAspectList();
-                if(aspects.size() == 0) {
-                    MarkerSetting.createDiconMarker(
-                            "dicon.validation.AspectAssemble.1",
-                            component, new Object[] { rtti.getQualifiedName() });
-                }
-            }
-        }
-    }
+	private void assemble(IComponentElement component) {
+		IRtti rtti = (IRtti) component.getAdapter(IRtti.class);
+		if (rtti != null) {
+			if (rtti.isInterface()) {
+				List aspects = component.getAspectList();
+				if (aspects.size() == 0) {
+					MarkerSetting.createDiconMarker("dicon.validation.AspectAssemble.1",
+							component, new Object[] {
+								rtti.getQualifiedName()
+							});
+				}
+			}
+		}
+	}
+
 }

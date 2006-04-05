@@ -22,6 +22,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceVisitor;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+
 import org.seasar.kijimuna.core.util.FileUtils;
 import org.seasar.kijimuna.core.util.ProjectUtils;
 
@@ -29,32 +30,32 @@ import org.seasar.kijimuna.core.util.ProjectUtils;
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public class ResourceVisitor implements IResourceVisitor {
-	
+
 	private String natureID;
-    private IFileProcessor builder;
+	private IFileProcessor builder;
 	private IProgressMonitor monitor;
 
-	public ResourceVisitor(String natureID, IFileProcessor builder, IProgressMonitor monitor) {
+	public ResourceVisitor(String natureID, IFileProcessor builder,
+			IProgressMonitor monitor) {
 		this.natureID = natureID;
-	    this.builder = builder;
+		this.builder = builder;
 		this.monitor = monitor;
 	}
-	
+
 	public boolean visit(IResource resource) throws CoreException {
 		if (resource instanceof IProject) {
 			IProject project = (IProject) resource;
-			if(project.isOpen() &&
-			        (ProjectUtils.getNature(project, natureID) != null)) {
+			if (project.isOpen() && (ProjectUtils.getNature(project, natureID) != null)) {
 				builder.handlePrepareFullProcess(project, monitor);
 				return true;
 			}
 		} else if (resource instanceof IFolder) {
 			return true;
 		} else if (resource instanceof IFile) {
-		    if(FileUtils.isInJavaSourceFolder((IFile) resource)) {
-		        IFile file = (IFile) resource;
-		        builder.handleFileAdded(file, true, monitor);
-		    }
+			if (FileUtils.isInJavaSourceFolder((IFile) resource)) {
+				IFile file = (IFile) resource;
+				builder.handleFileAdded(file, true, monitor);
+			}
 		}
 		return false;
 	}

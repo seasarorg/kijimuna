@@ -20,6 +20,6 @@ package org.seasar.kijimuna.core.dicon.model;
  */
 public interface IDescriptionElement extends IDiconElement {
 
-    String getDescription();
-    
+	String getDescription();
+
 }

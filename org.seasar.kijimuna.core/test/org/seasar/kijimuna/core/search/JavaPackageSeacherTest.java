@@ -18,56 +18,55 @@ package org.seasar.kijimuna.core.search;
 import java.util.ArrayList;
 import java.util.List;
 
+import junit.framework.TestCase;
+
 import org.eclipse.core.resources.IProject;
 import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.jdt.core.IType;
-import org.seasar.kijimuna.core.ConstCore;
-import org.seasar.kijimuna.core.search.IPackageRequestor;
-import org.seasar.kijimuna.core.search.JavaPackageSearcher;
-import org.seasar.kijimuna.core.test.TestProject;
 
-import junit.framework.TestCase;
+import org.seasar.kijimuna.core.ConstCore;
+import org.seasar.kijimuna.core.test.TestProject;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public class JavaPackageSeacherTest extends TestCase implements ConstCore {
 
-    private TestProject testProject;
-    private IProject project;
-    
-    public JavaPackageSeacherTest(String arg) {
-        super(arg);
-    }
-    
-    protected void setUp() throws Exception {
-        testProject = new TestProject();
-        project = testProject.getProject();
-        testProject.addJar(ID_PLUGIN_CORE, "/dtdparser-1.2.1.jar");
-    }
+	private TestProject testProject;
+	private IProject project;
 
-    protected void tearDown() throws Exception {
-        testProject.dispose();
-    }
+	public JavaPackageSeacherTest(String arg) {
+		super(arg);
+	}
 
-    public void testSearchPackagesAndTypes1() throws Exception {
-        JavaPackageSearcher searcher = new JavaPackageSearcher(project);
-        List list = new ArrayList();
-        IPackageRequestor requestor = searcher.createDefaultRequestor(list);
-        searcher.searchPackagesAndTypes("com.wutka.d", requestor);
-        assertEquals(list.size(), 1);
-        IPackageFragment pack = (IPackageFragment)list.get(0);
-        assertEquals(pack.getElementName(), "com.wutka.dtd");
-    }
+	protected void setUp() throws Exception {
+		testProject = new TestProject();
+		project = testProject.getProject();
+		testProject.addJar(ID_PLUGIN_CORE, "/dtdparser-1.2.1.jar");
+	}
 
-    public void testSearchPackagesAndTypes2() throws Exception {
-        JavaPackageSearcher searcher = new JavaPackageSearcher(project);
-        List list = new ArrayList();
-        IPackageRequestor requestor = searcher.createDefaultRequestor(list);
-        searcher.searchPackagesAndTypes("com.wutka.dtd.DTDEl", requestor);
-        assertEquals(list.size(), 1);
-        IType type = (IType)list.get(0);
-        assertEquals(type.getFullyQualifiedName(), "com.wutka.dtd.DTDElement");
-    }
-    
+	protected void tearDown() throws Exception {
+		testProject.dispose();
+	}
+
+	public void testSearchPackagesAndTypes1() throws Exception {
+		JavaPackageSearcher searcher = new JavaPackageSearcher(project);
+		List list = new ArrayList();
+		IPackageRequestor requestor = searcher.createDefaultRequestor(list);
+		searcher.searchPackagesAndTypes("com.wutka.d", requestor);
+		assertEquals(list.size(), 1);
+		IPackageFragment pack = (IPackageFragment) list.get(0);
+		assertEquals(pack.getElementName(), "com.wutka.dtd");
+	}
+
+	public void testSearchPackagesAndTypes2() throws Exception {
+		JavaPackageSearcher searcher = new JavaPackageSearcher(project);
+		List list = new ArrayList();
+		IPackageRequestor requestor = searcher.createDefaultRequestor(list);
+		searcher.searchPackagesAndTypes("com.wutka.dtd.DTDEl", requestor);
+		assertEquals(list.size(), 1);
+		IType type = (IType) list.get(0);
+		assertEquals(type.getFullyQualifiedName(), "com.wutka.dtd.DTDElement");
+	}
+
 }

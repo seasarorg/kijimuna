@@ -18,33 +18,33 @@ package org.seasar.kijimuna.core;
 import org.eclipse.core.runtime.preferences.DefaultScope;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.InstanceScope;
+
 import org.seasar.kijimuna.core.preference.CascadePreferences;
 import org.seasar.kijimuna.core.preference.PluginScope;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class KijimunaPreferences extends CascadePreferences
-		implements ConstCore {
+public class KijimunaPreferences extends CascadePreferences implements ConstCore {
 
 	private static IEclipsePreferences getBase() {
 		return (new DefaultScope()).getNode(ID_PLUGIN_CORE);
 	}
-	
+
 	private static IEclipsePreferences getDefault() {
 		return (new InstanceScope()).getNode(ID_PLUGIN_CORE);
 	}
-	
+
 	private static IEclipsePreferences getPref(String qualifier) {
 		return (new PluginScope(KijimunaCore.getInstance())).getNode(qualifier);
 	}
-	
+
 	public KijimunaPreferences() {
-	    super(getDefault(), getBase());
+		super(getDefault(), getBase());
 	}
-	
+
 	public KijimunaPreferences(String qualifier) {
 		super(getPref(qualifier), getDefault(), getBase());
 	}
-	
+
 }

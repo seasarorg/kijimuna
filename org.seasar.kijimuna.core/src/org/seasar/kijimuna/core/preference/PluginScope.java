@@ -29,26 +29,26 @@ public class PluginScope implements IScopeContext {
 
 	public static final String SCOPE = "plugin";
 	private Plugin plugin;
-    
-	public PluginScope(Plugin plugin) {
-	    super();
-	    if(plugin == null) {
-			throw new IllegalArgumentException();
-	    }
-	    this.plugin = plugin;
-	}
-	
-    public IPath getLocation() {
-    	IPath path = ResourcesPlugin.getPlugin().getStateLocation();
-    	String pluginID = plugin.getBundle().getSymbolicName();
-    	path = path.removeLastSegments(1).append(pluginID);
-    	return path;
-    }
 
-    public String getName() {
-        return SCOPE;
-    }
-    
+	public PluginScope(Plugin plugin) {
+		super();
+		if (plugin == null) {
+			throw new IllegalArgumentException();
+		}
+		this.plugin = plugin;
+	}
+
+	public IPath getLocation() {
+		IPath path = ResourcesPlugin.getPlugin().getStateLocation();
+		String pluginID = plugin.getBundle().getSymbolicName();
+		path = path.removeLastSegments(1).append(pluginID);
+		return path;
+	}
+
+	public String getName() {
+		return SCOPE;
+	}
+
 	public IEclipsePreferences getNode(String qualifier) {
 		if (qualifier == null) {
 			throw new IllegalArgumentException();
@@ -57,8 +57,8 @@ public class PluginScope implements IScopeContext {
 			return null;
 		}
 		IEclipsePreferences root = Platform.getPreferencesService().getRootNode();
-    	String pluginID = plugin.getBundle().getSymbolicName();
-		return (IEclipsePreferences)root.node(SCOPE).node(pluginID).node(qualifier);
+		String pluginID = plugin.getBundle().getSymbolicName();
+		return (IEclipsePreferences) root.node(SCOPE).node(pluginID).node(qualifier);
 	}
-    
+
 }

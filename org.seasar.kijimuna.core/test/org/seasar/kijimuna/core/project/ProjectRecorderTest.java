@@ -22,12 +22,12 @@ import junit.framework.TestCase;
  */
 public class ProjectRecorderTest extends TestCase {
 
-    public ProjectRecorderTest(String arg) {
-        super(arg);
-    }
+	public ProjectRecorderTest(String arg) {
+		super(arg);
+	}
 
 	public void testExample() throws Exception {
 		// TODO: not implement
 	}
-	
+
 }

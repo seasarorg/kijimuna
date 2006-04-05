@@ -20,6 +20,6 @@ import java.io.Serializable;
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public interface IRttiMethodDesctiptor 
-		extends IRttiInvokableDesctiptor, Serializable, Comparable {
+public interface IRttiMethodDesctiptor extends IRttiInvokableDesctiptor, Serializable,
+		Comparable {
 }
