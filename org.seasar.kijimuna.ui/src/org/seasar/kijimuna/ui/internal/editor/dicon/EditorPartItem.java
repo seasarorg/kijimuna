@@ -21,28 +21,29 @@ import org.eclipse.ui.IEditorPart;
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public class EditorPartItem implements Comparable {
-    private IEditorPart editor;
-    private String title;
-    private int index;
-    
-    public EditorPartItem(IEditorPart editor, String title, int index) {
-        this.editor = editor;
-        this.title = title;
-        this.index = index;
-    }
 
-    public int compareTo(Object obj) {
-        EditorPartItem comparer = (EditorPartItem)obj;
-        int compIndex = comparer.index;
-        return index - compIndex;
-    }
-    
-    public IEditorPart getEditorPart() {
-        return editor;
-    }
-    
-    public String getTitle() {
-        return title;
-    }
-    
+	private IEditorPart editor;
+	private String title;
+	private int index;
+
+	public EditorPartItem(IEditorPart editor, String title, int index) {
+		this.editor = editor;
+		this.title = title;
+		this.index = index;
+	}
+
+	public int compareTo(Object obj) {
+		EditorPartItem comparer = (EditorPartItem) obj;
+		int compIndex = comparer.index;
+		return index - compIndex;
+	}
+
+	public IEditorPart getEditorPart() {
+		return editor;
+	}
+
+	public String getTitle() {
+		return title;
+	}
+
 }

@@ -16,6 +16,7 @@
 package org.seasar.kijimuna.ui.internal.provider.dicon.walker;
 
 import org.eclipse.ui.views.properties.IPropertySource;
+
 import org.seasar.kijimuna.ui.internal.provider.dicon.IContentWalker;
 
 /**
@@ -23,37 +24,37 @@ import org.seasar.kijimuna.ui.internal.provider.dicon.IContentWalker;
  */
 public abstract class AbstractContentWalker implements IContentWalker {
 
-    private IPropertySource source;
-    private IContentWalker parent;
+	private IPropertySource source;
+	private IContentWalker parent;
 
-    public AbstractContentWalker(IContentWalker parent) {
-        this.parent = parent;
-    }
-    
-    protected IPropertySource createProperty() {
-        return null;
-    }
-    
-    public Object getParent() {
-        return parent;
-    }
-    
-    public Object[] getChildren() {
-        return new Object[0];
-    }
-    
-    public Object getAdapter(Class adapter) {
-        if(adapter.equals(IPropertySource.class)) {
-            if(source == null) {
-                source = createProperty();
-            }
-            return source;
-        }
-        return null;
-    }
+	public AbstractContentWalker(IContentWalker parent) {
+		this.parent = parent;
+	}
 
-    public boolean isDefaultExpandedState() {
-        return false;
-    }
+	protected IPropertySource createProperty() {
+		return null;
+	}
+
+	public Object getParent() {
+		return parent;
+	}
+
+	public Object[] getChildren() {
+		return new Object[0];
+	}
+
+	public Object getAdapter(Class adapter) {
+		if (adapter.equals(IPropertySource.class)) {
+			if (source == null) {
+				source = createProperty();
+			}
+			return source;
+		}
+		return null;
+	}
+
+	public boolean isDefaultExpandedState() {
+		return false;
+	}
 
 }

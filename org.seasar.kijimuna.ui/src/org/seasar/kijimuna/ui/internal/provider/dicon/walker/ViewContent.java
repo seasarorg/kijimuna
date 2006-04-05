@@ -20,6 +20,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.core.resources.IProject;
+
 import org.seasar.kijimuna.core.dicon.DiconNature;
 import org.seasar.kijimuna.core.dicon.model.IContainerElement;
 import org.seasar.kijimuna.ui.internal.provider.dicon.IContentRoot;
@@ -30,26 +31,26 @@ import org.seasar.kijimuna.ui.internal.provider.dicon.IContentRoot;
 public class ViewContent implements IContentRoot {
 
 	private IProject project;
-	
+
 	public ViewContent(IProject project) {
 		this.project = project;
 	}
-	
-    public Object[] getTopLevelItems() {
-    	final DiconNature nature = DiconNature.getInstance(project);
-        if(nature != null) {
+
+	public Object[] getTopLevelItems() {
+		final DiconNature nature = DiconNature.getInstance(project);
+		if (nature != null) {
 			List rootContainers = nature.getModel().getRootContainers(null);
-	    	if(rootContainers != null) {
+			if (rootContainers != null) {
 				Collections.sort(rootContainers);
-		    	ContentItem[] items = new ContentItem[rootContainers.size()];
-		    	Iterator it = rootContainers.iterator();
-		    	for(int i = 0 ; i < rootContainers.size(); i++) {
-		    		items[i] = new ContentItem((IContainerElement)it.next(), null, false);
-		    	}
+				ContentItem[] items = new ContentItem[rootContainers.size()];
+				Iterator it = rootContainers.iterator();
+				for (int i = 0; i < rootContainers.size(); i++) {
+					items[i] = new ContentItem((IContainerElement) it.next(), null, false);
+				}
 				return items;
-	    	}
-        }
-    	return new Object[0];
-    }	
-   
+			}
+		}
+		return new Object[0];
+	}
+
 }

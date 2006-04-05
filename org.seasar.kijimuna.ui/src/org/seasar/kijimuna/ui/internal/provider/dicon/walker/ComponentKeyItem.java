@@ -18,6 +18,7 @@ package org.seasar.kijimuna.ui.internal.provider.dicon.walker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.ui.views.properties.IPropertySource;
+
 import org.seasar.kijimuna.core.dicon.MarkerSetting;
 import org.seasar.kijimuna.core.dicon.info.IComponentKey;
 import org.seasar.kijimuna.core.rtti.IRtti;
@@ -28,60 +29,61 @@ import org.seasar.kijimuna.ui.internal.provider.dicon.property.ComponentKeyPrope
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class ComponentKeyItem extends AbstractInternalContainer
-		implements IHasJavaElement, ConstUI {
+public class ComponentKeyItem extends AbstractInternalContainer implements
+		IHasJavaElement, ConstUI {
 
-    private IComponentKey key;
-    
-    public ComponentKeyItem(ComponentKeyRoot parent, IComponentKey key) {
-        super(parent);
-        this.key = key;
-    }
+	private IComponentKey key;
 
-    protected IPropertySource createProperty() {
-        return new ComponentKeyProperty(key);
-    }
+	public ComponentKeyItem(ComponentKeyRoot parent, IComponentKey key) {
+		super(parent);
+		this.key = key;
+	}
 
-    
-    public int getMarkerSeverity() {
-    	int tooMany = key.getTooMany(); 
-        if(tooMany == IComponentKey.TOO_MANY_PROBLEM) {
-            IProject project = getElement().getProject();
-            return MarkerSetting.getDiconMarkerPreference(
-                    project, MARKER_CATEGORY_DICON_PROBLEM, false);
-        } else if (tooMany == IComponentKey.TOO_MANY_FETAL) {
-            IProject project = getElement().getProject();
-            return MarkerSetting.getDiconMarkerPreference(
-                    project, MARKER_CATEGORY_DICON_FETAL, false);
-        }
-        return super.getMarkerSeverity();
-    }
-    
-    public IJavaElement getJavaElement() {
-        IRtti rtti = (IRtti)key.getAdapter(IRtti.class);
-        if(rtti != null) {
-            return rtti.getType();
-        }
-        return null;
-    }
-    
-    public Object[] getChildren() {
-        if(key.getKeyType() == IComponentKey.INTERFACE) {
-            IRtti keyRtti = (IRtti)key.getAdapter(IRtti.class);
-            return new Object[] { new InterfaceItem(this, null, keyRtti) }; 
-        } 
-        return new Object[0];
-    }
-    
-    public String getDisplayName() {
-        return key.getDisplayName();
-    }
-    
-    public String getImageName() {
-        if(key.getKeyType() == IComponentKey.INTERFACE) {
-            return IMAGE_ICON_KEY_INTERFACE;
-        }
-        return IMAGE_ICON_KEY_STRING;
-    }
-    
+	protected IPropertySource createProperty() {
+		return new ComponentKeyProperty(key);
+	}
+
+	public int getMarkerSeverity() {
+		int tooMany = key.getTooMany();
+		if (tooMany == IComponentKey.TOO_MANY_PROBLEM) {
+			IProject project = getElement().getProject();
+			return MarkerSetting.getDiconMarkerPreference(project,
+					MARKER_CATEGORY_DICON_PROBLEM, false);
+		} else if (tooMany == IComponentKey.TOO_MANY_FETAL) {
+			IProject project = getElement().getProject();
+			return MarkerSetting.getDiconMarkerPreference(project,
+					MARKER_CATEGORY_DICON_FETAL, false);
+		}
+		return super.getMarkerSeverity();
+	}
+
+	public IJavaElement getJavaElement() {
+		IRtti rtti = (IRtti) key.getAdapter(IRtti.class);
+		if (rtti != null) {
+			return rtti.getType();
+		}
+		return null;
+	}
+
+	public Object[] getChildren() {
+		if (key.getKeyType() == IComponentKey.INTERFACE) {
+			IRtti keyRtti = (IRtti) key.getAdapter(IRtti.class);
+			return new Object[] {
+				new InterfaceItem(this, null, keyRtti)
+			};
+		}
+		return new Object[0];
+	}
+
+	public String getDisplayName() {
+		return key.getDisplayName();
+	}
+
+	public String getImageName() {
+		if (key.getKeyType() == IComponentKey.INTERFACE) {
+			return IMAGE_ICON_KEY_INTERFACE;
+		}
+		return IMAGE_ICON_KEY_STRING;
+	}
+
 }

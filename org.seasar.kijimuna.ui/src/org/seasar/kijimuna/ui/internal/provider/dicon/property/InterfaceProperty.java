@@ -17,6 +17,7 @@ package org.seasar.kijimuna.ui.internal.provider.dicon.property;
 
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
 import org.eclipse.ui.views.properties.PropertyDescriptor;
+
 import org.seasar.kijimuna.core.rtti.IRtti;
 import org.seasar.kijimuna.ui.KijimunaUI;
 
@@ -25,37 +26,36 @@ import org.seasar.kijimuna.ui.KijimunaUI;
  */
 public class InterfaceProperty extends NullProperty {
 
-    private static IPropertyDescriptor[] descriptors;
-    
-    static {
-        // info category
-        String category = KijimunaUI.getResourceString(
-                "dicon.provider.property.ContentProperty.4");
-        descriptors = new IPropertyDescriptor[1];
-        // Type
-        String id = "dicon.provider.property.MethodProperty.1";
-        PropertyDescriptor d = 
-            new PropertyDescriptor(id, KijimunaUI.getResourceString(id));
-        d.setCategory(category);
-        descriptors[0] = d;
-    }
+	private static IPropertyDescriptor[] descriptors;
 
-    private IRtti implementing;
-    
-    public InterfaceProperty(IRtti implementing) {
-    	this.implementing = implementing;
-    }
-    
+	static {
+		// info category
+		String category = KijimunaUI
+				.getResourceString("dicon.provider.property.ContentProperty.4");
+		descriptors = new IPropertyDescriptor[1];
+		// Type
+		String id = "dicon.provider.property.MethodProperty.1";
+		PropertyDescriptor d = new PropertyDescriptor(id, KijimunaUI
+				.getResourceString(id));
+		d.setCategory(category);
+		descriptors[0] = d;
+	}
+
+	private IRtti implementing;
+
+	public InterfaceProperty(IRtti implementing) {
+		this.implementing = implementing;
+	}
+
 	public IPropertyDescriptor[] getPropertyDescriptors() {
 		return descriptors;
 	}
-	
+
 	public Object getPropertyValue(Object id) {
-		if("dicon.provider.property.MethodProperty.1".equals(id)) {
+		if ("dicon.provider.property.MethodProperty.1".equals(id)) {
 			return implementing.getQualifiedName();
 		}
 		return null;
 	}
-	
-	
+
 }

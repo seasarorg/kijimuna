@@ -19,6 +19,7 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.ui.editors.text.TextEditor;
 import org.eclipse.ui.texteditor.ContentAssistAction;
 import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
+
 import org.seasar.kijimuna.ui.ConstUI;
 import org.seasar.kijimuna.ui.KijimunaUI;
 import org.seasar.kijimuna.ui.editor.configuration.ColorManager;
@@ -39,19 +40,19 @@ public class DiconXmlEditor extends TextEditor implements ConstUI {
 		setSourceViewerConfiguration(new DiconConfiguration(this, colorManager));
 		setDocumentProvider(new XmlDocumentProvider());
 	}
-	
+
 	public void dispose() {
 		colorManager.dispose();
 		super.dispose();
 	}
-	
+
 	protected void createActions() {
-	   super.createActions();
-	   IAction action = new ContentAssistAction(
-	           KijimunaUI.getResourceBundle(),
-	           ACTION_CONTENTASSIST_PROPOSAL, this);
-	   action.setActionDefinitionId(ITextEditorActionDefinitionIds.CONTENT_ASSIST_PROPOSALS);
-	   setAction(ACTION_CONTENTASSIST_PROPOSAL, action);
+		super.createActions();
+		IAction action = new ContentAssistAction(KijimunaUI.getResourceBundle(),
+				ACTION_CONTENTASSIST_PROPOSAL, this);
+		action
+				.setActionDefinitionId(ITextEditorActionDefinitionIds.CONTENT_ASSIST_PROPOSALS);
+		setAction(ACTION_CONTENTASSIST_PROPOSAL, action);
 	}
 
 }

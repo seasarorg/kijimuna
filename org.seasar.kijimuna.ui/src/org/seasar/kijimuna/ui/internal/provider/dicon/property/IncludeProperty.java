@@ -17,6 +17,7 @@ package org.seasar.kijimuna.ui.internal.provider.dicon.property;
 
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
 import org.eclipse.ui.views.properties.PropertyDescriptor;
+
 import org.seasar.kijimuna.core.ConstCore;
 import org.seasar.kijimuna.core.dicon.model.IIncludeElement;
 import org.seasar.kijimuna.ui.KijimunaUI;
@@ -24,36 +25,33 @@ import org.seasar.kijimuna.ui.KijimunaUI;
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class IncludeProperty extends NullProperty
-	implements ConstCore {
-	
-    private static IPropertyDescriptor[] descriptors;
-    
-    static {
-        descriptors = new IPropertyDescriptor[1];
-        PropertyDescriptor d = new PropertyDescriptor(
-		        DICON_ATTR_PATH, DICON_ATTR_PATH);
-        d.setCategory(KijimunaUI.getResourceString(
-                "dicon.provider.property.ContentProperty.3"));
-        descriptors[0] = d;        
-    }
-    
-    private IIncludeElement include;
+public class IncludeProperty extends NullProperty implements ConstCore {
 
-    public IncludeProperty(IIncludeElement include) {
-        this.include = include;
-    }
-     
+	private static IPropertyDescriptor[] descriptors;
+
+	static {
+		descriptors = new IPropertyDescriptor[1];
+		PropertyDescriptor d = new PropertyDescriptor(DICON_ATTR_PATH, DICON_ATTR_PATH);
+		d.setCategory(KijimunaUI
+				.getResourceString("dicon.provider.property.ContentProperty.3"));
+		descriptors[0] = d;
+	}
+
+	private IIncludeElement include;
+
+	public IncludeProperty(IIncludeElement include) {
+		this.include = include;
+	}
+
 	public IPropertyDescriptor[] getPropertyDescriptors() {
 		return descriptors;
 	}
-	
+
 	public Object getPropertyValue(Object id) {
-		if(DICON_ATTR_PATH.equals(id)) {
-		    return include.getPath();
+		if (DICON_ATTR_PATH.equals(id)) {
+			return include.getPath();
 		}
 		return null;
 	}
 
 }
-

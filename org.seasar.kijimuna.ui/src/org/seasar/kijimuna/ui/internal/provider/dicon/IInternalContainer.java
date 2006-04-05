@@ -23,12 +23,12 @@ import org.seasar.kijimuna.core.dicon.model.IDiconElement;
  */
 public interface IInternalContainer extends IContentWalker {
 
-    int getMarkerSeverity();
-    
-    boolean isOGNL();
-    
+	int getMarkerSeverity();
+
+	boolean isOGNL();
+
 	IDiconElement getElement();
-	
+
 	IContainerElement getContainer();
-	
+
 }

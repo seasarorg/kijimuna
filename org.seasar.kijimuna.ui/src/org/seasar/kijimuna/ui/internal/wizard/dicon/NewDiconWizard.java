@@ -18,6 +18,7 @@ package org.seasar.kijimuna.ui.internal.wizard.dicon;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.wizards.newresource.BasicNewResourceWizard;
+
 import org.seasar.kijimuna.ui.ConstUI;
 import org.seasar.kijimuna.ui.KijimunaUI;
 import org.seasar.kijimuna.ui.util.WidgetUtils;
@@ -25,35 +26,34 @@ import org.seasar.kijimuna.ui.util.WidgetUtils;
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class NewDiconWizard extends BasicNewResourceWizard
-		implements ConstUI {
-    
-    private NewDiconWizardPage page;
-    
-    public void init(IWorkbench workbench, IStructuredSelection currentSelection) {
-    	super.init(workbench, currentSelection);
-    	setWindowTitle(KijimunaUI.getResourceString("dicon.wizard.NewDiconWizard.1")); //$NON-NLS-1$
-    	setNeedsProgressMonitor(true);
-    }
-    
-    public void addPages() {
-    	super.addPages();
-    	page = new NewDiconWizardPage("newDiconPage");
-    	addPage(page);    	
-    	page.init(getSelection());
-    }
+public class NewDiconWizard extends BasicNewResourceWizard implements ConstUI {
 
-    public void dispose() {
-        super.dispose();
-        
-    }
+	private NewDiconWizardPage page;
 
-    protected void initializeDefaultPageImageDescriptor() {
-        setDefaultPageImageDescriptor(
-                WidgetUtils.getImageDescriptor(IMAGE_NEW_DICON));
-    }    
-    
-    public boolean performFinish() {
-        return page.createDiconFile();
-    }
+	public void init(IWorkbench workbench, IStructuredSelection currentSelection) {
+		super.init(workbench, currentSelection);
+		setWindowTitle(KijimunaUI.getResourceString("dicon.wizard.NewDiconWizard.1")); //$NON-NLS-1$
+		setNeedsProgressMonitor(true);
+	}
+
+	public void addPages() {
+		super.addPages();
+		page = new NewDiconWizardPage("newDiconPage");
+		addPage(page);
+		page.init(getSelection());
+	}
+
+	public void dispose() {
+		super.dispose();
+
+	}
+
+	protected void initializeDefaultPageImageDescriptor() {
+		setDefaultPageImageDescriptor(WidgetUtils.getImageDescriptor(IMAGE_NEW_DICON));
+	}
+
+	public boolean performFinish() {
+		return page.createDiconFile();
+	}
+
 }

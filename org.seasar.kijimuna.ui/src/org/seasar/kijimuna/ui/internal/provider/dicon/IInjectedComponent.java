@@ -25,9 +25,9 @@ public interface IInjectedComponent extends IInternalContainer {
 	int INJECTED_AUTO = 0;
 	int INJECTED_AUTO_NULL = 1;
 	int INJECTED_AUTO_TOOMANY = 2;
-    
+
 	int getInjectedStatus();
-	
-    IDiconElement getInjectedElement();
-	
+
+	IDiconElement getInjectedElement();
+
 }

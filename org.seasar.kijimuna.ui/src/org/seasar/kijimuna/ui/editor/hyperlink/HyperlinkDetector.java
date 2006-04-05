@@ -8,6 +8,7 @@ import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.hyperlink.IHyperlink;
 import org.eclipse.jface.text.hyperlink.IHyperlinkDetector;
+
 import org.seasar.kijimuna.core.dicon.model.IArgElement;
 import org.seasar.kijimuna.core.dicon.model.IAspectElement;
 import org.seasar.kijimuna.core.dicon.model.IComponentHolderElement;
@@ -32,8 +33,7 @@ public class HyperlinkDetector implements IHyperlinkDetector, ConstUI {
 	 * @param textViewer
 	 *            the text viewer in which to detect the hyperlink
 	 */
-	public HyperlinkDetector(ITextViewer textViewer,
-			XmlAssistProcessor processor) {
+	public HyperlinkDetector(ITextViewer textViewer, XmlAssistProcessor processor) {
 		Assert.isNotNull(textViewer);
 		fTextViewer = textViewer;
 		fProcessor = processor;
@@ -56,7 +56,8 @@ public class HyperlinkDetector implements IHyperlinkDetector, ConstUI {
 				|| parentElement instanceof IPropertyElement
 				|| parentElement instanceof IArgElement) {
 			String body = xmlRegion.getText();
-			if (body.length() > 0 && body.charAt(0) != '\"' && body.startsWith("new ") == false) {
+			if (body.length() > 0 && body.charAt(0) != '\"'
+					&& body.startsWith("new ") == false) {
 				parentElement.setBody(body);
 				ContentItem contentItem = new ContentItem(
 						(IComponentHolderElement) parentElement, null, true);
@@ -87,8 +88,8 @@ public class HyperlinkDetector implements IHyperlinkDetector, ConstUI {
 		return null;
 	}
 
-	public IHyperlink[] detectHyperlinks(ITextViewer textViewer,
-			IRegion region, boolean canShowMultipleHyperlinks) {
+	public IHyperlink[] detectHyperlinks(ITextViewer textViewer, IRegion region,
+			boolean canShowMultipleHyperlinks) {
 		if (region == null || fTextViewer == null)
 			return null;
 
@@ -121,7 +122,9 @@ public class HyperlinkDetector implements IHyperlinkDetector, ConstUI {
 		}
 
 		if (hyperlink != null && hyperlink.getHyperlinkRegion() != null) {
-			return new IHyperlink[] { hyperlink };
+			return new IHyperlink[] {
+				hyperlink
+			};
 		}
 		return null;
 	}

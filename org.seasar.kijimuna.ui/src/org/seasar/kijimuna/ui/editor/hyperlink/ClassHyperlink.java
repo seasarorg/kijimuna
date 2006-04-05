@@ -5,13 +5,10 @@ import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
-import org.eclipse.jdt.ui.JavaUI;
 import org.eclipse.jface.text.Assert;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.hyperlink.IHyperlink;
-import org.eclipse.ui.IEditorPart;
-import org.eclipse.ui.PartInitException;
-import org.seasar.kijimuna.ui.KijimunaUI;
+
 import org.seasar.kijimuna.ui.editor.contentassist.xml.XmlRegion;
 import org.seasar.kijimuna.ui.util.WorkbenchUtils;
 
@@ -23,7 +20,7 @@ public class ClassHyperlink implements IHyperlink {
 
 	/**
 	 * Creates a new hyperlink.
-	 *
+	 * 
 	 * @param xmlRegion
 	 */
 	public ClassHyperlink(XmlRegion xmlRegion) {
@@ -51,8 +48,9 @@ public class ClassHyperlink implements IHyperlink {
 		IJavaProject javaProject = JavaCore.create(project);
 		try {
 			IType type = javaProject.findType(hyperlinkText.trim());
-		    WorkbenchUtils.openJavaEditor(type);
+			WorkbenchUtils.openJavaEditor(type);
 		} catch (JavaModelException e) {
 		}
 	}
+
 }

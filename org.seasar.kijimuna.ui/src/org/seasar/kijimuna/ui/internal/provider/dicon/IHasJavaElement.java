@@ -23,5 +23,5 @@ import org.eclipse.jdt.core.IJavaElement;
 public interface IHasJavaElement extends IInternalContainer {
 
 	IJavaElement getJavaElement();
-	
+
 }

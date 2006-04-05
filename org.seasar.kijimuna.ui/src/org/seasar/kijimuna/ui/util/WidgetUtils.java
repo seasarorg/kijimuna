@@ -21,10 +21,8 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
-import org.seasar.kijimuna.core.KijimunaCore;
-import org.seasar.kijimuna.core.dicon.DiconNature;
+
 import org.seasar.kijimuna.core.dicon.MarkerSetting;
-import org.seasar.kijimuna.core.preference.IPreferences;
 import org.seasar.kijimuna.ui.ConstUI;
 import org.seasar.kijimuna.ui.KijimunaUI;
 
@@ -34,35 +32,35 @@ import org.seasar.kijimuna.ui.KijimunaUI;
 public class WidgetUtils implements ConstUI {
 
 	public static ImageDescriptor getImageDescriptor(String name) {
-	    ImageDescriptor descriptor;
-        URL url = KijimunaUI.getEntry(PATH_IMAGES + name);
-      	if(url != null) {
-      	    descriptor = ImageDescriptor.createFromURL(url);
-      	} else {
-      	    descriptor = ImageDescriptor.getMissingImageDescriptor();
-      	}
-	    return descriptor;
+		ImageDescriptor descriptor;
+		URL url = KijimunaUI.getEntry(PATH_IMAGES + name);
+		if (url != null) {
+			descriptor = ImageDescriptor.createFromURL(url);
+		} else {
+			descriptor = ImageDescriptor.getMissingImageDescriptor();
+		}
+		return descriptor;
 	}
-    
-    public static void setDiconMarkerSettingCombo(
-            IProject project, Combo combo, int category, boolean isDefault) {
-        combo.setData(new Integer(category));
-        if(combo.getItemCount() == 0) { 
-	        combo.add("Error");
-	        combo.add("Warning");
-	        combo.add("Info");
-	        combo.add("Ignore");
-        }
-        int severity = MarkerSetting.getDiconMarkerPreference(
-        		project, category, isDefault);
-        combo.select(severity);
-    }
-    
-    public static void setDiconValidationSetting(
-    		 IProject project, Button button, boolean isDefault) {
-        boolean isValidation = MarkerSetting.getDiconValidationPreference(
-        		project, isDefault);
-        button.setSelection(isValidation);
-    }
+
+	public static void setDiconMarkerSettingCombo(IProject project, Combo combo,
+			int category, boolean isDefault) {
+		combo.setData(new Integer(category));
+		if (combo.getItemCount() == 0) {
+			combo.add("Error");
+			combo.add("Warning");
+			combo.add("Info");
+			combo.add("Ignore");
+		}
+		int severity = MarkerSetting.getDiconMarkerPreference(project, category,
+				isDefault);
+		combo.select(severity);
+	}
+
+	public static void setDiconValidationSetting(IProject project, Button button,
+			boolean isDefault) {
+		boolean isValidation = MarkerSetting.getDiconValidationPreference(project,
+				isDefault);
+		button.setSelection(isValidation);
+	}
 
 }

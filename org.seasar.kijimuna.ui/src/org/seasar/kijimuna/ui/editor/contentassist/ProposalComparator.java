@@ -23,13 +23,14 @@ import org.eclipse.jface.text.contentassist.ICompletionProposal;
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public class ProposalComparator implements Comparator {
-    public int compare(Object o1, Object o2) {
-        if((o1 instanceof ICompletionProposal) &&
-                (o2 instanceof ICompletionProposal)) {
-            ICompletionProposal proposal1 = (ICompletionProposal)o1;
-            ICompletionProposal proposal2 = (ICompletionProposal)o2;
-            return proposal1.getDisplayString().compareTo(proposal2.getDisplayString());
-        }
-        return -1;
-    }
+
+	public int compare(Object o1, Object o2) {
+		if ((o1 instanceof ICompletionProposal) && (o2 instanceof ICompletionProposal)) {
+			ICompletionProposal proposal1 = (ICompletionProposal) o1;
+			ICompletionProposal proposal2 = (ICompletionProposal) o2;
+			return proposal1.getDisplayString().compareTo(proposal2.getDisplayString());
+		}
+		return -1;
+	}
+
 }

@@ -24,6 +24,7 @@ import org.eclipse.jface.text.ITextViewer;
  * @author Toshitaka Agata (Nulab, Inc.)
  */
 public class XmlDoubleClickStrategy implements ITextDoubleClickStrategy {
+
 	protected ITextViewer fText;
 
 	public void doubleClicked(ITextViewer part) {
@@ -36,7 +37,7 @@ public class XmlDoubleClickStrategy implements ITextDoubleClickStrategy {
 			selectWord(pos);
 		}
 	}
-	
+
 	protected boolean selectComment(int caretPos) {
 		IDocument doc = fText.getDocument();
 		int startPos, endPos;

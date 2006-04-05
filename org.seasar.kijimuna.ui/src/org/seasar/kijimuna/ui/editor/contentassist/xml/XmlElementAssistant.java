@@ -20,6 +20,7 @@ import java.util.Collections;
 import java.util.List;
 
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
+
 import org.seasar.kijimuna.core.dtd.IAttributeDef;
 import org.seasar.kijimuna.core.dtd.IDtd;
 import org.seasar.kijimuna.core.dtd.IElementDef;
@@ -32,23 +33,23 @@ import org.seasar.kijimuna.ui.editor.contentassist.ProposalComparator;
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public class XmlElementAssistant extends AbstractXmlAssistant {
-	
-    private String rootElementName;
-    
-	public XmlElementAssistant(XmlAssistProcessor processor, 
-	        IDtd dtd, XmlRegion xmlRegion, String rootElementName) {
-	    super(processor, dtd, xmlRegion);
-	    this.rootElementName = rootElementName;
+
+	private String rootElementName;
+
+	public XmlElementAssistant(XmlAssistProcessor processor, IDtd dtd,
+			XmlRegion xmlRegion, String rootElementName) {
+		super(processor, dtd, xmlRegion);
+		this.rootElementName = rootElementName;
 	}
-	
+
 	private int getCursolPos(int offset, String requiredAttributes, int additional) {
 		int index = requiredAttributes.indexOf('"');
-		if(index > 0) {
+		if (index > 0) {
 			return offset + index + 1;
 		}
 		return offset + additional;
 	}
-	
+
 	private String getRequiredAttributesStr(IElementDef element) {
 		IAttributeDef[] requiredAttributes = DtdUtils.getRequiredAttributes(element);
 		StringBuffer buffer = new StringBuffer();
@@ -67,12 +68,12 @@ public class XmlElementAssistant extends AbstractXmlAssistant {
 
 	private String getDTDDisplayText(IElementDef element) {
 		StringBuffer buffer = new StringBuffer();
-		buffer.append(element.getName());		
+		buffer.append(element.getName());
 		return buffer.toString();
 	}
-	
-	private void addDtdProposals(
-			List proposals, String prefix, int offset, IElementDef[] elementDefs) {
+
+	private void addDtdProposals(List proposals, String prefix, int offset,
+			IElementDef[] elementDefs) {
 		XmlRegion xmlRegion = getXmlRegion();
 		for (int i = 0; i < elementDefs.length; i++) {
 			IElementDef element = elementDefs[i];
@@ -80,7 +81,8 @@ public class XmlElementAssistant extends AbstractXmlAssistant {
 			if (isMatch(elementName, prefix)) {
 				String replaceStr = "";
 				int cursolPos = 0;
-				if (xmlRegion.getText().startsWith("<") && xmlRegion.getCursorOffset() != 0) {
+				if (xmlRegion.getText().startsWith("<")
+						&& xmlRegion.getCursorOffset() != 0) {
 					String text = xmlRegion.getText().substring(prefix.length()).trim();
 					if (xmlRegion.getText().endsWith(">") && text.indexOf("<") == -1) {
 						replaceStr = elementName;
@@ -92,65 +94,68 @@ public class XmlElementAssistant extends AbstractXmlAssistant {
 							cursolPos = getCursolPos(elementName.length(), required, 2);
 						} else {
 							String required = getRequiredAttributesStr(element);
-							replaceStr = elementName + required + "></" + elementName + ">";
-							cursolPos = getCursolPos(elementName.length(), required, 1);  
+							replaceStr = elementName + required + "></" + elementName
+									+ ">";
+							cursolPos = getCursolPos(elementName.length(), required, 1);
 						}
 					}
 				} else {
 					String required = getRequiredAttributesStr(element);
 					if (element.isEmpty()) {
-						replaceStr = "<" + elementName  + required + "/>";
-						cursolPos = getCursolPos(1 + elementName.length(), required, 0);  
+						replaceStr = "<" + elementName + required + "/>";
+						cursolPos = getCursolPos(1 + elementName.length(), required, 0);
 					} else {
-						replaceStr = "<" + elementName  + required + "></" + elementName + ">";
-						cursolPos = getCursolPos(1 + elementName.length(), required, 1);  
+						replaceStr = "<" + elementName + required + "></" + elementName
+								+ ">";
+						cursolPos = getCursolPos(1 + elementName.length(), required, 1);
 					}
-				}	
+				}
 				String displayText = getDTDDisplayText(element);
-				ICompletionProposal proposal = createProposal(
-				        replaceStr, displayText, prefix, 
-				        offset, cursolPos, IMAGE_ICON_XML_TAG);
+				ICompletionProposal proposal = createProposal(replaceStr, displayText,
+						prefix, offset, cursolPos, IMAGE_ICON_XML_TAG);
 				proposals.add(proposal);
 			}
 		}
 	}
 
 	protected String getRootElementName() {
-	    return rootElementName;
+		return rootElementName;
 	}
-	
+
 	protected void addBodyProposals(List proposals, String prefix, int offset) {
 	}
-	
+
 	public ICompletionProposal[] getCompletionProposal(String prefix, int offset) {
 		IDtd dtd = getDtd();
-		if(dtd != null) {
-		    IElement parent = getParentElement();
-			if(parent != null) {
+		if (dtd != null) {
+			IElement parent = getParentElement();
+			if (parent != null) {
 				IElementDef parentElementDef = dtd.getElement(parent.getElementName());
-				if(parentElementDef != null) {
+				if (parentElementDef != null) {
 					IElementDef[] elementDefs = parentElementDef.getElements();
 					List proposals = new ArrayList();
 					addDtdProposals(proposals, prefix, offset, elementDefs);
 					Collections.sort(proposals, new ProposalComparator());
-					if(parentElementDef.hasPCData()) {
+					if (parentElementDef.hasPCData()) {
 						addBodyProposals(proposals, prefix, offset);
 					}
-					return (ICompletionProposal[]) proposals.toArray(
-							new ICompletionProposal[proposals.size()]);
+					return (ICompletionProposal[]) proposals
+							.toArray(new ICompletionProposal[proposals.size()]);
 				}
 			} else {
-			    String rootName = getRootElementName();
-			    IElementDef root = dtd.getElement(rootName);
-			    if(root != null) {
+				String rootName = getRootElementName();
+				IElementDef root = dtd.getElement(rootName);
+				if (root != null) {
 					List proposals = new ArrayList();
-				    addDtdProposals(proposals, prefix, offset, new IElementDef[] { root });
-					return (ICompletionProposal[]) proposals.toArray(
-							new ICompletionProposal[proposals.size()]);
-			    }
+					addDtdProposals(proposals, prefix, offset, new IElementDef[] {
+						root
+					});
+					return (ICompletionProposal[]) proposals
+							.toArray(new ICompletionProposal[proposals.size()]);
+				}
 			}
 		}
 		return NO_PROPOSALS;
 	}
-	
+
 }

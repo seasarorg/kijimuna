@@ -16,6 +16,7 @@
 package org.seasar.kijimuna.ui;
 
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
+
 import org.seasar.kijimuna.core.ConstCore;
 
 /**
@@ -25,7 +26,7 @@ public interface ConstUI extends ConstCore {
 
 	String ID_PLUGIN_UI = "org.seasar.kijimuna.ui";
 	String ID_EDITOR_DICON = ID_PLUGIN_UI + ".editor.dicon";
-	
+
 	String PATH_RESOURCES = ID_PLUGIN_UI + ".resources";
 	String PATH_IMAGES = "/images/";
 
@@ -33,13 +34,13 @@ public interface ConstUI extends ConstCore {
 	String EXTENSION_ATTR_CLASS = "class";
 	String EXTENSION_ATTR_NAME = "name";
 	String EXTENSION_ATTR_INDEX = "index";
-	
+
 	String IMAGE_DECORATOR_AUTO = "decorator/auto.gif";
 	String IMAGE_DECORATOR_AUTO_NULL = "decorator/auto_null.gif";
 	String IMAGE_DECORATOR_OGNL = "decorator/ognl.gif";
 	String IMAGE_DECORATOR_ERROR = "decorator/error.gif";
 	String IMAGE_DECORATOR_WARNING = "decorator/warning.gif";
-	
+
 	String IMAGE_ICON_ARG = "icon/arg.gif";
 	String IMAGE_ICON_ASPECT = "icon/aspect.gif";
 	String IMAGE_ICON_ASPECT_POINTCUT = "icon/aspect_pointcut.gif";
@@ -71,29 +72,29 @@ public interface ConstUI extends ConstCore {
 	String IMAGE_ICON_SEARCH_DICON = "icon/search_dicon.gif";
 	String IMAGE_ICON_NEW_DICON = "icon/new_dicon.gif";
 	String IMAGE_NEW_DICON = "picture/wiz_new_dicon.gif";
-	
+
 	String[] ECLIPSE_ENCODINGS = new String[] {
-		"ISO-8859-1",
-		"UTF-8",
-		"UTF-16",
-		"UTF-16BE",
-		"UTF-16LE",
-		"US-ASCII",
-		"Shift_JIS",
-		"Windows-31J"
+			"ISO-8859-1",
+			"UTF-8",
+			"UTF-16",
+			"UTF-16BE",
+			"UTF-16LE",
+			"US-ASCII",
+			"Shift_JIS",
+			"Windows-31J"
 	};
 
 	String ACTION_CONTENTASSIST_PROPOSAL = "ContentAssistProposal";
 	String ID_CONTENTASSIST_PROPOSAL = ID_PLUGIN_UI + "." + ACTION_CONTENTASSIST_PROPOSAL;
 
 	ICompletionProposal[] NO_PROPOSALS = new ICompletionProposal[0];
-	
+
 	int PROPOSAL_MODE_NONE = 0;
 	int PROPOSAL_MODE_XML_DECL = 1;
 	int PROPOSAL_MODE_DOC_DECL = 2;
 	int PROPOSAL_MODE_ELEMENT = 3;
 	int PROPOSAL_MODE_ELEMENT_CLOSING = 4;
 	int PROPOSAL_MODE_ATTRIBUTE = 5;
-	int PROPOSAL_MODE_ATTRIBUTE_VALUE = 6;	
-	
+	int PROPOSAL_MODE_ATTRIBUTE_VALUE = 6;
+
 }

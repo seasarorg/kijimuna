@@ -17,6 +17,7 @@ package org.seasar.kijimuna.ui.internal.provider.dicon.walker;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IStorage;
+
 import org.seasar.kijimuna.core.dicon.model.IContainerElement;
 import org.seasar.kijimuna.core.dicon.model.IDiconElement;
 import org.seasar.kijimuna.core.util.ModelUtils;
@@ -27,45 +28,46 @@ import org.seasar.kijimuna.ui.internal.provider.dicon.IInternalContainer;
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public abstract class AbstractInternalContainer extends AbstractContentWalker
-		implements IInternalContainer, ConstUI {
+public abstract class AbstractInternalContainer extends AbstractContentWalker implements
+		IInternalContainer, ConstUI {
 
-    private IDiconElement element;
-    
-    public AbstractInternalContainer(IInternalContainer parent) {
-        this(parent.getElement(), parent);
-    }
-    
-    public AbstractInternalContainer(IDiconElement element, IContentWalker parent) {
-        super(parent);
-        this.element = element;
-    }
-    
-    public IContainerElement getContainer() {
-    	IProject project = (IProject)element.getAdapter(IProject.class);
-    	IStorage storage = (IStorage)element.getAdapter(IStorage.class);
-    	if((project != null) && (storage != null)) {
-    		return ModelUtils.getContainer(project, storage);
-    	} 
-    	return null;
-    }
+	private IDiconElement element;
 
-    public IDiconElement getElement() {
-        return element;
-    }
+	public AbstractInternalContainer(IInternalContainer parent) {
+		this(parent.getElement(), parent);
+	}
 
-    public int getMarkerSeverity() {
-        return MARKER_SEVERITY_NONE;
-    }
-    
-    public boolean isOGNL() {
-        return false;
-    }
+	public AbstractInternalContainer(IDiconElement element, IContentWalker parent) {
+		super(parent);
+		this.element = element;
+	}
 
-    public Object getAdapter(Class adapter) {
-        if(IDiconElement.class.equals(adapter)) {
-            return element;
-        }
-        return super.getAdapter(adapter);
-    }
+	public IContainerElement getContainer() {
+		IProject project = (IProject) element.getAdapter(IProject.class);
+		IStorage storage = (IStorage) element.getAdapter(IStorage.class);
+		if ((project != null) && (storage != null)) {
+			return ModelUtils.getContainer(project, storage);
+		}
+		return null;
+	}
+
+	public IDiconElement getElement() {
+		return element;
+	}
+
+	public int getMarkerSeverity() {
+		return MARKER_SEVERITY_NONE;
+	}
+
+	public boolean isOGNL() {
+		return false;
+	}
+
+	public Object getAdapter(Class adapter) {
+		if (IDiconElement.class.equals(adapter)) {
+			return element;
+		}
+		return super.getAdapter(adapter);
+	}
+
 }

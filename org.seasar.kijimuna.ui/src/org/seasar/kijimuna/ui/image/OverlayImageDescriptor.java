@@ -33,38 +33,36 @@ public class OverlayImageDescriptor extends CompositeImageDescriptor {
 	private ImageData rightData;
 	private int rightWidth;
 	private int rightHeight;
-	
-	public OverlayImageDescriptor(Image source, 
-			Image leftOverlay, Image rightOverlay) {
-		if(source != null) {
+
+	public OverlayImageDescriptor(Image source, Image leftOverlay, Image rightOverlay) {
+		if (source != null) {
 			sourceData = source.getImageData();
 			sourceWidth = source.getBounds().width;
 			sourceHeight = source.getBounds().height;
-			if(leftOverlay != null) {
+			if (leftOverlay != null) {
 				leftData = leftOverlay.getImageData();
 				leftHeight = leftOverlay.getBounds().height;
 			}
-			if(rightOverlay != null) {
+			if (rightOverlay != null) {
 				rightData = rightOverlay.getImageData();
 				rightWidth = rightOverlay.getBounds().width;
 				rightHeight = rightOverlay.getBounds().height;
 			}
 		}
 	}
-	
+
 	protected void drawCompositeImage(int width, int height) {
-		if(sourceData != null) {
+		if (sourceData != null) {
 			drawImage(sourceData, 0, 0);
-			if(leftData != null) {
+			if (leftData != null) {
 				drawImage(leftData, 0, sourceHeight - leftHeight);
 			}
-			if(rightData != null) {
-				drawImage(rightData, 
-						sourceWidth - rightWidth, sourceHeight - rightHeight);
+			if (rightData != null) {
+				drawImage(rightData, sourceWidth - rightWidth, sourceHeight - rightHeight);
 			}
 		}
 	}
-	
+
 	protected Point getSize() {
 		return new Point(sourceWidth, sourceHeight);
 	}

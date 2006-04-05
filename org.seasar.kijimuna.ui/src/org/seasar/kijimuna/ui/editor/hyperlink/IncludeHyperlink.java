@@ -5,6 +5,7 @@ import org.eclipse.core.resources.IStorage;
 import org.eclipse.jface.text.Assert;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.hyperlink.IHyperlink;
+
 import org.seasar.kijimuna.core.util.ProjectUtils;
 import org.seasar.kijimuna.ui.editor.contentassist.xml.XmlRegion;
 import org.seasar.kijimuna.ui.util.WorkbenchUtils;
@@ -17,7 +18,7 @@ public class IncludeHyperlink implements IHyperlink {
 
 	/**
 	 * Creates a new hyperlink.
-	 *
+	 * 
 	 * @param xmlRegion
 	 */
 	public IncludeHyperlink(XmlRegion xmlRegion) {
@@ -43,7 +44,7 @@ public class IncludeHyperlink implements IHyperlink {
 	public void open() {
 		IProject project = xmlRegion.getFile().getProject();
 		IStorage storage = ProjectUtils.findDiconStorage(project, hyperlinkText.trim());
-	    WorkbenchUtils.openDiconEditor(storage);
+		WorkbenchUtils.openDiconEditor(storage);
 	}
 
 }

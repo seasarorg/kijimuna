@@ -20,6 +20,6 @@ package org.seasar.kijimuna.ui.internal.provider.dicon;
  */
 public interface IContentRoot {
 
-    Object[] getTopLevelItems();
-    
+	Object[] getTopLevelItems();
+
 }

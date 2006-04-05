@@ -23,25 +23,26 @@ import org.eclipse.ui.views.properties.IPropertySource;
  */
 public class NullProperty implements IPropertySource {
 
-    public Object getEditableValue() {
-        return null;
-    }
- 
-    public IPropertyDescriptor[] getPropertyDescriptors() {
-        return null;
-    }
+	public Object getEditableValue() {
+		return null;
+	}
 
-    public Object getPropertyValue(Object id) {
-        return null;
-    }
+	public IPropertyDescriptor[] getPropertyDescriptors() {
+		return null;
+	}
 
-    public boolean isPropertySet(Object id) {
-        return false;
-    }
+	public Object getPropertyValue(Object id) {
+		return null;
+	}
 
-    public void resetPropertyValue(Object id) {
-    }
-    
-    public void setPropertyValue(Object id, Object value) {
-    }
+	public boolean isPropertySet(Object id) {
+		return false;
+	}
+
+	public void resetPropertyValue(Object id) {
+	}
+
+	public void setPropertyValue(Object id, Object value) {
+	}
+
 }

@@ -17,6 +17,7 @@ package org.seasar.kijimuna.ui.internal.provider.dicon.property;
 
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
 import org.eclipse.ui.views.properties.PropertyDescriptor;
+
 import org.seasar.kijimuna.core.dicon.info.IComponentKey;
 import org.seasar.kijimuna.core.dicon.info.IComponentNotFound;
 import org.seasar.kijimuna.core.dicon.info.ITooManyRegisted;
@@ -30,65 +31,67 @@ import org.seasar.kijimuna.ui.KijimunaUI;
  */
 public class AutoInjectedPropertyProperty extends NullProperty {
 
-    private static IPropertyDescriptor[] descriptors;
-    
-    static {
-        // info category
-        String category = KijimunaUI.getResourceString(
-                "dicon.provider.property.ContentProperty.4");
-        descriptors = new IPropertyDescriptor[4];
-        // class type
-        String id = "dicon.provider.property.AutoInjectedPropertyProperty.1";
-        PropertyDescriptor d = 
-            new PropertyDescriptor(id, KijimunaUI.getResourceString(id));
-        d.setCategory(category);
-        descriptors[0] = d;
-        // property name
-        id = "dicon.provider.property.AutoInjectedPropertyProperty.2";
-        d = new PropertyDescriptor(id, KijimunaUI.getResourceString(id));
-        d.setCategory(category);
-        descriptors[1] = d;
-        // property type
-        id = "dicon.provider.property.AutoInjectedPropertyProperty.3";
-        d = new PropertyDescriptor(id, KijimunaUI.getResourceString(id));
-        d.setCategory(category);
-        descriptors[2] = d;
-        // injected component
-        id = "dicon.provider.property.AutoInjectedPropertyProperty.4";
-        d = new PropertyDescriptor(id, KijimunaUI.getResourceString(id));
-        d.setCategory(category);
-        descriptors[3] = d;
-    }
-	
-    private IRttiPropertyDescriptor property;
-	
+	private static IPropertyDescriptor[] descriptors;
+
+	static {
+		// info category
+		String category = KijimunaUI
+				.getResourceString("dicon.provider.property.ContentProperty.4");
+		descriptors = new IPropertyDescriptor[4];
+		// class type
+		String id = "dicon.provider.property.AutoInjectedPropertyProperty.1";
+		PropertyDescriptor d = new PropertyDescriptor(id, KijimunaUI
+				.getResourceString(id));
+		d.setCategory(category);
+		descriptors[0] = d;
+		// property name
+		id = "dicon.provider.property.AutoInjectedPropertyProperty.2";
+		d = new PropertyDescriptor(id, KijimunaUI.getResourceString(id));
+		d.setCategory(category);
+		descriptors[1] = d;
+		// property type
+		id = "dicon.provider.property.AutoInjectedPropertyProperty.3";
+		d = new PropertyDescriptor(id, KijimunaUI.getResourceString(id));
+		d.setCategory(category);
+		descriptors[2] = d;
+		// injected component
+		id = "dicon.provider.property.AutoInjectedPropertyProperty.4";
+		d = new PropertyDescriptor(id, KijimunaUI.getResourceString(id));
+		d.setCategory(category);
+		descriptors[3] = d;
+	}
+
+	private IRttiPropertyDescriptor property;
+
 	public AutoInjectedPropertyProperty(IRttiPropertyDescriptor property) {
 		this.property = property;
 	}
-	
+
 	public IPropertyDescriptor[] getPropertyDescriptors() {
 		return descriptors;
 	}
 
 	public Object getPropertyValue(Object id) {
-		if("dicon.provider.property.AutoInjectedPropertyProperty.1".equals(id)) {
-		    return property.getParent().getQualifiedName();
-		} else if("dicon.provider.property.AutoInjectedPropertyProperty.2".equals(id)) {
-		    return property.getName();
-		} else if("dicon.provider.property.AutoInjectedPropertyProperty.3".equals(id)) {
-		    return property.getType().getQualifiedName();
-		} else if("dicon.provider.property.AutoInjectedPropertyProperty.4".equals(id)) {
-		    IRtti value = property.getValue();
-		    if(value instanceof IComponentNotFound) {
-		        return KijimunaUI.getResourceString(
-                "dicon.provider.property.AutoInjectedPropertyProperty.5",
-                new Object[] { value.getAdapter(IComponentKey.class) });
-		    } else if(value instanceof ITooManyRegisted) {
-		        return ((ITooManyRegisted)value).getErrorMessage();
-		    } else {
-	            return ModelUtils.getInjectedElementName(value);
-		    }
-		} 
+		if ("dicon.provider.property.AutoInjectedPropertyProperty.1".equals(id)) {
+			return property.getParent().getQualifiedName();
+		} else if ("dicon.provider.property.AutoInjectedPropertyProperty.2".equals(id)) {
+			return property.getName();
+		} else if ("dicon.provider.property.AutoInjectedPropertyProperty.3".equals(id)) {
+			return property.getType().getQualifiedName();
+		} else if ("dicon.provider.property.AutoInjectedPropertyProperty.4".equals(id)) {
+			IRtti value = property.getValue();
+			if (value instanceof IComponentNotFound) {
+				return KijimunaUI.getResourceString(
+						"dicon.provider.property.AutoInjectedPropertyProperty.5",
+						new Object[] {
+							value.getAdapter(IComponentKey.class)
+						});
+			} else if (value instanceof ITooManyRegisted) {
+				return ((ITooManyRegisted) value).getErrorMessage();
+			} else {
+				return ModelUtils.getInjectedElementName(value);
+			}
+		}
 		return null;
 	}
 

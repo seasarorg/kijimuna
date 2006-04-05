@@ -18,6 +18,7 @@ package org.seasar.kijimuna.ui.util;
 import java.net.URL;
 
 import org.eclipse.core.resources.IFile;
+
 import org.seasar.kijimuna.core.KijimunaCore;
 import org.seasar.kijimuna.core.dicon.DiconElementFactory;
 import org.seasar.kijimuna.core.dtd.DtdLoader;
@@ -33,37 +34,37 @@ import org.seasar.kijimuna.ui.ConstUI;
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public class CoreUtils implements ConstUI {
-    
-    public static String getPublicId(String stringToOffset) {
-        if(StringUtils.existValue(stringToOffset)) {
-            if(stringToOffset.indexOf(PUBLIC_ID_DICON_24) > 0) {
-                return PUBLIC_ID_DICON_24;
-            } else if(stringToOffset.indexOf(PUBLIC_ID_DICON_23) > 0) {
-                return PUBLIC_ID_DICON_23;
-            } else if(stringToOffset.indexOf(PUBLIC_ID_DICON_21) > 0) {
-                return PUBLIC_ID_DICON_21;
-            } else if(stringToOffset.indexOf(PUBLIC_ID_DICON_20) > 0) {
-                return PUBLIC_ID_DICON_20;
-            }
-        }
-        return null;
-    }
-    
-    public static IDtd loadDtd(String publicId) {
-        String path;
-        if(PUBLIC_ID_DICON_24.equals(publicId)) {
-            path = DTD_DICON_24;
-        } else if(PUBLIC_ID_DICON_23.equals(publicId)) {
-            path = DTD_DICON_23;
-        } else if(PUBLIC_ID_DICON_21.equals(publicId)) {
-            path = DTD_DICON_21;
-        } else {
-            path = DTD_DICON_20;
-        }
+
+	public static String getPublicId(String stringToOffset) {
+		if (StringUtils.existValue(stringToOffset)) {
+			if (stringToOffset.indexOf(PUBLIC_ID_DICON_24) > 0) {
+				return PUBLIC_ID_DICON_24;
+			} else if (stringToOffset.indexOf(PUBLIC_ID_DICON_23) > 0) {
+				return PUBLIC_ID_DICON_23;
+			} else if (stringToOffset.indexOf(PUBLIC_ID_DICON_21) > 0) {
+				return PUBLIC_ID_DICON_21;
+			} else if (stringToOffset.indexOf(PUBLIC_ID_DICON_20) > 0) {
+				return PUBLIC_ID_DICON_20;
+			}
+		}
+		return null;
+	}
+
+	public static IDtd loadDtd(String publicId) {
+		String path;
+		if (PUBLIC_ID_DICON_24.equals(publicId)) {
+			path = DTD_DICON_24;
+		} else if (PUBLIC_ID_DICON_23.equals(publicId)) {
+			path = DTD_DICON_23;
+		} else if (PUBLIC_ID_DICON_21.equals(publicId)) {
+			path = DTD_DICON_21;
+		} else {
+			path = DTD_DICON_20;
+		}
 		URL url = KijimunaCore.getEntry(path);
 		return DtdLoader.loadDtd(url);
-    }
-    
+	}
+
 	public static IParseResult parse(String text, IFile file) {
 		DocumentHandler handler = new DocumentHandler(new DiconElementFactory());
 		handler.putDtdPath(PUBLIC_ID_DICON_20, DTD_DICON_20);
@@ -74,5 +75,5 @@ public class CoreUtils implements ConstUI {
 		DocumentParser parser = new DocumentParser();
 		return parser.parse(text, file, handler);
 	}
-    
+
 }

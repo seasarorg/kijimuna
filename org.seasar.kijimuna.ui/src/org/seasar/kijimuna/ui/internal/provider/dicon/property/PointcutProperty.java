@@ -17,6 +17,7 @@ package org.seasar.kijimuna.ui.internal.provider.dicon.property;
 
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
 import org.eclipse.ui.views.properties.PropertyDescriptor;
+
 import org.seasar.kijimuna.core.dicon.info.IPointcut;
 import org.seasar.kijimuna.ui.KijimunaUI;
 
@@ -25,44 +26,44 @@ import org.seasar.kijimuna.ui.KijimunaUI;
  */
 public class PointcutProperty extends NullProperty {
 
-    private static IPropertyDescriptor[] descriptors;
-    
-    static {
-        // info category
-        String category = KijimunaUI.getResourceString(
-                "dicon.provider.property.ContentProperty.4");
-        descriptors = new IPropertyDescriptor[2];
-        // errorMessage
-        String id = "dicon.provider.property.PointcutProperty.1";
-        PropertyDescriptor d = 
-            new PropertyDescriptor(id, KijimunaUI.getResourceString(id));
-        d.setCategory(category);
-        descriptors[0] = d;
-        // regexp
-        id = "dicon.provider.property.PointcutProperty.2";
-        d = new PropertyDescriptor(id, KijimunaUI.getResourceString(id));
-        d.setCategory(category);
-        descriptors[1] = d;
-    }
-	
-    private IPointcut pointcut;
-    
-    public PointcutProperty(IPointcut pointcut) {
-    	this.pointcut = pointcut;
-    }
-    
+	private static IPropertyDescriptor[] descriptors;
+
+	static {
+		// info category
+		String category = KijimunaUI
+				.getResourceString("dicon.provider.property.ContentProperty.4");
+		descriptors = new IPropertyDescriptor[2];
+		// errorMessage
+		String id = "dicon.provider.property.PointcutProperty.1";
+		PropertyDescriptor d = new PropertyDescriptor(id, KijimunaUI
+				.getResourceString(id));
+		d.setCategory(category);
+		descriptors[0] = d;
+		// regexp
+		id = "dicon.provider.property.PointcutProperty.2";
+		d = new PropertyDescriptor(id, KijimunaUI.getResourceString(id));
+		d.setCategory(category);
+		descriptors[1] = d;
+	}
+
+	private IPointcut pointcut;
+
+	public PointcutProperty(IPointcut pointcut) {
+		this.pointcut = pointcut;
+	}
+
 	public IPropertyDescriptor[] getPropertyDescriptors() {
 		return descriptors;
 	}
 
 	public Object getPropertyValue(Object id) {
-		if("dicon.provider.property.PointcutProperty.1".equals(id)) {
+		if ("dicon.provider.property.PointcutProperty.1".equals(id)) {
 			return pointcut.getErrorMessage();
-		} else if("dicon.provider.property.PointcutProperty.2".equals(id)) {
+		} else if ("dicon.provider.property.PointcutProperty.2".equals(id)) {
 			return pointcut.getRegexp();
 		} else {
 			return null;
 		}
 	}
-    
+
 }

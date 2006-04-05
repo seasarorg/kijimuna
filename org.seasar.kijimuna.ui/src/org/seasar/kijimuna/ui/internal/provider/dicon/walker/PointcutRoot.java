@@ -26,31 +26,30 @@ import org.seasar.kijimuna.ui.KijimunaUI;
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class PointcutRoot 
-		extends AbstractInternalContainer implements ConstUI {
+public class PointcutRoot extends AbstractInternalContainer implements ConstUI {
 
-    private IAspectInfo info;
-    
-    public PointcutRoot(ContentItem parent, IAspectInfo info) {
-        super(parent);
-        this.info = info;
-    }
-    
-    public Object[] getChildren() {
-        IPointcut[] pointcuts = info.getPointcuts();
-        List ret = new ArrayList();
-        for(int i = 0; i < pointcuts.length; i++) {
-            ret.add(new PointcutItem(this, pointcuts[i]));
-        }
-        return ret.toArray();
-    }
+	private IAspectInfo info;
 
-    public String getDisplayName() {
-        return KijimunaUI.getResourceString("dicon.provider.walker.PointcutRoot.1");
-    }
-    
-    public String getImageName() {
-        return IMAGE_ICON_ASPECT_POINTCUT;
-    }
-    
+	public PointcutRoot(ContentItem parent, IAspectInfo info) {
+		super(parent);
+		this.info = info;
+	}
+
+	public Object[] getChildren() {
+		IPointcut[] pointcuts = info.getPointcuts();
+		List ret = new ArrayList();
+		for (int i = 0; i < pointcuts.length; i++) {
+			ret.add(new PointcutItem(this, pointcuts[i]));
+		}
+		return ret.toArray();
+	}
+
+	public String getDisplayName() {
+		return KijimunaUI.getResourceString("dicon.provider.walker.PointcutRoot.1");
+	}
+
+	public String getImageName() {
+		return IMAGE_ICON_ASPECT_POINTCUT;
+	}
+
 }

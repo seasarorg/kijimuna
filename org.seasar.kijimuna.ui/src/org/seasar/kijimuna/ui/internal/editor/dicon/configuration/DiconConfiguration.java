@@ -16,6 +16,7 @@
 package org.seasar.kijimuna.ui.internal.editor.dicon.configuration;
 
 import org.eclipse.ui.IEditorPart;
+
 import org.seasar.kijimuna.ui.editor.configuration.ColorManager;
 import org.seasar.kijimuna.ui.editor.configuration.xml.XmlConfiguration;
 import org.seasar.kijimuna.ui.editor.contentassist.xml.XmlAssistProcessor;
@@ -27,10 +28,11 @@ import org.seasar.kijimuna.ui.internal.editor.dicon.contentassist.DiconAssistPro
 public class DiconConfiguration extends XmlConfiguration {
 
 	public DiconConfiguration(IEditorPart editor, ColorManager colorManager) {
-	    super(editor, colorManager);
+		super(editor, colorManager);
 	}
 
-    protected XmlAssistProcessor createAssistProcessor() {
-        return new DiconAssistProcessor(getFile());
-    }
+	protected XmlAssistProcessor createAssistProcessor() {
+		return new DiconAssistProcessor(getFile());
+	}
+
 }

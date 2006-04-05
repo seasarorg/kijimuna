@@ -17,6 +17,7 @@ package org.seasar.kijimuna.ui.internal.provider.dicon.property;
 
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
 import org.eclipse.ui.views.properties.PropertyDescriptor;
+
 import org.seasar.kijimuna.core.rtti.IRtti;
 import org.seasar.kijimuna.core.rtti.IRttiMethodDesctiptor;
 import org.seasar.kijimuna.ui.KijimunaUI;
@@ -26,52 +27,52 @@ import org.seasar.kijimuna.ui.KijimunaUI;
  */
 public class MethodProperty extends NullProperty {
 
-    private static IPropertyDescriptor[] descriptors;
-    
-    static {
-        // info category
-        String category = KijimunaUI.getResourceString(
-                "dicon.provider.property.ContentProperty.4");
-        descriptors = new IPropertyDescriptor[6];
-        // args
-        String id = "dicon.provider.property.MethodProperty.1";
-        PropertyDescriptor d = 
-            new PropertyDescriptor(id, KijimunaUI.getResourceString(id));
-        d.setCategory(category);
-        descriptors[0] = d;
-        // returnType
-        id = "dicon.provider.property.MethodProperty.2";
-        d = new PropertyDescriptor(id, KijimunaUI.getResourceString(id));
-        d.setCategory(category);
-        descriptors[1] = d;
-        // methodName
-        id = "dicon.provider.property.MethodProperty.3";
-        d = new PropertyDescriptor(id, KijimunaUI.getResourceString(id));
-        d.setCategory(category);
-        descriptors[2] = d;
-        // final
-        id = "dicon.provider.property.MethodProperty.4";
-        d = new PropertyDescriptor(id, KijimunaUI.getResourceString(id));
-        d.setCategory(category);
-        descriptors[3] = d;
-        // static
-        id = "dicon.provider.property.MethodProperty.5";
-        d = new PropertyDescriptor(id, KijimunaUI.getResourceString(id));
-        d.setCategory(category);
-        descriptors[4] = d;
-        // parent
-        id = "dicon.provider.property.MethodProperty.6";
-        d = new PropertyDescriptor(id, KijimunaUI.getResourceString(id));
-        d.setCategory(category);
-        descriptors[5] = d;
-    }
+	private static IPropertyDescriptor[] descriptors;
 
-    private IRttiMethodDesctiptor method;
-    
-    public MethodProperty(IRttiMethodDesctiptor method) {
-    	this.method = method;
-    }
-    
+	static {
+		// info category
+		String category = KijimunaUI
+				.getResourceString("dicon.provider.property.ContentProperty.4");
+		descriptors = new IPropertyDescriptor[6];
+		// args
+		String id = "dicon.provider.property.MethodProperty.1";
+		PropertyDescriptor d = new PropertyDescriptor(id, KijimunaUI
+				.getResourceString(id));
+		d.setCategory(category);
+		descriptors[0] = d;
+		// returnType
+		id = "dicon.provider.property.MethodProperty.2";
+		d = new PropertyDescriptor(id, KijimunaUI.getResourceString(id));
+		d.setCategory(category);
+		descriptors[1] = d;
+		// methodName
+		id = "dicon.provider.property.MethodProperty.3";
+		d = new PropertyDescriptor(id, KijimunaUI.getResourceString(id));
+		d.setCategory(category);
+		descriptors[2] = d;
+		// final
+		id = "dicon.provider.property.MethodProperty.4";
+		d = new PropertyDescriptor(id, KijimunaUI.getResourceString(id));
+		d.setCategory(category);
+		descriptors[3] = d;
+		// static
+		id = "dicon.provider.property.MethodProperty.5";
+		d = new PropertyDescriptor(id, KijimunaUI.getResourceString(id));
+		d.setCategory(category);
+		descriptors[4] = d;
+		// parent
+		id = "dicon.provider.property.MethodProperty.6";
+		d = new PropertyDescriptor(id, KijimunaUI.getResourceString(id));
+		d.setCategory(category);
+		descriptors[5] = d;
+	}
+
+	private IRttiMethodDesctiptor method;
+
+	public MethodProperty(IRttiMethodDesctiptor method) {
+		this.method = method;
+	}
+
 	public IPropertyDescriptor[] getPropertyDescriptors() {
 		return descriptors;
 	}
@@ -79,7 +80,7 @@ public class MethodProperty extends NullProperty {
 	private String getArgDisplay() {
 		IRtti[] args = method.getArgs();
 		StringBuffer ret = new StringBuffer();
-		for(int i = 0; i < args.length; i++) {
+		for (int i = 0; i < args.length; i++) {
 			if (i != 0) {
 				ret.append(", ");
 			}
@@ -87,9 +88,9 @@ public class MethodProperty extends NullProperty {
 		}
 		return ret.toString();
 	}
-	
+
 	public Object getPropertyValue(Object id) {
-		if("dicon.provider.property.MethodProperty.1".equals(id)) {
+		if ("dicon.provider.property.MethodProperty.1".equals(id)) {
 			return getArgDisplay();
 		} else if ("dicon.provider.property.MethodProperty.2".equals(id)) {
 			return method.getReturnType();
@@ -105,6 +106,5 @@ public class MethodProperty extends NullProperty {
 			return null;
 		}
 	}
-	
-	
+
 }

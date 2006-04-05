@@ -16,6 +16,7 @@
 package org.seasar.kijimuna.ui.editor.contentassist.xml;
 
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
+
 import org.seasar.kijimuna.core.dtd.IDtd;
 import org.seasar.kijimuna.core.dtd.IElementDef;
 import org.seasar.kijimuna.core.parser.IElement;
@@ -24,27 +25,27 @@ import org.seasar.kijimuna.core.parser.IElement;
  * @author Toshitaka Agata (Nulab, Inc.)
  */
 public class XmlElementClosingAssistant extends AbstractXmlAssistant {
-	
-	public XmlElementClosingAssistant(XmlAssistProcessor processor,
-			IDtd dtd, XmlRegion xmlRegion) {
-	    super(processor, dtd, xmlRegion);
+
+	public XmlElementClosingAssistant(XmlAssistProcessor processor, IDtd dtd,
+			XmlRegion xmlRegion) {
+		super(processor, dtd, xmlRegion);
 	}
 
 	private String getDisplayText(IElementDef element) {
 		StringBuffer buffer = new StringBuffer();
-		buffer.append(element.getName());		
+		buffer.append(element.getName());
 		return buffer.toString();
 	}
-	
+
 	public ICompletionProposal[] getCompletionProposal(String prefix, int offset) {
 		IDtd dtd = getDtd();
-		if(dtd != null) {
+		if (dtd != null) {
 			XmlRegion xmlRegion = getXmlRegion();
 			IElement parent = getParentElement();
-			if(parent != null) {
+			if (parent != null) {
 				String parentElementName = parent.getElementName();
 				IElementDef element = dtd.getElement(parentElementName);
-				if(element != null) {
+				if (element != null) {
 					String elementName = parentElementName;
 					if (isMatch(elementName, prefix)) {
 						String replaceStr = "";
@@ -54,9 +55,10 @@ public class XmlElementClosingAssistant extends AbstractXmlAssistant {
 							replaceStr = "</" + elementName + ">";
 						}
 						String displayText = getDisplayText(element);
-						return new ICompletionProposal[] { 
-						        createProposal(replaceStr, displayText, prefix, 
-						                offset, replaceStr.length(), IMAGE_ICON_XML_TAG) };
+						return new ICompletionProposal[] {
+							createProposal(replaceStr, displayText, prefix, offset,
+									replaceStr.length(), IMAGE_ICON_XML_TAG)
+						};
 					}
 				}
 			}

@@ -30,6 +30,7 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.ide.IGotoMarker;
 import org.eclipse.ui.part.MultiPageEditorPart;
 import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
+
 import org.seasar.kijimuna.ui.ConstUI;
 import org.seasar.kijimuna.ui.KijimunaUI;
 
@@ -37,120 +38,117 @@ import org.seasar.kijimuna.ui.KijimunaUI;
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public class DiconEditor extends MultiPageEditorPart implements ConstUI {
-   
+
 	private DiconOutlinePage outline;
 	private IEditorPart editor;
-	
-    private int addEditorPage(IEditorPart part, String title) {
-        int ret = 0;
+
+	private int addEditorPage(IEditorPart part, String title) {
+		int ret = 0;
 		try {
 			ret = addPage(part, getEditorInput());
 			setPageText(ret, title);
 		} catch (PartInitException e) {
-		    KijimunaUI.reportException(e);
+			KijimunaUI.reportException(e);
 		}
 		return ret;
-    }
-    
-    public DiconOutlinePage getOutlinePage() {
-        if(outline == null) {
-        	outline = new DiconOutlinePage(this);
-        }
-        return outline;
-    }
+	}
 
-	public IEditorPart getSourceEditor(){
-		if(editor instanceof DiconXmlEditor){
-			return (DiconXmlEditor)editor;
+	public DiconOutlinePage getOutlinePage() {
+		if (outline == null) {
+			outline = new DiconOutlinePage(this);
+		}
+		return outline;
+	}
+
+	public IEditorPart getSourceEditor() {
+		if (editor instanceof DiconXmlEditor) {
+			return (DiconXmlEditor) editor;
 		} else {
-			return ((DiconEditor)editor).getSourceEditor();
+			return ((DiconEditor) editor).getSourceEditor();
 		}
 	}
 
-    protected void createPages() {
-        IExtensionRegistry registry = Platform.getExtensionRegistry();
-        IExtensionPoint point = 
-            registry.getExtensionPoint(EXTENSION_DICONEDITOR);
-        if(point != null) {
-	        IExtension[] extensions = point.getExtensions();
-	        TreeSet set = new TreeSet();
-	        for(int i = 0; i < extensions.length; i++) {
-	            IConfigurationElement conf = extensions[i].getConfigurationElements()[0];
-	            try {
-	                Object obj = conf.createExecutableExtension(
-	                        EXTENSION_ATTR_CLASS);
-	                if(obj instanceof DiconXmlEditor) {
-	                    editor = (IEditorPart)obj;
-	                    String title = conf.getAttribute(
-	                            EXTENSION_ATTR_NAME);
-	                    int index = Integer.parseInt(conf.getAttribute(
-	                            EXTENSION_ATTR_INDEX));
-	                    set.add(new EditorPartItem(editor, title, index));
-	                }
-	            } catch (Exception e) {
-	                KijimunaUI.reportException(e);
-	            }
-	        }
-	        for(Iterator it = set.iterator(); it.hasNext();) {
-	            EditorPartItem item = (EditorPartItem)it.next();
-	            addEditorPage(item.getEditorPart(), item.getTitle());
-	        }
-        }
-        setPartName(getEditorInput().getName());
-        setTitleToolTip(getEditorInput().getToolTipText());
-    }
-
-    public void doSave(IProgressMonitor monitor) {
-        for(int i = 0; i < getPageCount(); i++) {
-		    IEditorPart editor = getEditor(i); 
-	        if(editor.isSaveAsAllowed() && editor.isDirty()) {
-	            editor.doSave(monitor);
-	            break;
-	        }
+	protected void createPages() {
+		IExtensionRegistry registry = Platform.getExtensionRegistry();
+		IExtensionPoint point = registry.getExtensionPoint(EXTENSION_DICONEDITOR);
+		if (point != null) {
+			IExtension[] extensions = point.getExtensions();
+			TreeSet set = new TreeSet();
+			for (int i = 0; i < extensions.length; i++) {
+				IConfigurationElement conf = extensions[i].getConfigurationElements()[0];
+				try {
+					Object obj = conf.createExecutableExtension(EXTENSION_ATTR_CLASS);
+					if (obj instanceof DiconXmlEditor) {
+						editor = (IEditorPart) obj;
+						String title = conf.getAttribute(EXTENSION_ATTR_NAME);
+						int index = Integer.parseInt(conf
+								.getAttribute(EXTENSION_ATTR_INDEX));
+						set.add(new EditorPartItem(editor, title, index));
+					}
+				} catch (Exception e) {
+					KijimunaUI.reportException(e);
+				}
+			}
+			for (Iterator it = set.iterator(); it.hasNext();) {
+				EditorPartItem item = (EditorPartItem) it.next();
+				addEditorPage(item.getEditorPart(), item.getTitle());
+			}
 		}
-     }
+		setPartName(getEditorInput().getName());
+		setTitleToolTip(getEditorInput().getToolTipText());
+	}
 
-    public void doSaveAs() {
-		for(int i = 0; i < getPageCount(); i++) {
-		    IEditorPart editor = getEditor(i); 
-	        if(editor.isSaveAsAllowed()) {
-	            editor.doSaveAs();
-	            IEditorInput input = editor.getEditorInput();
-	    		setInput(input);
-	    		setPartName(input.getName());
-	            setTitleToolTip(getEditorInput().getToolTipText());
-	    		return;
-	        }
+	public void doSave(IProgressMonitor monitor) {
+		for (int i = 0; i < getPageCount(); i++) {
+			IEditorPart editor = getEditor(i);
+			if (editor.isSaveAsAllowed() && editor.isDirty()) {
+				editor.doSave(monitor);
+				break;
+			}
 		}
-    }
+	}
 
-    public boolean isSaveAsAllowed() {
-		for(int i = 0; i < getPageCount(); i++) {
-		    IEditorPart editor = getEditor(i);
-		    if(editor.isSaveAsAllowed()) {
-		        return true;
-		    }
+	public void doSaveAs() {
+		for (int i = 0; i < getPageCount(); i++) {
+			IEditorPart editor = getEditor(i);
+			if (editor.isSaveAsAllowed()) {
+				editor.doSaveAs();
+				IEditorInput input = editor.getEditorInput();
+				setInput(input);
+				setPartName(input.getName());
+				setTitleToolTip(getEditorInput().getToolTipText());
+				return;
+			}
+		}
+	}
+
+	public boolean isSaveAsAllowed() {
+		for (int i = 0; i < getPageCount(); i++) {
+			IEditorPart editor = getEditor(i);
+			if (editor.isSaveAsAllowed()) {
+				return true;
+			}
 		}
 		return false;
-    }
-    
-    public Object getAdapter(Class adapter) {
+	}
+
+	public Object getAdapter(Class adapter) {
 		if (adapter.equals(IContentOutlinePage.class)) {
-		    return getOutlinePage();
-		} else if(adapter.equals(IGotoMarker.class)) {
-			for(int i = 0; i < getPageCount(); i++) {
-			    IEditorPart editor = getEditor(i);
-			    if(editor instanceof IGotoMarker) {
-			        return editor;
-			    }
-		    	Object obj = editor.getAdapter(IGotoMarker.class);
-		    	if(obj != null) {
-		    		return obj;
-		    	}
+			return getOutlinePage();
+		} else if (adapter.equals(IGotoMarker.class)) {
+			for (int i = 0; i < getPageCount(); i++) {
+				IEditorPart editor = getEditor(i);
+				if (editor instanceof IGotoMarker) {
+					return editor;
+				}
+				Object obj = editor.getAdapter(IGotoMarker.class);
+				if (obj != null) {
+					return obj;
+				}
 			}
 			return null;
 		}
-        return super.getAdapter(adapter);
-    }
-}
+		return super.getAdapter(adapter);
+	}
 
+}

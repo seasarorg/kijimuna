@@ -20,6 +20,7 @@ import java.util.Collections;
 import java.util.List;
 
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
+
 import org.seasar.kijimuna.core.dtd.IAttributeDef;
 import org.seasar.kijimuna.core.dtd.IDtd;
 import org.seasar.kijimuna.core.dtd.IElementDef;
@@ -30,10 +31,10 @@ import org.seasar.kijimuna.ui.editor.contentassist.ProposalComparator;
  * @author Toshitaka Agata (Nulab, Inc.)
  */
 public class XmlAttributeAssistant extends AbstractXmlAssistant {
-	
-	public XmlAttributeAssistant(
-	        XmlAssistProcessor processor, IDtd dtd, XmlRegion xmlRegion) {
-	    super(processor, dtd, xmlRegion);
+
+	public XmlAttributeAssistant(XmlAssistProcessor processor, IDtd dtd,
+			XmlRegion xmlRegion) {
+		super(processor, dtd, xmlRegion);
 	}
 
 	private String getDisplayText(IAttributeDef attribute) {
@@ -54,25 +55,25 @@ public class XmlAttributeAssistant extends AbstractXmlAssistant {
 		}
 		return buffer.toString();
 	}
-	
+
 	public ICompletionProposal[] getCompletionProposal(String prefix, int offset) {
 		IDtd dtd = getDtd();
-		if(dtd != null) {
+		if (dtd != null) {
 			XmlRegion xmlRegion = getXmlRegion();
 			String elementName = xmlRegion.getElementName();
-			if(StringUtils.existValue(elementName)) {
+			if (StringUtils.existValue(elementName)) {
 				IElementDef elementDef = dtd.getElement(elementName);
-				if(elementDef != null) {
+				if (elementDef != null) {
 					IAttributeDef[] attributes = elementDef.getAttributes();
 					List proposals = new ArrayList();
 					String pre = "";
-					char c = xmlRegion.getText().charAt(xmlRegion.getCursorOffset() - 1); 
-					if(c == '"' || c == '\'') {
+					char c = xmlRegion.getText().charAt(xmlRegion.getCursorOffset() - 1);
+					if (c == '"' || c == '\'') {
 						pre = " ";
 					}
 					String post = "";
 					c = xmlRegion.getText().charAt(xmlRegion.getCursorOffset());
-					if(c != ' ' && c != '\t' && c != '\r' && c != '\n') {
+					if (c != ' ' && c != '\t' && c != '\r' && c != '\n') {
 						post = " ";
 					}
 					for (int i = 0; i < attributes.length; i++) {
@@ -81,15 +82,15 @@ public class XmlAttributeAssistant extends AbstractXmlAssistant {
 						if (isMatch(attrName, prefix)) {
 							String replaceStr = pre + attrName + "=\"\"" + post;
 							String displayText = getDisplayText(attribute);
-							ICompletionProposal proposal = createProposal(
-							        replaceStr, displayText, prefix, offset, 
-									replaceStr.length() - 1 - post.length(), IMAGE_ICON_XML_ATTR);
+							ICompletionProposal proposal = createProposal(replaceStr,
+									displayText, prefix, offset, replaceStr.length() - 1
+											- post.length(), IMAGE_ICON_XML_ATTR);
 							proposals.add(proposal);
 						}
 					}
 					Collections.sort(proposals, new ProposalComparator());
-					return (ICompletionProposal[]) proposals.toArray(
-					        new ICompletionProposal[proposals.size()]);
+					return (ICompletionProposal[]) proposals
+							.toArray(new ICompletionProposal[proposals.size()]);
 				}
 			}
 		}

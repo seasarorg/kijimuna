@@ -18,14 +18,14 @@ package org.seasar.kijimuna.ui.editor.scanner.xml;
 import org.eclipse.jface.text.rules.IPredicateRule;
 import org.eclipse.jface.text.rules.RuleBasedPartitionScanner;
 import org.eclipse.jface.text.rules.Token;
+
 import org.seasar.kijimuna.ui.editor.configuration.xml.XmlConsts;
 
 /**
  * @author Toshitaka Agata (Nulab, Inc.)
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class XmlPartitionScanner extends RuleBasedPartitionScanner
-		implements XmlConsts {
+public class XmlPartitionScanner extends RuleBasedPartitionScanner implements XmlConsts {
 
 	public XmlPartitionScanner() {
 		IPredicateRule[] rules = new IPredicateRule[4];
@@ -35,4 +35,5 @@ public class XmlPartitionScanner extends RuleBasedPartitionScanner
 		rules[3] = new TagRule(new Token(TYPE_TAG));
 		setPredicateRules(rules);
 	}
+
 }

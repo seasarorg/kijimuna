@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
+
 import org.seasar.kijimuna.ui.KijimunaUI;
 import org.seasar.kijimuna.ui.editor.contentassist.xml.AbstractXmlAssistant;
 import org.seasar.kijimuna.ui.editor.contentassist.xml.XmlAssistProcessor;
@@ -30,33 +31,35 @@ import org.seasar.kijimuna.ui.util.WorkbenchUtils;
  */
 public class DiconXmlDeclAssistant extends AbstractXmlAssistant {
 
-    public DiconXmlDeclAssistant(XmlAssistProcessor processor, XmlRegion xmlRegion) {
-        super(processor, null, xmlRegion);
-    }
-    
-    private ICompletionProposal createDeclProposal(String prefix, int offset, String enc) {
-        String decl = KijimunaUI.getResourceString(
-                "dicon.wizard.NewDiconWizardPage.10", new Object[] { enc });
-        if(isMatch(decl, prefix)) {
-            return createProposal(decl, enc, prefix, offset, decl.length(), null);
-        }
-        return null;
-    }
-    
+	public DiconXmlDeclAssistant(XmlAssistProcessor processor, XmlRegion xmlRegion) {
+		super(processor, null, xmlRegion);
+	}
+
+	private ICompletionProposal createDeclProposal(String prefix, int offset, String enc) {
+		String decl = KijimunaUI.getResourceString("dicon.wizard.NewDiconWizardPage.10",
+				new Object[] {
+					enc
+				});
+		if (isMatch(decl, prefix)) {
+			return createProposal(decl, enc, prefix, offset, decl.length(), null);
+		}
+		return null;
+	}
+
 	public ICompletionProposal[] getCompletionProposal(String prefix, int offset) {
-	    List proposals = new ArrayList();
-	    String regionText = getXmlRegion().getText();
-	    int cursorOffset = getXmlRegion().getCursorOffset();
-	    String xmlPrefix = regionText.substring(0, cursorOffset);
-	    String[] enc = WorkbenchUtils.getAllWorkbenchEncodings();
-	    for(int i = 0; i < enc.length; i++) {
-	        ICompletionProposal proposal = createDeclProposal(xmlPrefix, offset, enc[i]);
-		    if(proposal != null) {
-		        proposals.add(proposal);
-		    }
-	    }
-		return (ICompletionProposal[])proposals.toArray(
-		        new ICompletionProposal[proposals.size()]);
+		List proposals = new ArrayList();
+		String regionText = getXmlRegion().getText();
+		int cursorOffset = getXmlRegion().getCursorOffset();
+		String xmlPrefix = regionText.substring(0, cursorOffset);
+		String[] enc = WorkbenchUtils.getAllWorkbenchEncodings();
+		for (int i = 0; i < enc.length; i++) {
+			ICompletionProposal proposal = createDeclProposal(xmlPrefix, offset, enc[i]);
+			if (proposal != null) {
+				proposals.add(proposal);
+			}
+		}
+		return (ICompletionProposal[]) proposals
+				.toArray(new ICompletionProposal[proposals.size()]);
 	}
 
 }

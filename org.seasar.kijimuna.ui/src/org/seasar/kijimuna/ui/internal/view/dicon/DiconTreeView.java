@@ -16,8 +16,8 @@
 package org.seasar.kijimuna.ui.internal.view.dicon;
 
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IStorage;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IStorage;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
@@ -30,6 +30,7 @@ import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IPartListener;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.part.ViewPart;
+
 import org.seasar.kijimuna.core.dicon.model.IDiconElement;
 import org.seasar.kijimuna.ui.internal.provider.dicon.DiconContentProvider;
 import org.seasar.kijimuna.ui.internal.provider.dicon.DiconLabelProvider;
@@ -40,111 +41,114 @@ import org.seasar.kijimuna.ui.util.WorkbenchUtils;
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class DiconTreeView extends ViewPart
-		implements ISelectionChangedListener, IPartListener, IDoubleClickListener {
+public class DiconTreeView extends ViewPart implements ISelectionChangedListener,
+		IPartListener, IDoubleClickListener {
 
 	private TreeViewer viewer;
 	private ISelectionProvider selectionProvider;
 	private IWorkbenchPart focusPart;
 	private IProject currentProject;
-	
+
 	public void createPartControl(Composite parent) {
 		viewer = new TreeViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
-        viewer.setContentProvider(new DiconContentProvider());
-        viewer.setLabelProvider(new DiconLabelProvider());
-        viewer.setAutoExpandLevel(1);
-        viewer.addDoubleClickListener(this);
-        getSite().setSelectionProvider(viewer);
-        getViewSite().setSelectionProvider(viewer);
-        initInput();
-        getSite().getPage().addPartListener(this);
- 	}
-	
+		viewer.setContentProvider(new DiconContentProvider());
+		viewer.setLabelProvider(new DiconLabelProvider());
+		viewer.setAutoExpandLevel(1);
+		viewer.addDoubleClickListener(this);
+		getSite().setSelectionProvider(viewer);
+		getViewSite().setSelectionProvider(viewer);
+		initInput();
+		getSite().getPage().addPartListener(this);
+	}
+
 	private void initInput() {
-		IWorkbenchPart part =  WorkbenchUtils.getActiveEditor();
-		if(part == null) {
+		IWorkbenchPart part = WorkbenchUtils.getActiveEditor();
+		if (part == null) {
 			part = WorkbenchUtils.getWorkbenchPart();
 		}
 		partActivated(part);
 	}
-	
+
 	private void setInput(IProject project) {
-    	if(project != null) {
-    		if( !project.equals(currentProject)) {
-	    		currentProject = project;
-	    		viewer.setInput(new ViewContent(project));
-    		}
-    	}
+		if (project != null) {
+			if (!project.equals(currentProject)) {
+				currentProject = project;
+				viewer.setInput(new ViewContent(project));
+			}
+		}
 	}
-	
+
 	public void setFocus() {
-	    viewer.getTree().setFocus();
+		viewer.getTree().setFocus();
 	}
-	
+
 	public void dispose() {
-		if(selectionProvider != null) {
+		if (selectionProvider != null) {
 			selectionProvider.removeSelectionChangedListener(this);
 		}
 		getSite().getPage().removePartListener(this);
 		super.dispose();
 	}
-	
+
 	public void doubleClick(DoubleClickEvent event) {
 		Object obj = WorkbenchUtils.getFirstSelectedElement(event.getSelection());
 		WorkbenchUtils.showSource(WorkbenchUtils.getActiveEditor(), obj);
 	}
 
 	public void selectionChanged(SelectionChangedEvent event) {
-		if(focusPart == this) {
-		    IEditorPart editorPart = WorkbenchUtils.getActiveEditor();
-		    if(editorPart != null) {
-		        IStorage displayFile = WorkbenchUtils.getInputResource(editorPart);
-		        if(displayFile != null) {
-		    		Object obj = WorkbenchUtils.getFirstSelectedElement(event.getSelection());
-			        if(obj instanceof IInternalContainer) {
-			            IDiconElement element = ((IInternalContainer)obj).getElement();
-			            if(element != null) {
-				            IStorage selectedFile = (IStorage)element.getAdapter(IStorage.class);
-				            if(displayFile.equals(selectedFile)) {
-				                WorkbenchUtils.moveLine(editorPart, element.getStartLine());
-				            }
-			            }
-			        }
-		        }
-		    }
+		if (focusPart == this) {
+			IEditorPart editorPart = WorkbenchUtils.getActiveEditor();
+			if (editorPart != null) {
+				IStorage displayFile = WorkbenchUtils.getInputResource(editorPart);
+				if (displayFile != null) {
+					Object obj = WorkbenchUtils.getFirstSelectedElement(event
+							.getSelection());
+					if (obj instanceof IInternalContainer) {
+						IDiconElement element = ((IInternalContainer) obj).getElement();
+						if (element != null) {
+							IStorage selectedFile = (IStorage) element
+									.getAdapter(IStorage.class);
+							if (displayFile.equals(selectedFile)) {
+								WorkbenchUtils.moveLine(editorPart, element
+										.getStartLine());
+							}
+						}
+					}
+				}
+			}
 		} else {
-		    if(selectionProvider != null) {
-				setInput(WorkbenchUtils.getCurrentProject(
-				        selectionProvider.getSelection()));
+			if (selectionProvider != null) {
+				setInput(WorkbenchUtils.getCurrentProject(selectionProvider
+						.getSelection()));
 			}
 		}
-    }
+	}
 
 	public void partActivated(IWorkbenchPart part) {
-		if((part != null) && (part != focusPart)) {
+		if ((part != null) && (part != focusPart)) {
 			if (selectionProvider != null) {
 				selectionProvider.removeSelectionChangedListener(this);
 				selectionProvider = null;
 			}
-			if(focusPart != part) {
+			if (focusPart != part) {
 				focusPart = part;
 				if (focusPart != null) {
-					if(focusPart instanceof IEditorPart) {
-						IEditorPart editorPart = (IEditorPart)focusPart;
+					if (focusPart instanceof IEditorPart) {
+						IEditorPart editorPart = (IEditorPart) focusPart;
 						IStorage storage = WorkbenchUtils.getInputResource(editorPart);
-					    if(storage instanceof IFile) {
-					    	IFile file = (IFile)storage;
+						if (storage instanceof IFile) {
+							IFile file = (IFile) storage;
 							setInput(file.getProject());
 							return;
-					    }
-				    	// currentProject
-				    	return;
+						}
+						// currentProject
+						return;
 					}
 					selectionProvider = focusPart.getSite().getSelectionProvider();
 					if (selectionProvider != null) {
 						selectionProvider.addSelectionChangedListener(this);
-						setInput(WorkbenchUtils.getCurrentProject(
-								selectionProvider.getSelection()));
+						setInput(WorkbenchUtils.getCurrentProject(selectionProvider
+								.getSelection()));
 						return;
 					}
 				}

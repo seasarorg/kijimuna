@@ -22,36 +22,37 @@ import org.eclipse.jface.viewers.Viewer;
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public class DiconContentProvider implements ITreeContentProvider {
-    
-    public Object[] getChildren(Object parentElement) {
-        if(parentElement instanceof IContentWalker) {
-            IContentWalker walker = (IContentWalker)parentElement;
-            return walker.getChildren();
-        }
-        return new Object[0];
-    }
 
-    public Object getParent(Object element) {
-        if(element instanceof IContentWalker) {
-            return ((IContentWalker)element).getParent();
-        }
-        return null;
-    }
+	public Object[] getChildren(Object parentElement) {
+		if (parentElement instanceof IContentWalker) {
+			IContentWalker walker = (IContentWalker) parentElement;
+			return walker.getChildren();
+		}
+		return new Object[0];
+	}
 
-    public boolean hasChildren(Object element) {
-        return getChildren(element).length > 0;
-    }
+	public Object getParent(Object element) {
+		if (element instanceof IContentWalker) {
+			return ((IContentWalker) element).getParent();
+		}
+		return null;
+	}
 
-    public Object[] getElements(Object inputElement) {
-        if(inputElement instanceof IContentRoot) {
-        	return ((IContentRoot)inputElement).getTopLevelItems();
-        }
-        return new Object[0];
-     }
+	public boolean hasChildren(Object element) {
+		return getChildren(element).length > 0;
+	}
 
-    public void dispose() {
-    }
+	public Object[] getElements(Object inputElement) {
+		if (inputElement instanceof IContentRoot) {
+			return ((IContentRoot) inputElement).getTopLevelItems();
+		}
+		return new Object[0];
+	}
 
-    public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
-    }
+	public void dispose() {
+	}
+
+	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
+	}
+
 }

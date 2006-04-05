@@ -22,45 +22,46 @@ import org.eclipse.jface.text.source.IAnnotationHover;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IFileEditorInput;
+
 import org.seasar.kijimuna.core.util.StringUtils;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class SimpleAnnotationHover
-		implements IAnnotationHover {
-	
+public class SimpleAnnotationHover implements IAnnotationHover {
+
 	private IEditorPart part;
-	
+
 	public SimpleAnnotationHover(IEditorPart part) {
 		this.part = part;
 	}
-	
+
 	private IMarker[] getMarker() {
 		try {
-			IFileEditorInput input = (IFileEditorInput)part.getEditorInput();
+			IFileEditorInput input = (IFileEditorInput) part.getEditorInput();
 			IFile file = input.getFile();
 			return file.findMarkers(IMarker.MARKER, true, IFile.DEPTH_ZERO);
 		} catch (CoreException e) {
 			return new IMarker[0];
 		}
 	}
-	
+
 	public String getHoverInfo(ISourceViewer sourceViewer, int lineNumber) {
 		IMarker[] marker = getMarker();
-		if(marker != null) {
-		    StringBuffer buffer = new StringBuffer();
-			for(int i = 0; i < marker.length; i++) {
+		if (marker != null) {
+			StringBuffer buffer = new StringBuffer();
+			for (int i = 0; i < marker.length; i++) {
 				try {
-					Integer integer = (Integer)marker[i].getAttribute(IMarker.LINE_NUMBER);
-					if((integer != null) && (integer.intValue() == lineNumber + 1)) {
-					    String message = (String)marker[i].getAttribute(IMarker.MESSAGE);
-					    if(StringUtils.existValue(message)) {
-						    if(i > 0) {
-						        buffer.append(System.getProperty("line.separator"));
-						    }
+					Integer integer = (Integer) marker[i]
+							.getAttribute(IMarker.LINE_NUMBER);
+					if ((integer != null) && (integer.intValue() == lineNumber + 1)) {
+						String message = (String) marker[i].getAttribute(IMarker.MESSAGE);
+						if (StringUtils.existValue(message)) {
+							if (i > 0) {
+								buffer.append(System.getProperty("line.separator"));
+							}
 							buffer.append(message);
-					    }
+						}
 					}
 				} catch (CoreException e) {
 				}

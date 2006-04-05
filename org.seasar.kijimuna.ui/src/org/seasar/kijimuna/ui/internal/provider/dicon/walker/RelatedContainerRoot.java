@@ -25,39 +25,39 @@ import org.seasar.kijimuna.ui.KijimunaUI;
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class RelatedContainerRoot extends AbstractContentWalker 
-		implements ConstUI {
+public class RelatedContainerRoot extends AbstractContentWalker implements ConstUI {
 
-    private IContainerElement container;
-    
-    public RelatedContainerRoot(IContainerElement container) {
-        super(null);
-        this.container = container;
-    }
-    
-    public IContainerElement getContainerElement() {
-        return container;
-    }
+	private IContainerElement container;
 
-    public Object[] getChildren() {
-        List parents = ModelUtils.getParentContaienrs(container);
-        Object[] ret = new Object[parents.size()];
-        for(int i = 0; i < parents.size(); i++) {
-            ret[i] = new RelatedContainerItem((IContainerElement)parents.get(i), this);
-        }
-        return ret;
-    }
+	public RelatedContainerRoot(IContainerElement container) {
+		super(null);
+		this.container = container;
+	}
 
-    public String getDisplayName() {
-        return KijimunaUI.getResourceString("dicon.provider.walker.RelatedContainerRoot.1");
-    }
+	public IContainerElement getContainerElement() {
+		return container;
+	}
 
-    public String getImageName() {
-        return IMAGE_ICON_PARENTS;
-    }
-    
-    public boolean isDefaultExpandedState() {
-        return true;
-    }
+	public Object[] getChildren() {
+		List parents = ModelUtils.getParentContaienrs(container);
+		Object[] ret = new Object[parents.size()];
+		for (int i = 0; i < parents.size(); i++) {
+			ret[i] = new RelatedContainerItem((IContainerElement) parents.get(i), this);
+		}
+		return ret;
+	}
+
+	public String getDisplayName() {
+		return KijimunaUI
+				.getResourceString("dicon.provider.walker.RelatedContainerRoot.1");
+	}
+
+	public String getImageName() {
+		return IMAGE_ICON_PARENTS;
+	}
+
+	public boolean isDefaultExpandedState() {
+		return true;
+	}
 
 }

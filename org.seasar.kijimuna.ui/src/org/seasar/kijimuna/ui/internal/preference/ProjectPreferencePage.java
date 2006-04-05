@@ -30,6 +30,7 @@ import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.PropertyPage;
+
 import org.seasar.kijimuna.core.ConstCore;
 import org.seasar.kijimuna.core.KijimunaCore;
 import org.seasar.kijimuna.core.dicon.MarkerSetting;
@@ -37,8 +38,6 @@ import org.seasar.kijimuna.core.util.ProjectUtils;
 import org.seasar.kijimuna.ui.KijimunaUI;
 import org.seasar.kijimuna.ui.internal.preference.design.ProjectPropertyGUI;
 import org.seasar.kijimuna.ui.util.WidgetUtils;
-
-import com.sun.corba.se.spi.ior.MakeImmutable;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
@@ -58,7 +57,7 @@ public class ProjectPreferencePage extends PropertyPage implements ConstCore {
 	private Combo diconProblemCombo;
 
 	private IProject getProject() {
-		return (IProject)getElement();
+		return (IProject) getElement();
 	}
 
 	protected Control createContents(Composite parent) {
@@ -83,69 +82,69 @@ public class ProjectPreferencePage extends PropertyPage implements ConstCore {
 			boolean isVallidation = MarkerSetting.isDiconValidation(project);
 			validationCheck.setSelection(isVallidation);
 			view.validationCheckWidgetSelected(isNature && isVallidation);
-		} catch(CoreException e) {
+		} catch (CoreException e) {
 			KijimunaUI.reportException(e);
 		}
 		return view;
 	}
 
 	private void settingCombos(boolean isDefault) {
-	    IProject project = getProject();
-		WidgetUtils.setDiconMarkerSettingCombo(
-		        project, xmlErrorCombo, MARKER_CATEGORY_XML_ERROR, isDefault);
-		WidgetUtils.setDiconMarkerSettingCombo(
-		        project, xmlWarningCombo, MARKER_CATEGORY_XML_WARNING, isDefault);
-		WidgetUtils.setDiconMarkerSettingCombo(
-		        project, nullInjectionCombo, MARKER_CATEGORY_NULL_INJECTION, isDefault);
-		WidgetUtils.setDiconMarkerSettingCombo(
-		        project, autoInjectionCombo, MARKER_CATEGORY_AUTO_INJECTION, isDefault);
-		WidgetUtils.setDiconMarkerSettingCombo(
-		        project, javaFetalCombo, MARKER_CATEGORY_JAVA_FETAL, isDefault);
-		WidgetUtils.setDiconMarkerSettingCombo(
-		        project, diconFetalCombo, MARKER_CATEGORY_DICON_FETAL, isDefault);
-		WidgetUtils.setDiconMarkerSettingCombo(
-		        project, diconProblemCombo, MARKER_CATEGORY_DICON_PROBLEM, isDefault);
+		IProject project = getProject();
+		WidgetUtils.setDiconMarkerSettingCombo(project, xmlErrorCombo,
+				MARKER_CATEGORY_XML_ERROR, isDefault);
+		WidgetUtils.setDiconMarkerSettingCombo(project, xmlWarningCombo,
+				MARKER_CATEGORY_XML_WARNING, isDefault);
+		WidgetUtils.setDiconMarkerSettingCombo(project, nullInjectionCombo,
+				MARKER_CATEGORY_NULL_INJECTION, isDefault);
+		WidgetUtils.setDiconMarkerSettingCombo(project, autoInjectionCombo,
+				MARKER_CATEGORY_AUTO_INJECTION, isDefault);
+		WidgetUtils.setDiconMarkerSettingCombo(project, javaFetalCombo,
+				MARKER_CATEGORY_JAVA_FETAL, isDefault);
+		WidgetUtils.setDiconMarkerSettingCombo(project, diconFetalCombo,
+				MARKER_CATEGORY_DICON_FETAL, isDefault);
+		WidgetUtils.setDiconMarkerSettingCombo(project, diconProblemCombo,
+				MARKER_CATEGORY_DICON_PROBLEM, isDefault);
 	}
-	
+
 	public boolean performOk() {
 		try {
-			if(natureCheck.getSelection()) {
-			    final IProject project = getProject();
-				boolean alreadyHasNature = ProjectUtils.hasNature(
-				        project, ID_NATURE_DICON); 
-				if(!alreadyHasNature) {
-				    ProjectUtils.addNature(project, ID_NATURE_DICON);
+			if (natureCheck.getSelection()) {
+				final IProject project = getProject();
+				boolean alreadyHasNature = ProjectUtils.hasNature(project,
+						ID_NATURE_DICON);
+				if (!alreadyHasNature) {
+					ProjectUtils.addNature(project, ID_NATURE_DICON);
 				}
-				MarkerSetting.setDiconMarkerPreference(project, 
-				        MARKER_CATEGORY_XML_ERROR, 
-				        xmlErrorCombo.getSelectionIndex());
-				MarkerSetting.setDiconMarkerPreference(project, 
-				        MARKER_CATEGORY_XML_WARNING, 
-				        xmlWarningCombo.getSelectionIndex());
-				MarkerSetting.setDiconValidationPreference(project, validationCheck.getSelection());
-				MarkerSetting.setDiconMarkerPreference(project, 
-				        MARKER_CATEGORY_NULL_INJECTION,
-				        nullInjectionCombo.getSelectionIndex());
 				MarkerSetting.setDiconMarkerPreference(project,
-				        MARKER_CATEGORY_AUTO_INJECTION,
-				        autoInjectionCombo.getSelectionIndex());
+						MARKER_CATEGORY_XML_ERROR, xmlErrorCombo.getSelectionIndex());
 				MarkerSetting.setDiconMarkerPreference(project,
-				        MARKER_CATEGORY_JAVA_FETAL,
-				        javaFetalCombo.getSelectionIndex());
+						MARKER_CATEGORY_XML_WARNING, xmlWarningCombo.getSelectionIndex());
+				MarkerSetting.setDiconValidationPreference(project, validationCheck
+						.getSelection());
 				MarkerSetting.setDiconMarkerPreference(project,
-				        MARKER_CATEGORY_DICON_FETAL, 
-				        diconFetalCombo.getSelectionIndex());
+						MARKER_CATEGORY_NULL_INJECTION, nullInjectionCombo
+								.getSelectionIndex());
 				MarkerSetting.setDiconMarkerPreference(project,
-				        MARKER_CATEGORY_DICON_PROBLEM, 
-				        diconProblemCombo.getSelectionIndex());
-				if(alreadyHasNature) {
-					IWorkbenchWindow window = 
-						PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+						MARKER_CATEGORY_AUTO_INJECTION, autoInjectionCombo
+								.getSelectionIndex());
+				MarkerSetting.setDiconMarkerPreference(project,
+						MARKER_CATEGORY_JAVA_FETAL, javaFetalCombo.getSelectionIndex());
+				MarkerSetting.setDiconMarkerPreference(project,
+						MARKER_CATEGORY_DICON_FETAL, diconFetalCombo.getSelectionIndex());
+				MarkerSetting.setDiconMarkerPreference(project,
+						MARKER_CATEGORY_DICON_PROBLEM, diconProblemCombo
+								.getSelectionIndex());
+				if (alreadyHasNature) {
+					IWorkbenchWindow window = PlatformUI.getWorkbench()
+							.getActiveWorkbenchWindow();
 					try {
 						window.run(true, true, new IRunnableWithProgress() {
+
 							public void run(IProgressMonitor monitor)
-									throws InvocationTargetException, InterruptedException {
-							    KijimunaCore.getProjectRecorder().cleanup(project, monitor);
+									throws InvocationTargetException,
+									InterruptedException {
+								KijimunaCore.getProjectRecorder().cleanup(project,
+										monitor);
 							}
 						});
 					} catch (InvocationTargetException e) {
@@ -153,7 +152,7 @@ public class ProjectPreferencePage extends PropertyPage implements ConstCore {
 					}
 				}
 			} else {
-			    ProjectUtils.removeNature(getProject(), ID_NATURE_DICON);
+				ProjectUtils.removeNature(getProject(), ID_NATURE_DICON);
 			}
 		} catch (CoreException e) {
 			KijimunaUI.reportException(e);
@@ -162,13 +161,15 @@ public class ProjectPreferencePage extends PropertyPage implements ConstCore {
 		return true;
 	}
 
-    protected void performDefaults() {
-		if(natureCheck.getSelection()) {
+	protected void performDefaults() {
+		if (natureCheck.getSelection()) {
 			settingCombos(true);
-		    IProject project = getProject();
-		    boolean defaultValidation = MarkerSetting.getDiconValidationPreference(project, true);
-		    validationCheck.setSelection(defaultValidation);
+			IProject project = getProject();
+			boolean defaultValidation = MarkerSetting.getDiconValidationPreference(
+					project, true);
+			validationCheck.setSelection(defaultValidation);
 			view.validationCheckWidgetSelected(defaultValidation);
 		}
-    }
+	}
+
 }

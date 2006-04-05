@@ -17,6 +17,7 @@ package org.seasar.kijimuna.ui.internal.provider.dicon.walker;
 
 import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.ui.views.properties.IPropertySource;
+
 import org.seasar.kijimuna.core.dicon.MarkerSetting;
 import org.seasar.kijimuna.core.rtti.IRttiMethodDesctiptor;
 import org.seasar.kijimuna.core.util.ModelUtils;
@@ -28,44 +29,43 @@ import org.seasar.kijimuna.ui.internal.provider.dicon.property.MethodProperty;
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class MethodItem extends AbstractInternalContainer
-		implements IHasJavaElement, ConstUI {
+public class MethodItem extends AbstractInternalContainer implements IHasJavaElement,
+		ConstUI {
 
-    private IRttiMethodDesctiptor method;
-    private boolean needsSeverity;
-    
-    public MethodItem(IInternalContainer parent, 
-            IRttiMethodDesctiptor method, boolean needsSeverity) {
-        super(parent);
-        this.method = method;
-        this.needsSeverity = needsSeverity;
-    }
+	private IRttiMethodDesctiptor method;
+	private boolean needsSeverity;
 
-    protected IPropertySource createProperty() {
-        return new MethodProperty(method);
-    }
+	public MethodItem(IInternalContainer parent, IRttiMethodDesctiptor method,
+			boolean needsSeverity) {
+		super(parent);
+		this.method = method;
+		this.needsSeverity = needsSeverity;
+	}
 
-    public int getMarkerSeverity() {
-        if(needsSeverity) {
-            if(method.isFinal() || method.isStatic()) {
-                return MarkerSetting.getDiconMarkerPreference(
-                        getElement().getProject(),
-                        MARKER_CATEGORY_DICON_PROBLEM, false);
-            }
-        }
-        return super.getMarkerSeverity();
-    }
+	protected IPropertySource createProperty() {
+		return new MethodProperty(method);
+	}
 
-    public IJavaElement getJavaElement() {
-        return method.getMember();
-    }
-    
-    public String getDisplayName() {
-        return ModelUtils.getMethodDisplay(method, false);
-    }
-    
-    public String getImageName() {
-        return IMAGE_ICON_JAVA_METHOD;
-    }
-    
+	public int getMarkerSeverity() {
+		if (needsSeverity) {
+			if (method.isFinal() || method.isStatic()) {
+				return MarkerSetting.getDiconMarkerPreference(getElement().getProject(),
+						MARKER_CATEGORY_DICON_PROBLEM, false);
+			}
+		}
+		return super.getMarkerSeverity();
+	}
+
+	public IJavaElement getJavaElement() {
+		return method.getMember();
+	}
+
+	public String getDisplayName() {
+		return ModelUtils.getMethodDisplay(method, false);
+	}
+
+	public String getImageName() {
+		return IMAGE_ICON_JAVA_METHOD;
+	}
+
 }

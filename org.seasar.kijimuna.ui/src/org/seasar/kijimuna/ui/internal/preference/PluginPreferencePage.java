@@ -17,7 +17,6 @@ package org.seasar.kijimuna.ui.internal.preference;
 
 import java.lang.reflect.InvocationTargetException;
 
-import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.swt.SWT;
@@ -28,19 +27,17 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.dialogs.WorkbenchPreferencePage;
+
 import org.seasar.kijimuna.core.ConstCore;
 import org.seasar.kijimuna.core.KijimunaCore;
 import org.seasar.kijimuna.core.dicon.MarkerSetting;
 import org.seasar.kijimuna.ui.internal.preference.design.ProjectPropertyGUI;
 import org.seasar.kijimuna.ui.util.WidgetUtils;
 
-import com.sun.corba.se.spi.ior.MakeImmutable;
-
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class PluginPreferencePage extends WorkbenchPreferencePage
-		implements ConstCore {
+public class PluginPreferencePage extends WorkbenchPreferencePage implements ConstCore {
 
 	private ProjectPropertyGUI view;
 	private Combo xmlErrorCombo;
@@ -51,7 +48,7 @@ public class PluginPreferencePage extends WorkbenchPreferencePage
 	private Combo javaFetalCombo;
 	private Combo diconFetalCombo;
 	private Combo diconProblemCombo;
-	
+
 	protected Control createContents(Composite parent) {
 		view = new ProjectPropertyGUI(parent, SWT.NULL);
 		Button natureCheck = view.getNatureCheck();
@@ -64,7 +61,7 @@ public class PluginPreferencePage extends WorkbenchPreferencePage
 		javaFetalCombo = view.getJavaFetalCombo();
 		diconFetalCombo = view.getDiconFetalCombo();
 		diconProblemCombo = view.getDiconProblemCombo();
-		
+
 		settingCombos(false);
 		boolean isValidation = MarkerSetting.getDiconValidationPreference(null, false);
 		validationCheck.setSelection(isValidation);
@@ -73,52 +70,45 @@ public class PluginPreferencePage extends WorkbenchPreferencePage
 	}
 
 	private void settingCombos(boolean isDefault) {
-		WidgetUtils.setDiconMarkerSettingCombo(
-		        null, xmlErrorCombo, MARKER_CATEGORY_XML_ERROR, isDefault);
-		WidgetUtils.setDiconMarkerSettingCombo(
-		        null, xmlWarningCombo, MARKER_CATEGORY_XML_WARNING, isDefault);
-		WidgetUtils.setDiconMarkerSettingCombo(
-		        null, nullInjectionCombo, MARKER_CATEGORY_NULL_INJECTION, isDefault);
-		WidgetUtils.setDiconMarkerSettingCombo(
-		        null, autoInjectionCombo, MARKER_CATEGORY_AUTO_INJECTION, isDefault);
-		WidgetUtils.setDiconMarkerSettingCombo(
-		        null, javaFetalCombo, MARKER_CATEGORY_JAVA_FETAL, isDefault);
-		WidgetUtils.setDiconMarkerSettingCombo(
-		        null, diconFetalCombo, MARKER_CATEGORY_DICON_FETAL, isDefault);
-		WidgetUtils.setDiconMarkerSettingCombo(
-		        null, diconProblemCombo, MARKER_CATEGORY_DICON_PROBLEM, isDefault);
-	}	
+		WidgetUtils.setDiconMarkerSettingCombo(null, xmlErrorCombo,
+				MARKER_CATEGORY_XML_ERROR, isDefault);
+		WidgetUtils.setDiconMarkerSettingCombo(null, xmlWarningCombo,
+				MARKER_CATEGORY_XML_WARNING, isDefault);
+		WidgetUtils.setDiconMarkerSettingCombo(null, nullInjectionCombo,
+				MARKER_CATEGORY_NULL_INJECTION, isDefault);
+		WidgetUtils.setDiconMarkerSettingCombo(null, autoInjectionCombo,
+				MARKER_CATEGORY_AUTO_INJECTION, isDefault);
+		WidgetUtils.setDiconMarkerSettingCombo(null, javaFetalCombo,
+				MARKER_CATEGORY_JAVA_FETAL, isDefault);
+		WidgetUtils.setDiconMarkerSettingCombo(null, diconFetalCombo,
+				MARKER_CATEGORY_DICON_FETAL, isDefault);
+		WidgetUtils.setDiconMarkerSettingCombo(null, diconProblemCombo,
+				MARKER_CATEGORY_DICON_PROBLEM, isDefault);
+	}
 
 	public boolean performOk() {
-		MarkerSetting.setDiconMarkerPreference(null, 
-		        MARKER_CATEGORY_XML_ERROR, 
-		        xmlErrorCombo.getSelectionIndex());
-		MarkerSetting.setDiconMarkerPreference(null, 
-		        MARKER_CATEGORY_XML_WARNING, 
-		        xmlWarningCombo.getSelectionIndex());
+		MarkerSetting.setDiconMarkerPreference(null, MARKER_CATEGORY_XML_ERROR,
+				xmlErrorCombo.getSelectionIndex());
+		MarkerSetting.setDiconMarkerPreference(null, MARKER_CATEGORY_XML_WARNING,
+				xmlWarningCombo.getSelectionIndex());
 		MarkerSetting.setDiconValidationPreference(null, validationCheck.getSelection());
-		MarkerSetting.setDiconMarkerPreference(null, 
-		        MARKER_CATEGORY_NULL_INJECTION,
-		        nullInjectionCombo.getSelectionIndex());
-		MarkerSetting.setDiconMarkerPreference(null,
-		        MARKER_CATEGORY_AUTO_INJECTION,
-		        autoInjectionCombo.getSelectionIndex());
-		MarkerSetting.setDiconMarkerPreference(null,
-		        MARKER_CATEGORY_JAVA_FETAL,
-		        javaFetalCombo.getSelectionIndex());
-		MarkerSetting.setDiconMarkerPreference(null,
-		        MARKER_CATEGORY_DICON_FETAL, 
-		        diconFetalCombo.getSelectionIndex());
-		MarkerSetting.setDiconMarkerPreference(null,
-		        MARKER_CATEGORY_DICON_PROBLEM, 
-		        diconProblemCombo.getSelectionIndex());
-		IWorkbenchWindow window = 
-			PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+		MarkerSetting.setDiconMarkerPreference(null, MARKER_CATEGORY_NULL_INJECTION,
+				nullInjectionCombo.getSelectionIndex());
+		MarkerSetting.setDiconMarkerPreference(null, MARKER_CATEGORY_AUTO_INJECTION,
+				autoInjectionCombo.getSelectionIndex());
+		MarkerSetting.setDiconMarkerPreference(null, MARKER_CATEGORY_JAVA_FETAL,
+				javaFetalCombo.getSelectionIndex());
+		MarkerSetting.setDiconMarkerPreference(null, MARKER_CATEGORY_DICON_FETAL,
+				diconFetalCombo.getSelectionIndex());
+		MarkerSetting.setDiconMarkerPreference(null, MARKER_CATEGORY_DICON_PROBLEM,
+				diconProblemCombo.getSelectionIndex());
+		IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
 		try {
 			window.run(true, true, new IRunnableWithProgress() {
+
 				public void run(IProgressMonitor monitor)
 						throws InvocationTargetException, InterruptedException {
-				    KijimunaCore.getProjectRecorder().cleanup(monitor);
+					KijimunaCore.getProjectRecorder().cleanup(monitor);
 				}
 			});
 		} catch (InvocationTargetException e) {
@@ -127,9 +117,10 @@ public class PluginPreferencePage extends WorkbenchPreferencePage
 		return true;
 	}
 
-    protected void performDefaults() {
+	protected void performDefaults() {
 		settingCombos(true);
-	    validationCheck.setSelection(true);
+		validationCheck.setSelection(true);
 		view.validationCheckWidgetSelected(true);
-    }	
+	}
+
 }

@@ -17,6 +17,7 @@ package org.seasar.kijimuna.ui.internal.provider.dicon.walker;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IStorage;
+
 import org.seasar.kijimuna.core.dicon.model.IContainerElement;
 import org.seasar.kijimuna.core.util.ModelUtils;
 import org.seasar.kijimuna.ui.internal.provider.dicon.IContentRoot;
@@ -24,25 +25,25 @@ import org.seasar.kijimuna.ui.internal.provider.dicon.IContentRoot;
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class OutlineContent implements IContentRoot { 
+public class OutlineContent implements IContentRoot {
 
 	private IProject project;
-    private IStorage storage;
-    
-    public OutlineContent(IProject project, IStorage storage) {
-        this.project = project;
-    	this.storage = storage;
-    }
-    
-    public Object[] getTopLevelItems() {
-        IContainerElement container = ModelUtils.getContainer(project, storage); 
-        if(container != null) {
-            Object[] ret = new Object[2];
-            ret[0] = new RelatedContainerRoot(container);
-            ret[1] = new ContentItem(container, null, true);
-            return ret;
-        }
-        return new Object[0];
-    }
-    
+	private IStorage storage;
+
+	public OutlineContent(IProject project, IStorage storage) {
+		this.project = project;
+		this.storage = storage;
+	}
+
+	public Object[] getTopLevelItems() {
+		IContainerElement container = ModelUtils.getContainer(project, storage);
+		if (container != null) {
+			Object[] ret = new Object[2];
+			ret[0] = new RelatedContainerRoot(container);
+			ret[1] = new ContentItem(container, null, true);
+			return ret;
+		}
+		return new Object[0];
+	}
+
 }

@@ -18,8 +18,10 @@ package org.seasar.kijimuna.ui;
 import java.net.URL;
 import java.util.ResourceBundle;
 
-import org.eclipse.core.runtime.Plugin;
 import org.osgi.framework.BundleContext;
+
+import org.eclipse.core.runtime.Plugin;
+
 import org.seasar.kijimuna.core.MessageManager;
 
 /**
@@ -27,16 +29,15 @@ import org.seasar.kijimuna.core.MessageManager;
  */
 public class KijimunaUI extends Plugin implements ConstUI {
 
-	//	 static
+	// static
 	// -------------------------------------------------------------------
 
 	private static KijimunaUI kijimunaUI;
-	
-	
+
 	public static void reportInfo(String message) {
 		kijimunaUI.messageManager.reportInfo(message);
 	}
-	
+
 	public static void reportException(Exception e) {
 		kijimunaUI.messageManager.reportException(e);
 	}
@@ -44,32 +45,32 @@ public class KijimunaUI extends Plugin implements ConstUI {
 	public static String getResourceString(String key) {
 		return kijimunaUI.messageManager.getResourceString(key);
 	}
-	
+
 	public static String getResourceString(String key, Object[] args) {
 		return kijimunaUI.messageManager.getResourceString(key, args);
 	}
-	
+
 	public static ResourceBundle getResourceBundle() {
-	    return kijimunaUI.messageManager.getResourceBundle();
+		return kijimunaUI.messageManager.getResourceBundle();
 	}
 
 	public static URL getEntry(String name) {
-	    return kijimunaUI.getBundle().getEntry(name);
+		return kijimunaUI.getBundle().getEntry(name);
 	}
-	
-	//	 instance
+
+	// instance
 	// -------------------------------------------------------------------
-	
-	private MessageManager messageManager; 
-	
+
+	private MessageManager messageManager;
+
 	public KijimunaUI() {
 		kijimunaUI = this;
 		messageManager = new MessageManager(this, PATH_RESOURCES);
 	}
-	
-    public void stop(BundleContext context) throws Exception {
-        kijimunaUI = null;
-        super.stop(context);
-    }
+
+	public void stop(BundleContext context) throws Exception {
+		kijimunaUI = null;
+		super.stop(context);
+	}
 
 }

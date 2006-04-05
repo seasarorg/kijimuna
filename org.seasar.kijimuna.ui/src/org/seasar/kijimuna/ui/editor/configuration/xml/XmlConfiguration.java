@@ -34,6 +34,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IFileEditorInput;
+
 import org.seasar.kijimuna.ui.editor.configuration.ColorManager;
 import org.seasar.kijimuna.ui.editor.configuration.SimpleAnnotationHover;
 import org.seasar.kijimuna.ui.editor.contentassist.xml.XmlAssistProcessor;
@@ -45,10 +46,9 @@ import org.seasar.kijimuna.ui.editor.scanner.xml.TagColorScanner;
  * @author Toshitaka Agata (Nulab, Inc.)
  * @author Masataka Kurihara (Gluegent, Inc)
  */
-public class XmlConfiguration extends SourceViewerConfiguration
-		implements XmlConsts {
-	
-    private IEditorPart editor;
+public class XmlConfiguration extends SourceViewerConfiguration implements XmlConsts {
+
+	private IEditorPart editor;
 	private XmlDoubleClickStrategy doubleClickStrategy;
 	private ColorManager colorManager;
 	private ITokenScanner docColorScanner;
@@ -58,20 +58,19 @@ public class XmlConfiguration extends SourceViewerConfiguration
 		this.editor = editor;
 		this.colorManager = colorManager;
 	}
-	
+
 	public String[] getConfiguredContentTypes(ISourceViewer sourceViewer) {
 		return new String[] {
-			TYPE_COMMENT,
-			TYPE_XML_DECL,
-			TYPE_DOC_DECL,
-			TYPE_TAG,
-			IDocument.DEFAULT_CONTENT_TYPE
+				TYPE_COMMENT,
+				TYPE_XML_DECL,
+				TYPE_DOC_DECL,
+				TYPE_TAG,
+				IDocument.DEFAULT_CONTENT_TYPE
 		};
 	}
-	
-	public ITextDoubleClickStrategy getDoubleClickStrategy(
-		ISourceViewer sourceViewer,
-		String contentType) {
+
+	public ITextDoubleClickStrategy getDoubleClickStrategy(ISourceViewer sourceViewer,
+			String contentType) {
 		if (doubleClickStrategy == null)
 			doubleClickStrategy = new XmlDoubleClickStrategy();
 		return doubleClickStrategy;
@@ -79,18 +78,18 @@ public class XmlConfiguration extends SourceViewerConfiguration
 
 	private ITokenScanner getTagColorScanner() {
 		if (tagColorScanner == null) {
-		    tagColorScanner = new TagColorScanner(colorManager);
+			tagColorScanner = new TagColorScanner(colorManager);
 		}
 		return tagColorScanner;
 	}
 
 	private ITokenScanner getDocColorScanner() {
 		if (docColorScanner == null) {
-		    docColorScanner = new DocColorScanner(colorManager);
+			docColorScanner = new DocColorScanner(colorManager);
 		}
 		return docColorScanner;
 	}
-	
+
 	public IPresentationReconciler getPresentationReconciler(ISourceViewer sourceViewer) {
 		PresentationReconciler reconciler = new PresentationReconciler();
 
@@ -99,7 +98,7 @@ public class XmlConfiguration extends SourceViewerConfiguration
 		dr = new DefaultDamagerRepairer(getTagColorScanner());
 		reconciler.setDamager(dr, TYPE_TAG);
 		reconciler.setRepairer(dr, TYPE_TAG);
-		
+
 		dr = new DefaultDamagerRepairer(getTagColorScanner());
 		reconciler.setDamager(dr, IDocument.DEFAULT_CONTENT_TYPE);
 		reconciler.setRepairer(dr, IDocument.DEFAULT_CONTENT_TYPE);
@@ -111,62 +110,65 @@ public class XmlConfiguration extends SourceViewerConfiguration
 		dr = new DefaultDamagerRepairer(getDocColorScanner());
 		reconciler.setDamager(dr, TYPE_XML_DECL);
 		reconciler.setRepairer(dr, TYPE_XML_DECL);
-		
+
 		dr = new DefaultDamagerRepairer(getDocColorScanner());
 		reconciler.setDamager(dr, TYPE_DOC_DECL);
 		reconciler.setRepairer(dr, TYPE_DOC_DECL);
-		
+
 		return reconciler;
 	}
 
 	protected IFile getFile() {
-	    IEditorInput input = editor.getEditorInput();
-	    if(input instanceof IFileEditorInput) {
-	        return ((IFileEditorInput)input).getFile();
-	    }
-	    return null;
+		IEditorInput input = editor.getEditorInput();
+		if (input instanceof IFileEditorInput) {
+			return ((IFileEditorInput) input).getFile();
+		}
+		return null;
 	}
-	
+
 	protected XmlAssistProcessor createAssistProcessor() {
-	    IFile file = getFile();
-	    if(file != null) {
-		    return new XmlAssistProcessor(file);
-	    }
-	    return null;
+		IFile file = getFile();
+		if (file != null) {
+			return new XmlAssistProcessor(file);
+		}
+		return null;
 	}
-	
+
 	public IContentAssistant getContentAssistant(ISourceViewer sourceViewer) {
 		ContentAssistant assistant = null;
 		XmlAssistProcessor processor = createAssistProcessor();
-		if(processor != null) {
-		    assistant = new ContentAssistant();
+		if (processor != null) {
+			assistant = new ContentAssistant();
 			assistant.setContentAssistProcessor(processor, TYPE_XML_DECL);
 			assistant.setContentAssistProcessor(processor, TYPE_DOC_DECL);
 			assistant.setContentAssistProcessor(processor, TYPE_TAG);
-			assistant.setContentAssistProcessor(processor, IDocument.DEFAULT_CONTENT_TYPE);
-			assistant.setInformationControlCreator(getInformationControlCreator(sourceViewer));
+			assistant
+					.setContentAssistProcessor(processor, IDocument.DEFAULT_CONTENT_TYPE);
+			assistant
+					.setInformationControlCreator(getInformationControlCreator(sourceViewer));
 			assistant.enableAutoActivation(true);
 			assistant.setAutoActivationDelay(500);
 		}
 		return assistant;
 	}
 
-	public ITextHover getTextHover(
-	        ISourceViewer sourceViewer, String contentType, int stateMask) {
+	public ITextHover getTextHover(ISourceViewer sourceViewer, String contentType,
+			int stateMask) {
 		return null;
 	}
-	
-	public int[] getConfiguredTextHoverStateMasks(
-	        ISourceViewer sourceViewer, String contentType) {
+
+	public int[] getConfiguredTextHoverStateMasks(ISourceViewer sourceViewer,
+			String contentType) {
 		// TODO: CTRL or MOD1 ?
-		return new int[]{ SWT.CTRL };
+		return new int[] {
+			SWT.CTRL
+		};
 	}
-	
-	public ITextHover getTextHover(
-	        ISourceViewer sourceViewer, String contentType) {
+
+	public ITextHover getTextHover(ISourceViewer sourceViewer, String contentType) {
 		return null;
 	}
-	
+
 	public IAnnotationHover getAnnotationHover(ISourceViewer sourceViewer) {
 		return new SimpleAnnotationHover(editor);
 	}
@@ -176,54 +178,58 @@ public class XmlConfiguration extends SourceViewerConfiguration
 			return null;
 
 		XmlAssistProcessor processor = createAssistProcessor();
-		return new IHyperlinkDetector[] {new URLHyperlinkDetector(sourceViewer), new HyperlinkDetector(sourceViewer, processor)};
+		return new IHyperlinkDetector[] {
+				new URLHyperlinkDetector(sourceViewer),
+				new HyperlinkDetector(sourceViewer, processor)
+		};
 	}
 
-//	static class TraceAnnotationHover implements IAnnotationHover {
-//		public String getHoverInfo(ISourceViewer sourceViewer, int lineNumber) {
-//			return null;
-//		}
-//	}
-//
-//	static class TraceTextHover implements ITextHover {
-//		public String getHoverInfo(final ITextViewer textViewer, final IRegion hoverRegion) {
-//			final StyledText styledText = textViewer.getTextWidget();
-//			styledText.getDisplay().asyncExec(new Runnable() {
-//				public void run() {
-//				    Display display = textViewer.getTextWidget().getDisplay();
-//				    Color color = display.getSystemColor(SWT.COLOR_RED);
-//				    StyleRange styleRange = new StyleRange();
-//				    styleRange.start  = hoverRegion.getOffset();
-//				    styleRange.length = hoverRegion.getLength();
-//				    styleRange.fontStyle = SWT.BOLD;
-//				    styleRange.foreground = color;
-//				    textViewer.getTextWidget().setStyleRange(styleRange);
-//					
-//					Point start = styledText.getLocationAtOffset(hoverRegion.getOffset());
-//					Point end = styledText.getLocationAtOffset(
-//					        hoverRegion.getOffset() + hoverRegion.getLength());
-//					StyleRange styleRange2 = styledText.getStyleRangeAtOffset(
-//					        hoverRegion.getOffset());
-//					display = styledText.getDisplay();
-//					styleRange2.background = display.getSystemColor(SWT.COLOR_RED);
-//					GC gc = new GC(styledText);
-//					gc.setForeground(display.getSystemColor(SWT.COLOR_RED));
-//					gc.drawLine(start.x,start.y + 20,end.x,end.y + 20);
-//				}				
-//			});
-//			return "test hover";
-//		}
-//
-//		public IRegion getHoverRegion(ITextViewer textViewer, int offset) {
-//			ITypedRegion region;
-//			try {
-//				region = textViewer.getDocument().getPartition(offset);
-//				return region;
-//			} catch (BadLocationException e) {
-//				e.printStackTrace();
-//			}
-//			return null;
-//		}
-//	}
-	
+	// static class TraceAnnotationHover implements IAnnotationHover {
+	// public String getHoverInfo(ISourceViewer sourceViewer, int lineNumber) {
+	// return null;
+	// }
+	// }
+	//
+	// static class TraceTextHover implements ITextHover {
+	// public String getHoverInfo(final ITextViewer textViewer, final IRegion
+	// hoverRegion) {
+	// final StyledText styledText = textViewer.getTextWidget();
+	// styledText.getDisplay().asyncExec(new Runnable() {
+	// public void run() {
+	// Display display = textViewer.getTextWidget().getDisplay();
+	// Color color = display.getSystemColor(SWT.COLOR_RED);
+	// StyleRange styleRange = new StyleRange();
+	// styleRange.start = hoverRegion.getOffset();
+	// styleRange.length = hoverRegion.getLength();
+	// styleRange.fontStyle = SWT.BOLD;
+	// styleRange.foreground = color;
+	// textViewer.getTextWidget().setStyleRange(styleRange);
+	//					
+	// Point start = styledText.getLocationAtOffset(hoverRegion.getOffset());
+	// Point end = styledText.getLocationAtOffset(
+	// hoverRegion.getOffset() + hoverRegion.getLength());
+	// StyleRange styleRange2 = styledText.getStyleRangeAtOffset(
+	// hoverRegion.getOffset());
+	// display = styledText.getDisplay();
+	// styleRange2.background = display.getSystemColor(SWT.COLOR_RED);
+	// GC gc = new GC(styledText);
+	// gc.setForeground(display.getSystemColor(SWT.COLOR_RED));
+	// gc.drawLine(start.x,start.y + 20,end.x,end.y + 20);
+	// }
+	// });
+	// return "test hover";
+	// }
+	//
+	// public IRegion getHoverRegion(ITextViewer textViewer, int offset) {
+	// ITypedRegion region;
+	// try {
+	// region = textViewer.getDocument().getPartition(offset);
+	// return region;
+	// } catch (BadLocationException e) {
+	// e.printStackTrace();
+	// }
+	// return null;
+	// }
+	// }
+
 }

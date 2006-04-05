@@ -19,6 +19,7 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.jface.text.contentassist.CompletionProposal;
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
 import org.eclipse.swt.graphics.Image;
+
 import org.seasar.kijimuna.core.dtd.IDtd;
 import org.seasar.kijimuna.core.parser.IElement;
 import org.seasar.kijimuna.core.parser.IParseResult;
@@ -33,54 +34,53 @@ import org.seasar.kijimuna.ui.util.CoreUtils;
  */
 public abstract class AbstractXmlAssistant implements IContentAssistant, ConstUI {
 
-    private XmlAssistProcessor processor;
-    private IDtd dtd;
+	private XmlAssistProcessor processor;
+	private IDtd dtd;
 	private XmlRegion xmlRegion;
-    private IElement parentElement;
-    
-    protected boolean isMatch(String proposalName, String prefix) {
-        return proposalName.toLowerCase().startsWith(prefix.toLowerCase());
-    }
-    
-    protected AbstractXmlAssistant(
-    		XmlAssistProcessor processor, IDtd dtd, XmlRegion xmlRegion) {
-        this.processor = processor;
-        this.dtd = dtd;
-        this.xmlRegion = xmlRegion;
-    }
+	private IElement parentElement;
 
-    protected IDtd getDtd() {
-        return dtd;
-    }
-    
-    protected XmlRegion getXmlRegion() {
-    	return xmlRegion;
-    }
-	
-	protected IElement getParentElement() {
-	    if(parentElement == null) {
-		    XmlRegion xmlRegion = getXmlRegion();
-		    String stringToOffset = xmlRegion.getStringToOffset();
-		    IFile file = xmlRegion.getFile();
-		    IParseResult result = CoreUtils.parse(stringToOffset, file);
-		    parentElement = result.getLastStackElement();
-	    }
-	    return parentElement;
+	protected boolean isMatch(String proposalName, String prefix) {
+		return proposalName.toLowerCase().startsWith(prefix.toLowerCase());
 	}
-    
-    public ICompletionProposal createProposal(String replaceStr, String displayStr,
-            String prefix, int offset, int cursorPosition, String imageName) {
-        Image image = null;
-        if(StringUtils.existValue(imageName)) {
-            image = getImage(imageName);
-        }
-        return new CompletionProposal(
-                replaceStr, offset - prefix.length(), prefix.length(),  
-                cursorPosition, image, displayStr, null, null);
-    }
-    
-    private Image getImage(String name) {
-        return processor.getImage(name);
-    }
+
+	protected AbstractXmlAssistant(XmlAssistProcessor processor, IDtd dtd,
+			XmlRegion xmlRegion) {
+		this.processor = processor;
+		this.dtd = dtd;
+		this.xmlRegion = xmlRegion;
+	}
+
+	protected IDtd getDtd() {
+		return dtd;
+	}
+
+	protected XmlRegion getXmlRegion() {
+		return xmlRegion;
+	}
+
+	protected IElement getParentElement() {
+		if (parentElement == null) {
+			XmlRegion xmlRegion = getXmlRegion();
+			String stringToOffset = xmlRegion.getStringToOffset();
+			IFile file = xmlRegion.getFile();
+			IParseResult result = CoreUtils.parse(stringToOffset, file);
+			parentElement = result.getLastStackElement();
+		}
+		return parentElement;
+	}
+
+	public ICompletionProposal createProposal(String replaceStr, String displayStr,
+			String prefix, int offset, int cursorPosition, String imageName) {
+		Image image = null;
+		if (StringUtils.existValue(imageName)) {
+			image = getImage(imageName);
+		}
+		return new CompletionProposal(replaceStr, offset - prefix.length(), prefix
+				.length(), cursorPosition, image, displayStr, null, null);
+	}
+
+	private Image getImage(String name) {
+		return processor.getImage(name);
+	}
 
 }

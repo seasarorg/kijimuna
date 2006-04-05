@@ -28,6 +28,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.views.contentoutline.ContentOutlinePage;
+
 import org.seasar.kijimuna.core.dicon.DiconNature;
 import org.seasar.kijimuna.core.dicon.model.IDiconElement;
 import org.seasar.kijimuna.core.parser.IElement;
@@ -44,122 +45,123 @@ import org.seasar.kijimuna.ui.util.WorkbenchUtils;
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class DiconOutlinePage extends ContentOutlinePage
-		implements IProjectRecordChangeListener, IDoubleClickListener, ConstUI {
+public class DiconOutlinePage extends ContentOutlinePage implements
+		IProjectRecordChangeListener, IDoubleClickListener, ConstUI {
 
-    private DiconEditor part;
-    private TreeViewer viewer;
-    
-    public DiconOutlinePage(DiconEditor part) {
-        this.part = part;
-    }
+	private DiconEditor part;
+	private TreeViewer viewer;
 
-	private void setInput() {
-	    IStorage storage = WorkbenchUtils.getInputResource(part);
-	    if(storage != null) {
-	        IProject project;
-	        if(storage instanceof IFile) {
-	            project = ((IFile)storage).getProject();
-	        } else {
-	            project = ProjectUtils.getProjectFromDiconStorage(storage);
-	        }
-	        if(project != null) {
-	            viewer.setInput(new OutlineContent(project, storage));
-	            return;
-	        }
-	    }
-	    viewer.setInput(null);
+	public DiconOutlinePage(DiconEditor part) {
+		this.part = part;
 	}
 
-    private DiconNature getNature() {
-        IStorage storage = WorkbenchUtils.getInputResource(part);
-		if(storage != null) {
-	        if(storage instanceof IFile) {
-	            IProject project = ((IFile)storage).getProject();
-	           	return DiconNature.getInstance(project);
-	        }
+	private void setInput() {
+		IStorage storage = WorkbenchUtils.getInputResource(part);
+		if (storage != null) {
+			IProject project;
+			if (storage instanceof IFile) {
+				project = ((IFile) storage).getProject();
+			} else {
+				project = ProjectUtils.getProjectFromDiconStorage(storage);
+			}
+			if (project != null) {
+				viewer.setInput(new OutlineContent(project, storage));
+				return;
+			}
+		}
+		viewer.setInput(null);
+	}
+
+	private DiconNature getNature() {
+		IStorage storage = WorkbenchUtils.getInputResource(part);
+		if (storage != null) {
+			if (storage instanceof IFile) {
+				IProject project = ((IFile) storage).getProject();
+				return DiconNature.getInstance(project);
+			}
 		}
 		return null;
-    }
-    
-    private IContentWalker findLine(IContentWalker walker, int lineNumber) {
-        IElement element = (IElement)walker.getAdapter(IElement.class);
-        if(element != null) {
-	        int startLine = element.getStartLine();
-	        int endLine = element.getEndLine();
-	        if((startLine <= lineNumber) && (lineNumber <= endLine)) {
-	            return walker;
-	        }
-        }
-        Object[] obj = walker.getChildren();
-        for(int i = 0; i < obj.length; i++) {
-            if(obj[i] instanceof IContentWalker) {
-                return findLine((IContentWalker)obj[i], lineNumber);
-            }
-        }
-        return null;
-    }
-    
-    public void syncEditor(int lineNumber) {
-        OutlineContent content = (OutlineContent)viewer.getInput();
-        Object[] obj = content.getTopLevelItems();
-        if(obj[1] instanceof IContentWalker) {
-            IContentWalker walker = (IContentWalker)obj[1];
-            IContentWalker selected = findLine(walker, lineNumber);
-            if(selected != null) {
-	            ISelection selection = new StructuredSelection(selected);
-	            viewer.setSelection(selection, true);
-            }
-        }
-    }
-    
-    public void createControl(Composite parent) {
-        super.createControl(parent);
-        viewer = getTreeViewer();
-        viewer.setContentProvider(new DiconContentProvider());
-        viewer.setLabelProvider(new DiconLabelProvider());
-        viewer.setAutoExpandLevel(2);
-        viewer.addDoubleClickListener(this);
-        setInput();
+	}
+
+	private IContentWalker findLine(IContentWalker walker, int lineNumber) {
+		IElement element = (IElement) walker.getAdapter(IElement.class);
+		if (element != null) {
+			int startLine = element.getStartLine();
+			int endLine = element.getEndLine();
+			if ((startLine <= lineNumber) && (lineNumber <= endLine)) {
+				return walker;
+			}
+		}
+		Object[] obj = walker.getChildren();
+		for (int i = 0; i < obj.length; i++) {
+			if (obj[i] instanceof IContentWalker) {
+				return findLine((IContentWalker) obj[i], lineNumber);
+			}
+		}
+		return null;
+	}
+
+	public void syncEditor(int lineNumber) {
+		OutlineContent content = (OutlineContent) viewer.getInput();
+		Object[] obj = content.getTopLevelItems();
+		if (obj[1] instanceof IContentWalker) {
+			IContentWalker walker = (IContentWalker) obj[1];
+			IContentWalker selected = findLine(walker, lineNumber);
+			if (selected != null) {
+				ISelection selection = new StructuredSelection(selected);
+				viewer.setSelection(selection, true);
+			}
+		}
+	}
+
+	public void createControl(Composite parent) {
+		super.createControl(parent);
+		viewer = getTreeViewer();
+		viewer.setContentProvider(new DiconContentProvider());
+		viewer.setLabelProvider(new DiconLabelProvider());
+		viewer.setAutoExpandLevel(2);
+		viewer.addDoubleClickListener(this);
+		setInput();
 		DiconNature nature = getNature();
-		if(nature != null) {
+		if (nature != null) {
 			nature.getModel().addRecordChangeListener(this);
 		}
-    }
-    
+	}
+
 	public void dispose() {
 		DiconNature nature = getNature();
-		if(nature != null) {
+		if (nature != null) {
 			nature.getModel().removeRecordChangeListener(this);
 		}
 		super.dispose();
 	}
-	
+
 	public void finishChanged() {
-	    final Control control = viewer.getTree();
-	    Display display = control.getDisplay();
-	    display.asyncExec(new Runnable() {
-	        public void run() {
-	            if(control.isDisposed()) {
-	                return;
-	            }
-	            setInput();
-	        }
-	    });
+		final Control control = viewer.getTree();
+		Display display = control.getDisplay();
+		display.asyncExec(new Runnable() {
+
+			public void run() {
+				if (control.isDisposed()) {
+					return;
+				}
+				setInput();
+			}
+		});
 	}
-	
+
 	public void doubleClick(DoubleClickEvent event) {
 		Object obj = WorkbenchUtils.getFirstSelectedElement(event.getSelection());
 		WorkbenchUtils.showSource(part, obj);
 	}
-	
+
 	public void selectionChanged(SelectionChangedEvent event) {
-	    super.selectionChanged(event);
+		super.selectionChanged(event);
 		Object obj = WorkbenchUtils.getFirstSelectedElement(event.getSelection());
-        if(obj instanceof IInternalContainer) {
-            IDiconElement element = ((IInternalContainer)obj).getElement();
-            WorkbenchUtils.moveLine(part, element.getStartLine());
-        }
+		if (obj instanceof IInternalContainer) {
+			IDiconElement element = ((IInternalContainer) obj).getElement();
+			WorkbenchUtils.moveLine(part, element.getStartLine());
+		}
 	}
 
 }

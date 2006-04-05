@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.ui.views.properties.IPropertySource;
+
 import org.seasar.kijimuna.core.dicon.info.IComponentKey;
 import org.seasar.kijimuna.ui.ConstUI;
 import org.seasar.kijimuna.ui.KijimunaUI;
@@ -27,34 +28,33 @@ import org.seasar.kijimuna.ui.internal.provider.dicon.property.ComponentKeyRootP
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class ComponentKeyRoot extends AbstractInternalContainer
-		implements ConstUI {
+public class ComponentKeyRoot extends AbstractInternalContainer implements ConstUI {
 
-    private IComponentKey[] keys;
-    
-    public ComponentKeyRoot(ContentItem parent, IComponentKey[] keys) {
-        super(parent);
-        this.keys = keys;
-    }
+	private IComponentKey[] keys;
 
-    protected IPropertySource createProperty() {
-        return new ComponentKeyRootProperty(keys);
-    }
+	public ComponentKeyRoot(ContentItem parent, IComponentKey[] keys) {
+		super(parent);
+		this.keys = keys;
+	}
 
-    public Object[] getChildren() {
-        List ret = new ArrayList();
-        for(int i = 0; i < keys.length; i++) {
-            ret.add(new ComponentKeyItem(this, keys[i]));
-        }
-        return ret.toArray();
-    }
+	protected IPropertySource createProperty() {
+		return new ComponentKeyRootProperty(keys);
+	}
 
-    public String getDisplayName() {
-        return KijimunaUI.getResourceString("dicon.provider.walker.ComponentKeyRoot.1");
-    }
-    
-    public String getImageName() {
-        return IMAGE_ICON_KEY_ROOT;
-    }
-    
+	public Object[] getChildren() {
+		List ret = new ArrayList();
+		for (int i = 0; i < keys.length; i++) {
+			ret.add(new ComponentKeyItem(this, keys[i]));
+		}
+		return ret.toArray();
+	}
+
+	public String getDisplayName() {
+		return KijimunaUI.getResourceString("dicon.provider.walker.ComponentKeyRoot.1");
+	}
+
+	public String getImageName() {
+		return IMAGE_ICON_KEY_ROOT;
+	}
+
 }

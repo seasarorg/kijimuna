@@ -17,6 +17,7 @@ package org.seasar.kijimuna.ui.internal.provider.dicon.walker;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.ui.views.properties.IPropertySource;
+
 import org.seasar.kijimuna.core.dicon.MarkerSetting;
 import org.seasar.kijimuna.core.dicon.info.IComponentNotFound;
 import org.seasar.kijimuna.core.dicon.info.ITooManyRegisted;
@@ -32,62 +33,63 @@ import org.seasar.kijimuna.ui.internal.provider.dicon.property.AutoInjectedPrope
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class AutoInjectedPropertyItem extends AbstractInternalContainer
-		implements IInjectedComponent, ConstUI {
+public class AutoInjectedPropertyItem extends AbstractInternalContainer implements
+		IInjectedComponent, ConstUI {
 
-    private IRttiPropertyDescriptor property;
-    
-    public AutoInjectedPropertyItem(ContentItem parent, IRttiPropertyDescriptor property) {
-        super(parent);
-        this.property = property;
-    }
-    
-    protected IPropertySource createProperty() {
-        return new AutoInjectedPropertyProperty(property);
-    }
+	private IRttiPropertyDescriptor property;
+
+	public AutoInjectedPropertyItem(ContentItem parent, IRttiPropertyDescriptor property) {
+		super(parent);
+		this.property = property;
+	}
+
+	protected IPropertySource createProperty() {
+		return new AutoInjectedPropertyProperty(property);
+	}
 
 	public int getMarkerSeverity() {
-        IRtti arg = property.getValue();
-        if (arg instanceof ITooManyRegisted) {
-            IProject project = getElement().getProject();
-            return MarkerSetting.getDiconMarkerPreference(
-                    project, MARKER_CATEGORY_DICON_FETAL, false); 
-        } else if (arg instanceof IComponentNotFound) {
-            IProject project = getElement().getProject();
-            return MarkerSetting.getDiconMarkerPreference(
-                    project, MARKER_CATEGORY_NULL_INJECTION, false); 
-        } else {
-            return MARKER_SEVERITY_NONE;
-        }
+		IRtti arg = property.getValue();
+		if (arg instanceof ITooManyRegisted) {
+			IProject project = getElement().getProject();
+			return MarkerSetting.getDiconMarkerPreference(project,
+					MARKER_CATEGORY_DICON_FETAL, false);
+		} else if (arg instanceof IComponentNotFound) {
+			IProject project = getElement().getProject();
+			return MarkerSetting.getDiconMarkerPreference(project,
+					MARKER_CATEGORY_NULL_INJECTION, false);
+		} else {
+			return MARKER_SEVERITY_NONE;
+		}
 	}
-    
-    public int getInjectedStatus() {
-        IRtti arg = property.getValue();
-        if (arg instanceof ITooManyRegisted) {
-            return IInjectedComponent.INJECTED_AUTO_TOOMANY; 
-        } else if(arg instanceof IComponentNotFound) {
-            return IInjectedComponent.INJECTED_AUTO_NULL;
-        } else {
-            return IInjectedComponent.INJECTED_AUTO;
-        }
-    }
-    
-    public IDiconElement getInjectedElement() {
-        IRtti arg = property.getValue();
-        if(arg != null) {
-            return (IDiconElement)arg.getAdapter(IComponentElement.class);
-        }
-        return null;
-    }
-    
-    public String getDisplayName() {
-        return KijimunaUI.getResourceString(
-                "dicon.provider.walker.AutoInjectedArgItem.1",
-                new Object[] { property.getName() }); 
-    }
-    
-    public String getImageName() {
-        return IMAGE_ICON_PROPERTY;
-    }
-    
+
+	public int getInjectedStatus() {
+		IRtti arg = property.getValue();
+		if (arg instanceof ITooManyRegisted) {
+			return IInjectedComponent.INJECTED_AUTO_TOOMANY;
+		} else if (arg instanceof IComponentNotFound) {
+			return IInjectedComponent.INJECTED_AUTO_NULL;
+		} else {
+			return IInjectedComponent.INJECTED_AUTO;
+		}
+	}
+
+	public IDiconElement getInjectedElement() {
+		IRtti arg = property.getValue();
+		if (arg != null) {
+			return (IDiconElement) arg.getAdapter(IComponentElement.class);
+		}
+		return null;
+	}
+
+	public String getDisplayName() {
+		return KijimunaUI.getResourceString(
+				"dicon.provider.walker.AutoInjectedArgItem.1", new Object[] {
+					property.getName()
+				});
+	}
+
+	public String getImageName() {
+		return IMAGE_ICON_PROPERTY;
+	}
+
 }

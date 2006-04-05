@@ -23,5 +23,5 @@ import org.seasar.kijimuna.core.dicon.model.IContainerElement;
 public interface IExternalContainer extends IContentWalker {
 
 	IContainerElement getExternalContainer();
-	
+
 }

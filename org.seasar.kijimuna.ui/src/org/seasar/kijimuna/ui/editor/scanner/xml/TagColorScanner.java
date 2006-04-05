@@ -23,6 +23,7 @@ import org.eclipse.jface.text.rules.SingleLineRule;
 import org.eclipse.jface.text.rules.Token;
 import org.eclipse.jface.text.rules.WhitespaceRule;
 import org.eclipse.swt.graphics.RGB;
+
 import org.seasar.kijimuna.ui.editor.configuration.ColorManager;
 import org.seasar.kijimuna.ui.editor.configuration.xml.XmlConsts;
 
@@ -31,10 +32,10 @@ import org.seasar.kijimuna.ui.editor.configuration.xml.XmlConsts;
  */
 public class TagColorScanner extends RuleBasedScanner {
 
-    private IToken getColorToken(ColorManager manager, RGB rgb) {
-        return new Token(new TextAttribute(manager.getColor(rgb)));
-    }
-    
+	private IToken getColorToken(ColorManager manager, RGB rgb) {
+		return new Token(new TextAttribute(manager.getColor(rgb)));
+	}
+
 	public TagColorScanner(ColorManager manager) {
 		IToken attribute = getColorToken(manager, XmlConsts.COLOR_ATTRIBUTE);
 		IRule[] rules = new IRule[3];
@@ -42,7 +43,8 @@ public class TagColorScanner extends RuleBasedScanner {
 		rules[1] = new SingleLineRule("'", "'", attribute, '\\');
 		rules[2] = new WhitespaceRule(new WhitespaceDetector());
 		setRules(rules);
-		setDefaultReturnToken(new Token(
-				new TextAttribute(manager.getColor(XmlConsts.COLOR_TAG))));
+		setDefaultReturnToken(new Token(new TextAttribute(manager
+				.getColor(XmlConsts.COLOR_TAG))));
 	}
+
 }

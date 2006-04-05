@@ -20,6 +20,7 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IDocumentPartitioner;
 import org.eclipse.jface.text.rules.DefaultPartitioner;
 import org.eclipse.ui.editors.text.FileDocumentProvider;
+
 import org.seasar.kijimuna.ui.ConstUI;
 import org.seasar.kijimuna.ui.editor.scanner.xml.XmlPartitionScanner;
 
@@ -27,26 +28,24 @@ import org.seasar.kijimuna.ui.editor.scanner.xml.XmlPartitionScanner;
  * @author Toshitaka Agata (Nulab, Inc.)
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class XmlDocumentProvider extends FileDocumentProvider
-		implements XmlConsts, ConstUI {
+public class XmlDocumentProvider extends FileDocumentProvider implements XmlConsts,
+		ConstUI {
 
-    protected IDocument createDocument(Object element) throws CoreException {
+	protected IDocument createDocument(Object element) throws CoreException {
 		IDocument document = super.createDocument(element);
 		if (document != null) {
 			IDocumentPartitioner partitioner = new DefaultPartitioner(
-			        new XmlPartitionScanner(),
-			        new String[] { 
-			                TYPE_COMMENT, 
-			                TYPE_XML_DECL, 
-			                TYPE_DOC_DECL,
-			                TYPE_TAG,
-			                IDocument.DEFAULT_CONTENT_TYPE
-			        }
-			);
+					new XmlPartitionScanner(), new String[] {
+							TYPE_COMMENT,
+							TYPE_XML_DECL,
+							TYPE_DOC_DECL,
+							TYPE_TAG,
+							IDocument.DEFAULT_CONTENT_TYPE
+					});
 			document.setDocumentPartitioner(partitioner);
 			partitioner.connect(document);
 		}
 		return document;
-    }
+	}
 
 }

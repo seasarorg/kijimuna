@@ -33,10 +33,10 @@ public class ColorManager {
 	public void dispose() {
 		Iterator e = colorTable.values().iterator();
 		while (e.hasNext()) {
-			 ((Color)e.next()).dispose();
+			((Color) e.next()).dispose();
 		}
 	}
-	
+
 	public Color getColor(RGB rgb) {
 		Color color = (Color) colorTable.get(rgb);
 		if (color == null) {
@@ -45,4 +45,5 @@ public class ColorManager {
 		}
 		return color;
 	}
+
 }

@@ -26,6 +26,7 @@ import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
+
 import org.seasar.kijimuna.core.search.IPackageRequestor;
 import org.seasar.kijimuna.core.search.JavaPackageSearcher;
 import org.seasar.kijimuna.core.util.StringUtils;
@@ -33,11 +34,11 @@ import org.seasar.kijimuna.ui.ConstUI;
 import org.seasar.kijimuna.ui.KijimunaUI;
 import org.seasar.kijimuna.ui.editor.contentassist.xml.AbstractXmlAssistant;
 
-
 public class JavaPackageProposalCreator implements IPackageRequestor, ConstUI {
+
 	private AbstractXmlAssistant assistant;
-    private List packageResult;
-    private List typeResult;
+	private List packageResult;
+	private List typeResult;
 	private String prefix;
 	private int offset;
 	private Set packageSet;
@@ -45,11 +46,11 @@ public class JavaPackageProposalCreator implements IPackageRequestor, ConstUI {
 	private IProject project;
 	private String postFix;
 	private int postLength;
-	
-	public JavaPackageProposalCreator(AbstractXmlAssistant assistant, 
-	        IProject project, String prefix, int offset, String postFix, int postLength) {
-	    this.assistant = assistant;
-	    this.project = project;
+
+	public JavaPackageProposalCreator(AbstractXmlAssistant assistant, IProject project,
+			String prefix, int offset, String postFix, int postLength) {
+		this.assistant = assistant;
+		this.project = project;
 		this.prefix = prefix;
 		this.offset = offset;
 		this.postFix = postFix;
@@ -64,13 +65,14 @@ public class JavaPackageProposalCreator implements IPackageRequestor, ConstUI {
 		if (lastDot > 0) {
 			dotAfterPrefix = prefix.substring(lastDot + 1);
 		}
-		if (dotAfterPrefix.length() > 0 && Character.isLowerCase(dotAfterPrefix.charAt(0))) {
+		if (dotAfterPrefix.length() > 0
+				&& Character.isLowerCase(dotAfterPrefix.charAt(0))) {
 			return false;
 		} else {
 			return true;
 		}
 	}
-	
+
 	public ICompletionProposal[] getJavaPackageProposals() {
 		packageResult = new ArrayList();
 		typeResult = new ArrayList();
@@ -86,26 +88,26 @@ public class JavaPackageProposalCreator implements IPackageRequestor, ConstUI {
 			result.addAll(typeResult);
 		}
 		ICompletionProposal[] ret = new ICompletionProposal[result.size()];
-		for(int i = 0; i < result.size(); i ++) {
-		    JavaPackageProposalHolder item = (JavaPackageProposalHolder)result.get(i);
-		    ret[i] = item.getProposal();
+		for (int i = 0; i < result.size(); i++) {
+			JavaPackageProposalHolder item = (JavaPackageProposalHolder) result.get(i);
+			ret[i] = item.getProposal();
 		}
 		return ret;
 	}
 
 	public void acceptPackage(IPackageFragment pack, boolean archive) {
 		String packageName = pack.getElementName();
-		if(StringUtils.existValue(packageName) && !packageSet.contains(packageName)) {
-		    String imageName;
-		    if(archive) {
-		        imageName = IMAGE_ICON_JAVA_JAR_PACKAGE;
-		    } else {
-		        imageName = IMAGE_ICON_JAVA_PACKAGE;
-		    }
-		    String replaceText = packageName;
-		    // String replaceText = packageName + ".";
-			ICompletionProposal tempProposal = assistant.createProposal(replaceText, 
-			        packageName, prefix, offset, replaceText.length(), imageName);
+		if (StringUtils.existValue(packageName) && !packageSet.contains(packageName)) {
+			String imageName;
+			if (archive) {
+				imageName = IMAGE_ICON_JAVA_JAR_PACKAGE;
+			} else {
+				imageName = IMAGE_ICON_JAVA_PACKAGE;
+			}
+			String replaceText = packageName;
+			// String replaceText = packageName + ".";
+			ICompletionProposal tempProposal = assistant.createProposal(replaceText,
+					packageName, prefix, offset, replaceText.length(), imageName);
 			packageResult.add(new JavaPackageProposalHolder(pack, tempProposal));
 			packageSet.add(packageName);
 		}
@@ -115,8 +117,8 @@ public class JavaPackageProposalCreator implements IPackageRequestor, ConstUI {
 		String className = type.getFullyQualifiedName();
 		String imageName;
 		try {
-		    if(!typeSet.contains(className)) {
-				if(type.isInterface()) {
+			if (!typeSet.contains(className)) {
+				if (type.isInterface()) {
 					imageName = IMAGE_ICON_JAVA_INTERFACE;
 				} else {
 					imageName = IMAGE_ICON_JAVA_CLASS;
@@ -124,17 +126,18 @@ public class JavaPackageProposalCreator implements IPackageRequestor, ConstUI {
 				String replaceText = className;
 				String displayText = type.getElementName() + " - " + className;
 				int cursorPos = replaceText.length();
-				if(StringUtils.existValue(postFix)) {
-				    replaceText += postFix;
-				    cursorPos += postLength;
+				if (StringUtils.existValue(postFix)) {
+					replaceText += postFix;
+					cursorPos += postLength;
 				}
-				ICompletionProposal tempProposal = assistant.createProposal(
-						replaceText, displayText, prefix, offset, cursorPos, imageName);
+				ICompletionProposal tempProposal = assistant.createProposal(replaceText,
+						displayText, prefix, offset, cursorPos, imageName);
 				typeResult.add(new JavaPackageProposalHolder(type, tempProposal));
 				typeSet.add(className);
-		    }
+			}
 		} catch (JavaModelException e) {
 			KijimunaUI.reportException(e);
 		}
 	}
+
 }

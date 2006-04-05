@@ -22,6 +22,6 @@ import org.eclipse.jface.text.contentassist.ICompletionProposal;
  */
 public interface IContentAssistant {
 
-    ICompletionProposal[] getCompletionProposal(String prefix, int offset);
-    
+	ICompletionProposal[] getCompletionProposal(String prefix, int offset);
+
 }

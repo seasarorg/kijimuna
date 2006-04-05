@@ -22,20 +22,20 @@ import java.util.ResourceBundle;
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public class Messages {
-    
-    private static final String BUNDLE_NAME = 
-        "org.seasar.kijimuna.ui.internal.preference.design.messages"; 
-    private static final ResourceBundle RESOURCE_BUNDLE = 
-        ResourceBundle.getBundle(BUNDLE_NAME);
 
-    private Messages() {
-    }
+	private static final String BUNDLE_NAME = "org.seasar.kijimuna.ui.internal.preference.design.messages";
+	private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle
+			.getBundle(BUNDLE_NAME);
 
-    public static String getString(String key) {
-        try {
-            return RESOURCE_BUNDLE.getString(key);
-        } catch (MissingResourceException e) {
-            return '!' + key + '!';
-        }
-    }
+	private Messages() {
+	}
+
+	public static String getString(String key) {
+		try {
+			return RESOURCE_BUNDLE.getString(key);
+		} catch (MissingResourceException e) {
+			return '!' + key + '!';
+		}
+	}
+
 }

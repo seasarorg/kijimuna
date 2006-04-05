@@ -18,11 +18,12 @@ package org.seasar.kijimuna.ui.internal.editor.dicon.contentassist;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
+
 import org.seasar.kijimuna.core.dtd.IDtd;
 import org.seasar.kijimuna.ui.ConstUI;
 import org.seasar.kijimuna.ui.editor.contentassist.IContentAssistant;
-import org.seasar.kijimuna.ui.editor.contentassist.xml.XmlRegion;
 import org.seasar.kijimuna.ui.editor.contentassist.xml.XmlAssistProcessor;
+import org.seasar.kijimuna.ui.editor.contentassist.xml.XmlRegion;
 import org.seasar.kijimuna.ui.util.CoreUtils;
 
 /**
@@ -30,24 +31,24 @@ import org.seasar.kijimuna.ui.util.CoreUtils;
  */
 public class DiconAssistProcessor extends XmlAssistProcessor implements ConstUI {
 
-    public DiconAssistProcessor(IFile file) {
-        super(file);
-    }
+	public DiconAssistProcessor(IFile file) {
+		super(file);
+	}
 
-    protected boolean isBodyChar(char c) {
-    	String test = "#@.";
-    	return (test.indexOf(c) != -1);
-    }
-    
-    protected boolean isAttributeChar(char c) {
-    	String test = "/."; 
-        return (test.indexOf(c) != -1);
-    }
+	protected boolean isBodyChar(char c) {
+		String test = "#@.";
+		return (test.indexOf(c) != -1);
+	}
 
-    protected String getRootElementName() {
-        return DICON_TAG_CONTAINER;
-    }
-    
+	protected boolean isAttributeChar(char c) {
+		String test = "/.";
+		return (test.indexOf(c) != -1);
+	}
+
+	protected String getRootElementName() {
+		return DICON_TAG_CONTAINER;
+	}
+
 	protected IDtd getDtd(IDocument doc, int offset) {
 		try {
 			String stringToOffset = doc.get(0, offset);
@@ -57,22 +58,22 @@ public class DiconAssistProcessor extends XmlAssistProcessor implements ConstUI 
 		}
 	}
 
-	protected IContentAssistant getAttributeValueContentAssistant(
-    		IDtd dtd, XmlRegion xmlRegion) {
-        return new DiconAttributeValueAssistant(this, dtd, xmlRegion);
-    }
-    
-    protected IContentAssistant getElementContentAssistant(
-            IDtd dtd, XmlRegion xmlRegion, String rootElementName) {
-        return new DiconElementAssistant(this, dtd, xmlRegion, rootElementName);
-    }
-    
-    protected IContentAssistant getXmlDeclContentAssistant(XmlRegion xmlRegion) {
-        return new DiconXmlDeclAssistant(this, xmlRegion);
-    }
-    
-    protected IContentAssistant getDocDeclContentAssistant(XmlRegion xmlRegion) {
-    	return new DiconDocDeclAssistant(this, xmlRegion);
-    }
+	protected IContentAssistant getAttributeValueContentAssistant(IDtd dtd,
+			XmlRegion xmlRegion) {
+		return new DiconAttributeValueAssistant(this, dtd, xmlRegion);
+	}
+
+	protected IContentAssistant getElementContentAssistant(IDtd dtd, XmlRegion xmlRegion,
+			String rootElementName) {
+		return new DiconElementAssistant(this, dtd, xmlRegion, rootElementName);
+	}
+
+	protected IContentAssistant getXmlDeclContentAssistant(XmlRegion xmlRegion) {
+		return new DiconXmlDeclAssistant(this, xmlRegion);
+	}
+
+	protected IContentAssistant getDocDeclContentAssistant(XmlRegion xmlRegion) {
+		return new DiconDocDeclAssistant(this, xmlRegion);
+	}
 
 }

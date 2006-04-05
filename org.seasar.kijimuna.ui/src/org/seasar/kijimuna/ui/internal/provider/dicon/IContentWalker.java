@@ -21,15 +21,15 @@ import org.eclipse.core.runtime.IAdaptable;
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public interface IContentWalker extends IAdaptable {
-    
-    Object getParent();
-    
-    Object[] getChildren();
 
-    String getDisplayName();
-    
-    String getImageName();
-    
-    boolean isDefaultExpandedState();
-    
+	Object getParent();
+
+	Object[] getChildren();
+
+	String getDisplayName();
+
+	String getImageName();
+
+	boolean isDefaultExpandedState();
+
 }

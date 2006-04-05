@@ -26,7 +26,7 @@ public class XmlRegion {
 
 	private IFile file;
 	private String stringToOffset;
-    private int regionOffset;
+	private int regionOffset;
 	private int cursorOffset;
 	private int proposalMode;
 	private String regionText;
@@ -34,10 +34,10 @@ public class XmlRegion {
 	private String attributeName;
 	private String hyperlinkText;
 	private IRegion hyperlinkRegion;
-	
-	public XmlRegion(IFile file, String stringToOffset, int regionOffset, int cursorOffset, 
-	        int proposalMode, String regionText, String elementName, String attributeName,
-	        String hyperlinkText, IRegion hyperlinkRegion) {
+
+	public XmlRegion(IFile file, String stringToOffset, int regionOffset,
+			int cursorOffset, int proposalMode, String regionText, String elementName,
+			String attributeName, String hyperlinkText, IRegion hyperlinkRegion) {
 		this.file = file;
 		this.stringToOffset = stringToOffset;
 		this.regionOffset = regionOffset;
@@ -49,15 +49,15 @@ public class XmlRegion {
 		this.hyperlinkText = hyperlinkText;
 		this.hyperlinkRegion = hyperlinkRegion;
 	}
-	
+
 	public IFile getFile() {
 		return file;
 	}
-	
+
 	public String getStringToOffset() {
 		return stringToOffset;
 	}
-	
+
 	public int getCursorOffset() {
 		return cursorOffset;
 	}
@@ -69,19 +69,19 @@ public class XmlRegion {
 	public String getText() {
 		return regionText;
 	}
-	
+
 	public int getProposalMode() {
-	    return proposalMode;
+		return proposalMode;
 	}
 
 	public String getElementName() {
-	    return elementName;
+		return elementName;
 	}
-	
+
 	public String getAttributeName() {
 		return attributeName;
 	}
-	
+
 	public String getHyperlinkText() {
 		return hyperlinkText;
 	}
@@ -89,4 +89,5 @@ public class XmlRegion {
 	public IRegion getHyperlinkRegion() {
 		return hyperlinkRegion;
 	}
+
 }

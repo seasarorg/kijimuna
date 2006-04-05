@@ -23,6 +23,7 @@ import java.util.regex.Pattern;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
+
 import org.seasar.kijimuna.core.dicon.DiconNature;
 import org.seasar.kijimuna.core.dicon.model.IComponentElement;
 import org.seasar.kijimuna.core.dtd.IDtd;
@@ -45,34 +46,34 @@ import org.seasar.kijimuna.ui.util.CoreUtils;
  */
 public class DiconAttributeValueAssistant extends XmlAttributeValueAssistant {
 
-	public DiconAttributeValueAssistant(XmlAssistProcessor processor,
-	        IDtd dtd, XmlRegion xmlRegion) {
-	    super(processor, dtd, xmlRegion);
+	public DiconAttributeValueAssistant(XmlAssistProcessor processor, IDtd dtd,
+			XmlRegion xmlRegion) {
+		super(processor, dtd, xmlRegion);
 	}
-	
+
 	public ICompletionProposal[] getCompletionProposal(String prefix, int offset) {
 		String elementName = getXmlRegion().getElementName();
 		String attributeName = getXmlRegion().getAttributeName();
 		String stringToOffset = getXmlRegion().getStringToOffset();
 		IFile file = getXmlRegion().getFile();
-		if (DICON_TAG_COMPONENT.equals(elementName) &&
-		        DICON_ATTR_CLASS.equals(attributeName)) {
+		if (DICON_TAG_COMPONENT.equals(elementName)
+				&& DICON_ATTR_CLASS.equals(attributeName)) {
 			return getClassCompletionProposal(file, prefix, offset);
-		} else if (DICON_TAG_PROPERTY.equals(elementName) &&
-		        DICON_ATTR_NAME.equals(attributeName)) {
+		} else if (DICON_TAG_PROPERTY.equals(elementName)
+				&& DICON_ATTR_NAME.equals(attributeName)) {
 			IElement parent = getParentElement(stringToOffset, file);
 			return getPropertyNameCompletionProposal(prefix, offset, parent);
-		} else if ((DICON_TAG_INITMETHOD.equals(elementName) ||
-		        DICON_TAG_DESTROYMETHOD.equals(elementName)) &&
-		        DICON_ATTR_NAME.equals(attributeName)) {
+		} else if ((DICON_TAG_INITMETHOD.equals(elementName) || DICON_TAG_DESTROYMETHOD
+				.equals(elementName))
+				&& DICON_ATTR_NAME.equals(attributeName)) {
 			IElement parent = getParentElement(stringToOffset, file);
 			return getMethodNameCompletionProposal(prefix, offset, parent);
-		} else if (DICON_TAG_ASPECT.equals(elementName) &&
-		        DICON_ATTR_POINTCUT.equals(attributeName)) {
+		} else if (DICON_TAG_ASPECT.equals(elementName)
+				&& DICON_ATTR_POINTCUT.equals(attributeName)) {
 			IElement parent = getParentElement(stringToOffset, file);
 			return getMethodNameCompletionProposal(prefix, offset, parent);
-		} else if (DICON_TAG_INCLUDE.equals(elementName)){
-		    return getIncludePathCompletionProposal(file, prefix, offset);
+		} else if (DICON_TAG_INCLUDE.equals(elementName)) {
+			return getIncludePathCompletionProposal(file, prefix, offset);
 		} else {
 			return super.getCompletionProposal(prefix, offset);
 		}
@@ -82,79 +83,83 @@ public class DiconAttributeValueAssistant extends XmlAttributeValueAssistant {
 		IParseResult result = CoreUtils.parse(stringToOffset, file);
 		return result.getLastStackElement();
 	}
-	
-	private ICompletionProposal[] getClassCompletionProposal(IFile file, String prefix, int offset) {
+
+	private ICompletionProposal[] getClassCompletionProposal(IFile file, String prefix,
+			int offset) {
 		IProject project = file.getProject();
-	    JavaPackageProposalCreator creator = 
-	        new JavaPackageProposalCreator(this, project, prefix, offset, null, 0);
+		JavaPackageProposalCreator creator = new JavaPackageProposalCreator(this,
+				project, prefix, offset, null, 0);
 		return creator.getJavaPackageProposals();
 	}
 
-	private ICompletionProposal[] getPropertyNameCompletionProposal(
-			String prefix, int offset, IElement parentElement) {
+	private ICompletionProposal[] getPropertyNameCompletionProposal(String prefix,
+			int offset, IElement parentElement) {
 		List proposals = new ArrayList();
 		if (parentElement instanceof IComponentElement) {
-			IRtti rtti = (IRtti)((IComponentElement)parentElement).getAdapter(IRtti.class);
+			IRtti rtti = (IRtti) ((IComponentElement) parentElement)
+					.getAdapter(IRtti.class);
 			if (rtti != null) {
-				IRttiPropertyDescriptor[] properties = 
-					rtti.getProperties(Pattern.compile(prefix + ".*"));
+				IRttiPropertyDescriptor[] properties = rtti.getProperties(Pattern
+						.compile(prefix + ".*"));
 				for (int i = 0; i < properties.length; i++) {
 					IRttiPropertyDescriptor property = properties[i];
 					String propertyName = property.getName();
-					String displayName = propertyName + " - " + 
-							property.getType().getQualifiedName();
-					ICompletionProposal tempProposal = createProposal(
-							propertyName, displayName, prefix, 
-				            offset, propertyName.length(), IMAGE_ICON_JAVA_METHOD);
+					String displayName = propertyName + " - "
+							+ property.getType().getQualifiedName();
+					ICompletionProposal tempProposal = createProposal(propertyName,
+							displayName, prefix, offset, propertyName.length(),
+							IMAGE_ICON_JAVA_METHOD);
 					proposals.add(tempProposal);
 				}
 			}
 		}
 		Collections.sort(proposals, new ProposalComparator());
-		return (ICompletionProposal[]) proposals.toArray(
-		        new ICompletionProposal[proposals.size()]);
+		return (ICompletionProposal[]) proposals
+				.toArray(new ICompletionProposal[proposals.size()]);
 	}
-	
-	private ICompletionProposal[] getMethodNameCompletionProposal(
-			String prefix, int offset, IElement parentElement) {
+
+	private ICompletionProposal[] getMethodNameCompletionProposal(String prefix,
+			int offset, IElement parentElement) {
 		List proposals = new ArrayList();
 		if (parentElement instanceof IComponentElement) {
-			IRtti rtti = (IRtti)((IComponentElement)parentElement).getAdapter(IRtti.class);
+			IRtti rtti = (IRtti) ((IComponentElement) parentElement)
+					.getAdapter(IRtti.class);
 			if (rtti != null) {
-			    IRttiMethodDesctiptor[] methods = rtti.getMethods(Pattern.compile(prefix + ".*"));
+				IRttiMethodDesctiptor[] methods = rtti.getMethods(Pattern.compile(prefix
+						+ ".*"));
 				for (int i = 0; i < methods.length; i++) {
 					String methodName = methods[i].getMethodName();
 					String displayName = ModelUtils.getMethodDisplay(methods[i], false);
-					ICompletionProposal tempProposal = createProposal(
-							methodName, displayName, prefix, 
-							offset, methodName.length(), IMAGE_ICON_JAVA_METHOD);
+					ICompletionProposal tempProposal = createProposal(methodName,
+							displayName, prefix, offset, methodName.length(),
+							IMAGE_ICON_JAVA_METHOD);
 					proposals.add(tempProposal);
 				}
 			}
 		}
 		Collections.sort(proposals, new ProposalComparator());
-		return (ICompletionProposal[]) proposals.toArray(
-		        new ICompletionProposal[proposals.size()]);
+		return (ICompletionProposal[]) proposals
+				.toArray(new ICompletionProposal[proposals.size()]);
 	}
 
-	private ICompletionProposal[] getIncludePathCompletionProposal(
-			IFile file, String prefix, int offset) {
-	    DiconNature nature = DiconNature.getInstance(file.getProject());
-	    if(nature != null) {
-	        String[] paths = nature.getModel().getAllContainerPaths();
+	private ICompletionProposal[] getIncludePathCompletionProposal(IFile file,
+			String prefix, int offset) {
+		DiconNature nature = DiconNature.getInstance(file.getProject());
+		if (nature != null) {
+			String[] paths = nature.getModel().getAllContainerPaths();
 			List proposals = new ArrayList();
 			for (int i = 0; i < paths.length; i++) {
 				if (isMatch(paths[i], prefix)) {
-				    ICompletionProposal proposal = createProposal(paths[i], paths[i], prefix, 
-					        offset, paths[i].length(), IMAGE_ICON_CONTAINER);
+					ICompletionProposal proposal = createProposal(paths[i], paths[i],
+							prefix, offset, paths[i].length(), IMAGE_ICON_CONTAINER);
 					proposals.add(proposal);
 				}
 			}
 			Collections.sort(proposals, new ProposalComparator());
-			return (ICompletionProposal[]) proposals.toArray(
-			        new ICompletionProposal[proposals.size()]);
-	    }
-	    return NO_PROPOSALS;
+			return (ICompletionProposal[]) proposals
+					.toArray(new ICompletionProposal[proposals.size()]);
+		}
+		return NO_PROPOSALS;
 	}
-	
+
 }

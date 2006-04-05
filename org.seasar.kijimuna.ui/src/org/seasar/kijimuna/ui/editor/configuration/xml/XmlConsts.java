@@ -23,18 +23,18 @@ import org.eclipse.swt.graphics.RGB;
  */
 public interface XmlConsts {
 
-    String TYPE = "org.seasar.kijimuna.ui.editor.configuration.xml";
-    
+	String TYPE = "org.seasar.kijimuna.ui.editor.configuration.xml";
+
 	String TYPE_COMMENT = TYPE + ".COMMENT";
 	String TYPE_XML_DECL = TYPE + ".XML_DECL";
 	String TYPE_DOC_DECL = TYPE + ".DOC_DECL";
 	String TYPE_TAG = TYPE + ".TAG";
-    
-    RGB COLOR_COMMENT = new RGB(128, 0, 0);
-    RGB COLOR_XML_DECL = new RGB(128, 128, 128);
-    RGB COLOR_DOC_DECL = new RGB(64, 128, 128);
-    RGB COLOR_TAG = new RGB(0, 0, 128);
-    RGB COLOR_ATTRIBUTE = new RGB(0, 128, 0);
-    RGB COLOR_DEFAULT = new RGB(0, 0, 0);
+
+	RGB COLOR_COMMENT = new RGB(128, 0, 0);
+	RGB COLOR_XML_DECL = new RGB(128, 128, 128);
+	RGB COLOR_DOC_DECL = new RGB(64, 128, 128);
+	RGB COLOR_TAG = new RGB(0, 0, 128);
+	RGB COLOR_ATTRIBUTE = new RGB(0, 128, 0);
+	RGB COLOR_DEFAULT = new RGB(0, 0, 0);
 
 }
