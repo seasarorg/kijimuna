@@ -142,6 +142,7 @@ public interface ConstCore {
 
 	public static final String DICON_NS_SEP = ".";
 
+	// magic components
 	public static final String MODEL_INTERFACE_INTERCEPTOR = "org.aopalliance.intercept.MethodInterceptor";
 	public static final String MODEL_INTERFACE_S2CONTAINER = "org.seasar.framework.container.S2Container";
 	public static final String MODEL_INTERFACE_REQUEST = "javax.servlet.http.HttpServletRequest";
@@ -152,7 +153,10 @@ public interface ConstCore {
 	public static final String MODEL_NAME_REQUEST = "request";
 	public static final String MODEL_NAME_RESPONSE = "response";
 	public static final String MODEL_NAME_SESSION = "session";
+	// for before version 2.3
 	public static final String MODEL_NAME_SERVLETCONTEXT = "servletContext";
+	// for since version 2.4
+	public static final String MODEL_NAME_APPLICATION = "application";
 
 	public static final int RECORDER_EVENT_INIT = 0;
 	public static final int RECORDER_EVENT_RESTORE = 1;
