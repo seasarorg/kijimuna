@@ -15,6 +15,8 @@
  */
 package org.seasar.kijimuna.core.rtti;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
@@ -69,7 +71,7 @@ public class RttiLoader implements Serializable {
 		this.autoConvert = autoConvert;
 		this.hostName = hostName;
 		this.cache = cache;
-		this.qualifyNamesCashe = new HashMap();
+		setUpTransient();
 	}
 
 	public IRttiCache getRttiCache() {
@@ -262,6 +264,16 @@ public class RttiLoader implements Serializable {
 
 	private String getWrapperName(String declareName) {
 		return (String) PRIMITIVES.get(declareName);
+	}
+
+	private void setUpTransient() {
+		this.qualifyNamesCashe = new HashMap();
+	}
+	
+	private void readObject(ObjectInputStream in) throws IOException,
+			ClassNotFoundException {
+		in.defaultReadObject();
+		setUpTransient();
 	}
 
 }
