@@ -71,7 +71,7 @@ public class RttiLoader implements Serializable {
 		this.autoConvert = autoConvert;
 		this.hostName = hostName;
 		this.cache = cache;
-		setUpTransient();
+		setUpQualifyNamesCache();
 	}
 
 	public IRttiCache getRttiCache() {
@@ -266,14 +266,14 @@ public class RttiLoader implements Serializable {
 		return (String) PRIMITIVES.get(declareName);
 	}
 
-	private void setUpTransient() {
+	private void setUpQualifyNamesCache() {
 		this.qualifyNamesCashe = new HashMap();
 	}
 	
 	private void readObject(ObjectInputStream in) throws IOException,
 			ClassNotFoundException {
 		in.defaultReadObject();
-		setUpTransient();
+		setUpQualifyNamesCache();
 	}
 
 }
