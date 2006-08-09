@@ -48,8 +48,12 @@ public class ManualSetterInjection implements IValidation, ConstCore {
 			String propertyName = property.getPropertyName();
 			if (StringUtils.existValue(propertyName) && (value != null)) {
 				IRttiPropertyDescriptor desc = component.getProperty(propertyName);
-				if ((desc == null) || !desc.isWritable()
-						|| !desc.getType().isAssignableFrom(value)) {
+				if ((desc == null)
+						|| !desc.isWritable()
+						|| (!desc.getType().isAssignableFrom(value) && (desc.getType()
+								.getConstructor(new IRtti[] {
+									value
+								}) == null))) {
 					MarkerSetting.createDiconMarker(
 							"dicon.validation.ManualSetterInjection.1", property,
 							new Object[] {
@@ -60,5 +64,4 @@ public class ManualSetterInjection implements IValidation, ConstCore {
 			}
 		}
 	}
-
 }
