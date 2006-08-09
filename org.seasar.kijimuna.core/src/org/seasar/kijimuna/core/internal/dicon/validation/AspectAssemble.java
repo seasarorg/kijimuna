@@ -39,12 +39,15 @@ public class AspectAssemble implements IValidation, ConstCore {
 		IRtti rtti = (IRtti) component.getAdapter(IRtti.class);
 		if (rtti != null) {
 			if (rtti.isInterface()) {
-				List aspects = component.getAspectList();
-				if (aspects.size() == 0) {
-					MarkerSetting.createDiconMarker("dicon.validation.AspectAssemble.1",
-							component, new Object[] {
-								rtti.getQualifiedName()
-							});
+				if (component.getExpression() == null) {
+					List aspects = component.getAspectList();
+					if (aspects.size() == 0) {
+						MarkerSetting.createDiconMarker(
+								"dicon.validation.AspectAssemble.1", component,
+								new Object[] {
+									rtti.getQualifiedName()
+								});
+					}
 				}
 			}
 		}
