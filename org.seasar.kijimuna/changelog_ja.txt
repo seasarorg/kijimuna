@@ -3,7 +3,7 @@ Kijimuna 変更履歴
 
 
 ----------------------------------------------------------------------
-[修正] S2Conteiner2.4の定義済みオブジェクト「application」に対応しまし
+[新規] S2Conteiner2.4の定義済みオブジェクト「application」に対応しまし
        た。(KIJIMUNA-5)
 
 [修正] Interceptorを利用しているdiconファイルで、「org.aopalliance.
@@ -12,6 +12,9 @@ Kijimuna 変更履歴
 
 [修正] <component>のclassにインタフェース、ボディにOGNL式を指定した場合に
        エラーとなるのを修正しました。(KIJIMUNA-3)
+
+[修正] プロパティの型がStringを引数とするコンストラクタを持つ場合に
+       文字列で値を指定するとエラーとなるのを修正しました。(KIJIMUNA-4)
 
 
 1.1.1 (2006-07-12)
