@@ -2,7 +2,7 @@
 <feature
       id="org.seasar.kijimuna"
       label="%plugin.brand"
-      version="1.1.1"
+      version="1.1.2"
       provider-name="%author"
       image="banner.gif">
 
@@ -50,12 +50,12 @@ governing permissions and limitations under the License.
          id="org.seasar.kijimuna.core"
          download-size="0"
          install-size="0"
-         version="1.1.1"/>
+         version="1.1.2"/>
 
    <plugin
          id="org.seasar.kijimuna.ui"
          download-size="0"
          install-size="0"
-         version="1.1.1"/>
+         version="1.1.2"/>
 
 </feature>
