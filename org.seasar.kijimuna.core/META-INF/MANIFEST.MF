@@ -23,6 +23,7 @@ Provide-Package: org.seasar.kijimuna.core,
  org.seasar.kijimuna.core.preference,
  org.seasar.kijimuna.core.project,
  org.seasar.kijimuna.core.rtti,
- org.seasar.kijimuna.core.util,
+ org.seasar.kijimuna.core.rtti.ognl,
  org.seasar.kijimuna.core.search,
- org.seasar.kijimuna.core.test
+ org.seasar.kijimuna.core.test,
+ org.seasar.kijimuna.core.util
