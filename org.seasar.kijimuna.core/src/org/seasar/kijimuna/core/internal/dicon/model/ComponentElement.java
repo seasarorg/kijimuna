@@ -30,8 +30,10 @@ import org.seasar.kijimuna.core.ConstCore;
 import org.seasar.kijimuna.core.KijimunaCore;
 import org.seasar.kijimuna.core.dicon.info.IComponentInfo;
 import org.seasar.kijimuna.core.dicon.info.IComponentKey;
+import org.seasar.kijimuna.core.dicon.info.ITooManyRegisted;
 import org.seasar.kijimuna.core.dicon.model.IComponentElement;
 import org.seasar.kijimuna.core.dicon.model.IContainerElement;
+import org.seasar.kijimuna.core.dicon.model.IDiconElement;
 import org.seasar.kijimuna.core.rtti.HasErrorRtti;
 import org.seasar.kijimuna.core.rtti.IRtti;
 import org.seasar.kijimuna.core.rtti.IRttiConstructorDesctiptor;
@@ -238,24 +240,49 @@ public class ComponentElement extends AbstractExpressionElement implements
 						.compile(".*"));
 				for (int i = 0; i < props.length; i++) {
 					String name = props[i].getName();
-					if (props[i].getType().isInterface() && props[i].isWritable()) {
-						if (!ModelUtils.hasPropertyElement(this, name)) {
-							IContainerElement container = getContainerElement();
-							IComponentKey key = container.createComponentKey(props[i]
-									.getType());
-							if (ModelUtils.doDesignTimeAutoBinding(props[i].getType())) {
-								IRtti inject = container.getComponent(key);
-								props[i].setValue(inject);
-							}
-							list.add(props[i]);
-						}
+					if (!isAutoInjectableProperty(props[i])) {
+						continue;
 					}
+					if (ModelUtils.hasPropertyElement(this, name)) {
+						continue;
+					}
+					IContainerElement container = getContainerElement();
+					IComponentKey key = container.createComponentKey(props[i]
+							.getType());
+					if (ModelUtils.doDesignTimeAutoBinding(props[i].getType())) {
+						IRtti inject = container.getComponent(key);
+						if (inject instanceof ITooManyRegisted) {
+							ITooManyRegisted tmr = (ITooManyRegisted) inject;
+							IRtti injectByCN = getInjectedRttiByComponentName(
+									props[i], tmr.getRegistedComponents());
+							inject = injectByCN != null ? injectByCN : tmr;
+						}
+						props[i].setValue(inject);
+					}
+					list.add(props[i]);
 				}
 				return (IRttiPropertyDescriptor[]) list
 						.toArray(new IRttiPropertyDescriptor[list.size()]);
 			}
 		}
 		return new IRttiPropertyDescriptor[0];
+	}
+	
+	private boolean isAutoInjectableProperty(IRttiPropertyDescriptor prop) {
+		return prop.getType().isInterface() && prop.isWritable();
+	}
+	
+	private IRtti getInjectedRttiByComponentName(IRttiPropertyDescriptor prop,
+			IDiconElement[] elements) {
+		for (int i = 0; i < elements.length; i++) {
+			if (elements[i] instanceof IComponentElement) {
+				IComponentElement component = (IComponentElement) elements[i];
+				if (prop.getName().equals(component.getComponentName())) {
+					return (IRtti) component.getAdapter(IRtti.class);
+				}
+			}
+		}
+		return null;
 	}
 
 	public Object getAdapter(Class adapter) {
