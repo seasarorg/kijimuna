@@ -235,13 +235,11 @@ public class ContainerElement extends DiconElement implements IContainerElement,
 			return new ContainerRtti(getS2ContainerRtti(), container, componentKey);
 		} else if (element instanceof IComponentElement) {
 			IRtti rtti = (IRtti) element.getAdapter(IRtti.class);
-			if (rtti != null) {
-				if (rtti instanceof ITooManyRegisted) {
-					return rtti;
-				}
-				IComponentElement component = (IComponentElement) element;
-				return new InjectedRtti(rtti, component, componentKey);
+			if (rtti instanceof ITooManyRegisted) {
+				return rtti;
 			}
+			IComponentElement component = (IComponentElement) element;
+			return new InjectedRtti(rtti, component, componentKey);
 		}
 		return new ComponentNotFoundRtti(componentKey);
 	}
