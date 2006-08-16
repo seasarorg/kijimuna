@@ -37,6 +37,7 @@ import org.eclipse.jdt.core.IType;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.Signature;
 
+import org.seasar.kijimuna.core.rtti.HasErrorRtti;
 import org.seasar.kijimuna.core.rtti.IRtti;
 import org.seasar.kijimuna.core.rtti.IRttiConstructorDesctiptor;
 import org.seasar.kijimuna.core.rtti.IRttiFieldDescriptor;
@@ -467,6 +468,9 @@ public class DefaultRtti implements IRtti {
 		if ((test != null) && (test instanceof IRtti)) {
 			IRtti testRtti = (IRtti) test;
 			RttiInfo testInfo = (RttiInfo) testRtti.getAdapter(RttiInfo.class);
+			if (testInfo == null) {
+				return false;
+			}
 			if (autoConvert && (isPrimitive() || testInfo.isPrimitive())) {
 				if (getWrapperName().equals(testInfo.getWrapperName())) {
 					return true;
@@ -561,10 +565,16 @@ public class DefaultRtti implements IRtti {
 		if (testRtti == null) {
 			return true;
 		}
+		if (testRtti instanceof HasErrorRtti) {
+			return false;
+		}
 		if (equals(testRtti)) {
 			return true;
 		}
 		RttiInfo testInfo = (RttiInfo) testRtti.getAdapter(RttiInfo.class);
+		if (testInfo == null) {
+			return true;
+		}
 		if (isPrimitive() || testInfo.isPrimitive()) {
 			// widening primitive conversion
 			return isWideningPrimitiveConversion(testRtti);

@@ -30,10 +30,8 @@ import org.seasar.kijimuna.core.ConstCore;
 import org.seasar.kijimuna.core.KijimunaCore;
 import org.seasar.kijimuna.core.dicon.info.IComponentInfo;
 import org.seasar.kijimuna.core.dicon.info.IComponentKey;
-import org.seasar.kijimuna.core.dicon.info.ITooManyRegisted;
 import org.seasar.kijimuna.core.dicon.model.IComponentElement;
 import org.seasar.kijimuna.core.dicon.model.IContainerElement;
-import org.seasar.kijimuna.core.dicon.model.IDiconElement;
 import org.seasar.kijimuna.core.rtti.HasErrorRtti;
 import org.seasar.kijimuna.core.rtti.IRtti;
 import org.seasar.kijimuna.core.rtti.IRttiConstructorDesctiptor;
@@ -48,6 +46,8 @@ import org.seasar.kijimuna.core.util.StringUtils;
 public class ComponentElement extends AbstractExpressionElement implements
 		IComponentElement, ConstCore {
 
+	private static final Pattern PATTERN_ANY = Pattern.compile(".*");
+	
 	private Set componentKeySet;
 	private IComponentInfo info;
 	private IRttiConstructorDesctiptor suitableConstructor;
@@ -236,30 +236,19 @@ public class ComponentElement extends AbstractExpressionElement implements
 			IRtti rtti = (IRtti) getAdapter(IRtti.class);
 			if (rtti != null) {
 				List list = new ArrayList();
-				IRttiPropertyDescriptor[] props = rtti.getProperties(Pattern
-						.compile(".*"));
+				IRttiPropertyDescriptor[] props = rtti.getProperties(PATTERN_ANY);
 				for (int i = 0; i < props.length; i++) {
-					String name = props[i].getName();
-					if (!isAutoInjectableProperty(props[i])) {
+					IRttiPropertyDescriptor prop = props[i];
+					if (!isAutoInjectableProperty(prop)) {
 						continue;
 					}
-					if (ModelUtils.hasPropertyElement(this, name)) {
+					if (ModelUtils.hasPropertyElement(this, prop.getName())) {
 						continue;
 					}
-					IContainerElement container = getContainerElement();
-					IComponentKey key = container.createComponentKey(props[i]
-							.getType());
-					if (ModelUtils.doDesignTimeAutoBinding(props[i].getType())) {
-						IRtti inject = container.getComponent(key);
-						if (inject instanceof ITooManyRegisted) {
-							ITooManyRegisted tmr = (ITooManyRegisted) inject;
-							IRtti injectByCN = getInjectedRttiByComponentName(
-									props[i], tmr.getRegistedComponents());
-							inject = injectByCN != null ? injectByCN : tmr;
-						}
-						props[i].setValue(inject);
+					if (ModelUtils.doDesignTimeAutoBinding(prop.getType())) {
+						injectRtti(prop);
 					}
-					list.add(props[i]);
+					list.add(prop);
 				}
 				return (IRttiPropertyDescriptor[]) list
 						.toArray(new IRttiPropertyDescriptor[list.size()]);
@@ -272,19 +261,29 @@ public class ComponentElement extends AbstractExpressionElement implements
 		return prop.getType().isInterface() && prop.isWritable();
 	}
 	
-	private IRtti getInjectedRttiByComponentName(IRttiPropertyDescriptor prop,
-			IDiconElement[] elements) {
-		for (int i = 0; i < elements.length; i++) {
-			if (elements[i] instanceof IComponentElement) {
-				IComponentElement component = (IComponentElement) elements[i];
-				if (prop.getName().equals(component.getComponentName())) {
-					return (IRtti) component.getAdapter(IRtti.class);
-				}
-			}
+	private void injectRtti(IRttiPropertyDescriptor prop) {
+		if (!injectRttiByComponentName(prop)) {
+			injectRttiByPropertyType(prop);
 		}
-		return null;
 	}
-
+	
+	private boolean injectRttiByComponentName(IRttiPropertyDescriptor prop) {
+		IContainerElement container = getContainerElement();
+		IComponentKey key = container.createComponentKey(prop.getName());
+		IRtti inject = container.getComponent(key);
+		if (prop.getType().isAssignableFrom(inject)) {
+			prop.setValue(inject);
+			return true;
+		}
+		return false;
+	}
+	
+	private void injectRttiByPropertyType(IRttiPropertyDescriptor prop) {
+		IContainerElement container = getContainerElement();
+		IComponentKey key = container.createComponentKey(prop.getType());
+		prop.setValue(container.getComponent(key));
+	}
+	
 	public Object getAdapter(Class adapter) {
 		if (IComponentInfo.class.equals(adapter)) {
 			if (info == null) {
