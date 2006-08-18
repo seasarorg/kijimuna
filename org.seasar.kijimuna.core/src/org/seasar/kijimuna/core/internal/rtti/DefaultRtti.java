@@ -443,25 +443,38 @@ public class DefaultRtti implements IRtti {
 
 	private IRtti[] getInterfaces(boolean includeThis) {
 		if (isTypeAvailable()) {
-			try {
-				String[] interfaces = getType().getSuperInterfaceNames();
-				Set ret = new TreeSet();
-				for (int i = 0; i < interfaces.length; i++) {
-					IRtti rtti = loader.loadRtti(interfaces[i]);
-					ret.add(rtti);
-					IRtti[] rttis = rtti.getInterfaces();
-					for (int j = 0; j < rttis.length; j++) {
-						ret.add(rttis[j]);
-					}
-				}
-				if (includeThis && isInterface()) {
-					ret.add(this);
-				}
-				return (IRtti[]) ret.toArray(new IRtti[ret.size()]);
-			} catch (Exception ignore) {
+			Set ret = getInterfacesRecursively(getType());
+			if (includeThis && isInterface()) {
+				ret.add(this);
 			}
+			return (IRtti[]) ret.toArray(new IRtti[ret.size()]);
 		}
 		return new IRtti[0];
+	}
+	
+	private Set getInterfacesRecursively(IType type) {
+		Set ret = new TreeSet();
+		if (type == null) {
+			return ret;
+		}
+		try {
+			String[] interfaces = type.getSuperInterfaceNames();
+			for (int i = 0; i < interfaces.length; i++) {
+				IRtti rtti = loader.loadRtti(interfaces[i]);
+				ret.add(rtti);
+				IRtti[] rtties = rtti.getInterfaces();
+				for (int j = 0; j < rtties.length; j++) {
+					ret.addAll(getInterfacesRecursively(rtties[j].getType()));
+				}
+			}
+			String superclass = type.getSuperclassName();
+			if (superclass != null) {
+				ret.addAll(getInterfacesRecursively(loader.loadRtti(superclass)
+						.getType()));
+			}
+		} catch (JavaModelException ignore) {
+		}
+		return ret;
 	}
 
 	public boolean equals(Object test) {
