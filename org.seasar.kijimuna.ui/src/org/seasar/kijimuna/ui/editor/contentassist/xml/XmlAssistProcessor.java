@@ -200,8 +200,10 @@ public class XmlAssistProcessor implements IContentAssistProcessor, ConstUI, Xml
 						proposalMode = PROPOSAL_MODE_ATTRIBUTE_VALUE;
 						hyperlinkRegion = getAttributeValueRegion(regionText,
 								regionOffset, cursorOffset);
-						hyperlinkText = doc.get(hyperlinkRegion.getOffset(),
-								hyperlinkRegion.getLength());
+						if (hyperlinkRegion != null) {
+							hyperlinkText = doc.get(hyperlinkRegion.getOffset(),
+									hyperlinkRegion.getLength());
+						}
 					} else {
 						proposalMode = PROPOSAL_MODE_ATTRIBUTE;
 					}

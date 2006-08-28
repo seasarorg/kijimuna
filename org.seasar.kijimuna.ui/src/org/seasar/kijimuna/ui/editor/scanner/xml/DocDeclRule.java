@@ -24,7 +24,7 @@ import org.eclipse.jface.text.rules.MultiLineRule;
 public class DocDeclRule extends MultiLineRule {
 
 	public DocDeclRule(IToken token) {
-		super("<!DOCTYPE", ">", token);
+		super("<!DOCTYPE", ">", token, (char) 0, true);
 	}
 
 }
