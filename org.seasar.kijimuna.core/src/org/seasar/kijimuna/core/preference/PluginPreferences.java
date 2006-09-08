@@ -53,11 +53,11 @@ public class PluginPreferences extends EclipsePreferences {
 		}
 	}
 
-	protected EclipsePreferences internalCreate(IEclipsePreferences nodeParent,
+	protected EclipsePreferences internalCreate(EclipsePreferences nodeParent,
 			String nodeName, Plugin context) {
 		return new PluginPreferences(nodeParent, nodeName);
 	}
-
+	
 	protected IPath getLocation() {
 		if (pluginID == null || qualifier == null) {
 			return null;
