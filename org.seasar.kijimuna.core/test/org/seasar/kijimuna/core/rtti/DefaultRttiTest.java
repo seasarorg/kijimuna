@@ -174,8 +174,8 @@ public class DefaultRttiTest extends TestCase {
 		IRtti person = loader.loadRtti("test.Person");
 		IRtti i_person = loader.loadRtti("test.IPerson");
 		IRtti[] interfaces = person.getInterfaces();
-		assertEquals(interfaces.length, 1);
-		assertTrue(i_person.equals(interfaces[0]));
+		assertEquals(2, interfaces.length);
+		assertTrue(i_person.equals(interfaces[1]));
 	}
 
 	public void testGetSuperInterfaces2() throws Exception {
