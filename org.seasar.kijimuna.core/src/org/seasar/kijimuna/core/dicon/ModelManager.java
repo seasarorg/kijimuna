@@ -124,8 +124,11 @@ public class ModelManager implements Serializable {
 		Set ret = new HashSet();
 		for (Iterator it = relatedMap.keySet().iterator(); it.hasNext();) {
 			String keyString = (String) it.next();
-			ret.add(getContainer(ProjectUtils.getStorage(getProject(), keyString),
-					monitor));
+			IStorage storage = ProjectUtils.getStorage(getProject(), keyString);
+			if (storage == null) {
+				continue;
+			}
+			ret.add(getContainer(storage, monitor));
 			if (monitor != null) {
 				monitor.worked(1);
 			}
