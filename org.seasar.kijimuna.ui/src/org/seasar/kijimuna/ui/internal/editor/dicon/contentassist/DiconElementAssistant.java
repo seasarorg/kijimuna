@@ -17,7 +17,6 @@ package org.seasar.kijimuna.ui.internal.editor.dicon.contentassist;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -78,15 +77,22 @@ public class DiconElementAssistant extends XmlElementAssistant implements ConstU
 		return ognlRtti.getValue(component.getContainerElement(), el);
 	}
 
-	private List getComponentProposals(IContainerElement container, String prefix,
-			int offset) {
+	private String getLastPrefix(String prefix) {
+		int last = prefix.lastIndexOf('.');
+		return last < 0 ? prefix : prefix.substring(last + 1);
+	}
+	
+	private List getComponentProposals(IContainerElement container,
+			String prefix, int offset) {
 		List proposals = new ArrayList();
 		List componentList = container.getComponentList();
-		for (Iterator it = componentList.iterator(); it.hasNext();) {
-			IComponentElement comp = (IComponentElement) it.next();
+		for (int i = 0; i < componentList.size(); i++) {
+			IComponentElement comp = (IComponentElement) componentList.get(i);
 			String name = comp.getComponentName();
-			if (StringUtils.existValue(name) && isMatch(name, prefix)) {
-				ICompletionProposal proposal = createProposal(name, name, prefix, offset,
+			if (StringUtils.existValue(name) && isMatch(name, getLastPrefix(
+					prefix))) {
+				ICompletionProposal proposal = createProposal(name, name,
+						getLastPrefix(prefix), offset,
 						name.length(), IMAGE_ICON_COMPONENT);
 				proposals.add(proposal);
 			}
@@ -94,32 +100,26 @@ public class DiconElementAssistant extends XmlElementAssistant implements ConstU
 		Collections.sort(proposals, new ProposalComparator());
 		return proposals;
 	}
-
-	private void addNamespaceProposals(List proposals, IContainerElement container,
+	
+	private List getNamespaceProposals(IContainerElement container,
 			String prefix, int offset) {
+		List proposals = new ArrayList();
 		List includes = container.getIncludeList();
 		for (int i = 0; i < includes.size(); i++) {
-			IContainerElement child = ((IIncludeElement) includes.get(i))
-					.getChildContainer();
-			if (child != null) {
-				String namespace = child.getNamespace();
-				if (StringUtils.existValue(namespace) && isMatch(namespace, prefix)) {
-					proposals.add(createProposal(namespace, namespace, prefix, offset,
-							namespace.length(), IMAGE_ICON_CONTAINER));
-				}
-				addNamespaceProposals(proposals, child, prefix, offset);
+			IIncludeElement include = (IIncludeElement) includes.get(i);
+			String namespace = include.getChildContainer().getNamespace();
+			if (StringUtils.existValue(namespace) && isMatch(namespace,
+					getLastPrefix(prefix))) {
+				ICompletionProposal proposal = createProposal(namespace,
+						namespace, getLastPrefix(prefix), offset,
+						namespace.length(), IMAGE_ICON_CONTAINER);
+				proposals.add(proposal);
 			}
 		}
-	}
-
-	private List getNamespaceProposals(IContainerElement container, String prefix,
-			int offset) {
-		List proposals = new ArrayList();
-		addNamespaceProposals(proposals, container, prefix, offset);
 		Collections.sort(proposals, new ProposalComparator());
 		return proposals;
 	}
-
+	
 	private List getOGNLProposals(IDiconElement element, String prefix, int offset) {
 		List proposals = new ArrayList();
 		if (prefix.length() == 0) {
@@ -283,8 +283,14 @@ public class DiconElementAssistant extends XmlElementAssistant implements ConstU
 							if ((elRtti != null) && !(elRtti instanceof HasErrorRtti)) {
 								if (elRtti.getQualifiedName().equals(
 										MODEL_INTERFACE_S2CONTAINER)) {
-									proposals.addAll(getComponentProposals(element
-											.getContainerElement(), prefix, offset));
+									IContainerElement container = (IContainerElement)
+											elRtti.getAdapter(IContainerElement.class);
+									if (container != null) {
+										proposals.addAll(getComponentProposals(
+												container, prefix, offset));
+										proposals.addAll(getNamespaceProposals(
+												container, prefix, offset));
+									}
 								}
 								proposals.addAll(getMemberProposals(elRtti, el + ".",
 										elPrefix, false, prefix, offset));
