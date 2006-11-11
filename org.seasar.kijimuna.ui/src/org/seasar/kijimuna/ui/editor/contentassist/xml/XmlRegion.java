@@ -34,10 +34,13 @@ public class XmlRegion {
 	private String attributeName;
 	private String hyperlinkText;
 	private IRegion hyperlinkRegion;
+	// offsetを越えたIDocument#getの値
+	private String stringToEnd;
 
 	public XmlRegion(IFile file, String stringToOffset, int regionOffset,
 			int cursorOffset, int proposalMode, String regionText, String elementName,
-			String attributeName, String hyperlinkText, IRegion hyperlinkRegion) {
+			String attributeName, String hyperlinkText, IRegion hyperlinkRegion,
+			String stringToEnd) {
 		this.file = file;
 		this.stringToOffset = stringToOffset;
 		this.regionOffset = regionOffset;
@@ -48,6 +51,7 @@ public class XmlRegion {
 		this.attributeName = attributeName;
 		this.hyperlinkText = hyperlinkText;
 		this.hyperlinkRegion = hyperlinkRegion;
+		this.stringToEnd = stringToEnd;
 	}
 
 	public IFile getFile() {
@@ -88,6 +92,10 @@ public class XmlRegion {
 
 	public IRegion getHyperlinkRegion() {
 		return hyperlinkRegion;
+	}
+
+	public String getStringToEnd() {
+		return stringToEnd;
 	}
 
 }

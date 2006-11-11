@@ -17,7 +17,9 @@ package org.seasar.kijimuna.ui.internal.editor.dicon.contentassist;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Pattern;
 
 import org.eclipse.core.resources.IFile;
@@ -32,6 +34,7 @@ import org.seasar.kijimuna.core.dicon.model.IIncludeElement;
 import org.seasar.kijimuna.core.dicon.model.IMethodElement;
 import org.seasar.kijimuna.core.dtd.IDtd;
 import org.seasar.kijimuna.core.parser.IElement;
+import org.seasar.kijimuna.core.parser.IParseResult;
 import org.seasar.kijimuna.core.rtti.HasErrorRtti;
 import org.seasar.kijimuna.core.rtti.IRtti;
 import org.seasar.kijimuna.core.rtti.IRttiFieldDescriptor;
@@ -45,6 +48,7 @@ import org.seasar.kijimuna.ui.editor.contentassist.ProposalComparator;
 import org.seasar.kijimuna.ui.editor.contentassist.xml.XmlAssistProcessor;
 import org.seasar.kijimuna.ui.editor.contentassist.xml.XmlElementAssistant;
 import org.seasar.kijimuna.ui.editor.contentassist.xml.XmlRegion;
+import org.seasar.kijimuna.ui.util.CoreUtils;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
@@ -92,8 +96,8 @@ public class DiconElementAssistant extends XmlElementAssistant implements ConstU
 			if (StringUtils.existValue(name) && isMatch(name, getLastPrefix(
 					prefix))) {
 				ICompletionProposal proposal = createProposal(name, name,
-						getLastPrefix(prefix), offset,
-						name.length(), IMAGE_ICON_COMPONENT);
+						getLastPrefix(prefix), offset, name.length(),
+						IMAGE_ICON_COMPONENT);
 				proposals.add(proposal);
 			}
 		}
@@ -103,21 +107,26 @@ public class DiconElementAssistant extends XmlElementAssistant implements ConstU
 	
 	private List getNamespaceProposals(IContainerElement container,
 			String prefix, int offset) {
-		List proposals = new ArrayList();
+		Map proposals = new HashMap();
 		List includes = container.getIncludeList();
 		for (int i = 0; i < includes.size(); i++) {
 			IIncludeElement include = (IIncludeElement) includes.get(i);
 			String namespace = include.getChildContainer().getNamespace();
 			if (StringUtils.existValue(namespace) && isMatch(namespace,
 					getLastPrefix(prefix))) {
+				if (proposals.containsKey(namespace)) {
+					continue;
+				}
 				ICompletionProposal proposal = createProposal(namespace,
-						namespace, getLastPrefix(prefix), offset,
-						namespace.length(), IMAGE_ICON_CONTAINER);
-				proposals.add(proposal);
+						namespace + " - " + include.getPath(),
+						getLastPrefix(prefix), offset, namespace.length(),
+						IMAGE_ICON_CONTAINER);
+				proposals.put(namespace, proposal);
 			}
 		}
-		Collections.sort(proposals, new ProposalComparator());
-		return proposals;
+		List ret = new ArrayList(proposals.values());
+		Collections.sort(ret, new ProposalComparator());
+		return ret;
 	}
 	
 	private List getOGNLProposals(IDiconElement element, String prefix, int offset) {
@@ -278,7 +287,7 @@ public class DiconElementAssistant extends XmlElementAssistant implements ConstU
 								elRtti = execMethodOGNL((IComponentElement) element
 										.getParent(), el);
 							} else {
-								elRtti = execOGNL(element.getContainerElement(), el);
+								elRtti = execOGNL(getContainerElement(), el);
 							}
 							if ((elRtti != null) && !(elRtti instanceof HasErrorRtti)) {
 								if (elRtti.getQualifiedName().equals(
@@ -297,7 +306,7 @@ public class DiconElementAssistant extends XmlElementAssistant implements ConstU
 							}
 						}
 					} else if (pos == -1) {
-						IContainerElement container = element.getContainerElement();
+						IContainerElement container = getContainerElement();
 						proposals
 								.addAll(getComponentProposals(container, prefix, offset));
 						proposals
@@ -308,6 +317,13 @@ public class DiconElementAssistant extends XmlElementAssistant implements ConstU
 			}
 		}
 		superProposals.addAll(proposals);
+	}
+	
+	private IContainerElement getContainerElement() {
+		XmlRegion region = getXmlRegion();
+		IParseResult result = CoreUtils.parse(region.getStringToEnd(), region
+				.getFile());
+		return (IContainerElement) result.getRootElement();
 	}
 
 }

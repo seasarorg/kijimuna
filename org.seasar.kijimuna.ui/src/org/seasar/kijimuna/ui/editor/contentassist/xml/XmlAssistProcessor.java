@@ -222,7 +222,7 @@ public class XmlAssistProcessor implements IContentAssistProcessor, ConstUI, Xml
 		}
 		return new XmlRegion(file, stringToOffset, regionOffset, cursorOffset,
 				proposalMode, regionText, elementName, attributeName, hyperlinkText,
-				hyperlinkRegion);
+				hyperlinkRegion, doc.get());
 	}
 
 	private String getPrefixFromRegion(XmlRegion xmlRegion) {
