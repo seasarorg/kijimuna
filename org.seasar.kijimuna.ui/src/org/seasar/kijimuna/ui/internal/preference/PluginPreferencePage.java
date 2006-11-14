@@ -19,108 +19,82 @@ import java.lang.reflect.InvocationTargetException;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.TabFolder;
+import org.eclipse.swt.widgets.TabItem;
+import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.internal.dialogs.WorkbenchPreferencePage;
 
 import org.seasar.kijimuna.core.ConstCore;
 import org.seasar.kijimuna.core.KijimunaCore;
-import org.seasar.kijimuna.core.dicon.MarkerSetting;
-import org.seasar.kijimuna.ui.internal.preference.design.ProjectPropertyGUI;
-import org.seasar.kijimuna.ui.util.WidgetUtils;
+import org.seasar.kijimuna.ui.internal.preference.design.DesignPane;
+import org.seasar.kijimuna.ui.internal.preference.design.DiconEditorColoringDesign;
+import org.seasar.kijimuna.ui.internal.preference.design.ErrorMarkerDesign;
+import org.seasar.kijimuna.ui.internal.preference.design.Messages;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class PluginPreferencePage extends WorkbenchPreferencePage implements ConstCore {
+public class PluginPreferencePage extends PreferencePage implements
+		IWorkbenchPreferencePage, ConstCore {
 
-	private ProjectPropertyGUI view;
-	private Combo xmlErrorCombo;
-	private Combo xmlWarningCombo;
-	private Button validationCheck;
-	private Combo nullInjectionCombo;
-	private Combo autoInjectionCombo;
-	private Combo javaFetalCombo;
-	private Combo diconFetalCombo;
-	private Combo diconProblemCombo;
+	private ErrorMarkerDesign markerDesign;
+	private DiconEditorColoringDesign coloringDesign;
 
+	public void init(IWorkbench workbench) {
+	}
+	
 	protected Control createContents(Composite parent) {
-		view = new ProjectPropertyGUI(parent, SWT.NULL);
-		Button natureCheck = view.getNatureCheck();
-		natureCheck.setVisible(false);
-		xmlErrorCombo = view.getXmlErrorCombo();
-		xmlWarningCombo = view.getXmlWarningCombo();
-		validationCheck = view.getValidationCheck();
-		nullInjectionCombo = view.getNullInjectionCombo();
-		autoInjectionCombo = view.getAutoInjectionCombo();
-		javaFetalCombo = view.getJavaFetalCombo();
-		diconFetalCombo = view.getDiconFetalCombo();
-		diconProblemCombo = view.getDiconProblemCombo();
-
-		settingCombos(false);
-		boolean isValidation = MarkerSetting.getDiconValidationPreference(null, false);
-		validationCheck.setSelection(isValidation);
-		view.validationCheckWidgetSelected(isValidation);
-		return view;
+		DesignPane pane = new DesignPane(parent, SWT.NULL);
+		TabFolder folder = pane.getTabFolder();
+		
+		// error marker tab
+		markerDesign = new ErrorMarkerDesign(folder, SWT.NULL);
+		TabItem item = new TabItem(folder, SWT.NULL);
+		item.setText(Messages.getString("ErrorMarkerDesign.1"));
+		item.setControl(markerDesign);
+		
+		// editor coloring tab
+		coloringDesign = new DiconEditorColoringDesign(folder, SWT.NULL);
+		item = new TabItem(folder, SWT.NULL);
+		item.setText(Messages.getString("DiconEditorColoringDesign.1"));
+		item.setControl(coloringDesign);
+		
+		return pane;
 	}
-
-	private void settingCombos(boolean isDefault) {
-		WidgetUtils.setDiconMarkerSettingCombo(null, xmlErrorCombo,
-				MARKER_CATEGORY_XML_ERROR, isDefault);
-		WidgetUtils.setDiconMarkerSettingCombo(null, xmlWarningCombo,
-				MARKER_CATEGORY_XML_WARNING, isDefault);
-		WidgetUtils.setDiconMarkerSettingCombo(null, nullInjectionCombo,
-				MARKER_CATEGORY_NULL_INJECTION, isDefault);
-		WidgetUtils.setDiconMarkerSettingCombo(null, autoInjectionCombo,
-				MARKER_CATEGORY_AUTO_INJECTION, isDefault);
-		WidgetUtils.setDiconMarkerSettingCombo(null, javaFetalCombo,
-				MARKER_CATEGORY_JAVA_FETAL, isDefault);
-		WidgetUtils.setDiconMarkerSettingCombo(null, diconFetalCombo,
-				MARKER_CATEGORY_DICON_FETAL, isDefault);
-		WidgetUtils.setDiconMarkerSettingCombo(null, diconProblemCombo,
-				MARKER_CATEGORY_DICON_PROBLEM, isDefault);
-	}
-
+	
 	public boolean performOk() {
-		MarkerSetting.setDiconMarkerPreference(null, MARKER_CATEGORY_XML_ERROR,
-				xmlErrorCombo.getSelectionIndex());
-		MarkerSetting.setDiconMarkerPreference(null, MARKER_CATEGORY_XML_WARNING,
-				xmlWarningCombo.getSelectionIndex());
-		MarkerSetting.setDiconValidationPreference(null, validationCheck.getSelection());
-		MarkerSetting.setDiconMarkerPreference(null, MARKER_CATEGORY_NULL_INJECTION,
-				nullInjectionCombo.getSelectionIndex());
-		MarkerSetting.setDiconMarkerPreference(null, MARKER_CATEGORY_AUTO_INJECTION,
-				autoInjectionCombo.getSelectionIndex());
-		MarkerSetting.setDiconMarkerPreference(null, MARKER_CATEGORY_JAVA_FETAL,
-				javaFetalCombo.getSelectionIndex());
-		MarkerSetting.setDiconMarkerPreference(null, MARKER_CATEGORY_DICON_FETAL,
-				diconFetalCombo.getSelectionIndex());
-		MarkerSetting.setDiconMarkerPreference(null, MARKER_CATEGORY_DICON_PROBLEM,
-				diconProblemCombo.getSelectionIndex());
-		IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+		performApply();
+		IRunnableWithProgress runnable = new IRunnableWithProgress() {
+			public void run(IProgressMonitor monitor) throws
+					InvocationTargetException, InterruptedException {
+				KijimunaCore.getProjectRecorder().cleanup(monitor);
+			}
+		};
+		IWorkbenchWindow w = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
 		try {
-			window.run(true, true, new IRunnableWithProgress() {
-
-				public void run(IProgressMonitor monitor)
-						throws InvocationTargetException, InterruptedException {
-					KijimunaCore.getProjectRecorder().cleanup(monitor);
-				}
-			});
+			if (w != null) {
+				w.run(true, true, runnable);
+			}
 		} catch (InvocationTargetException e) {
 		} catch (InterruptedException e) {
 		}
 		return true;
 	}
-
+	
+	protected void performApply() {
+		markerDesign.store();
+		coloringDesign.store();
+	}
+	
 	protected void performDefaults() {
-		settingCombos(true);
-		validationCheck.setSelection(true);
-		view.validationCheckWidgetSelected(true);
+		markerDesign.loadDefault();
+		coloringDesign.loadDefault();
 	}
 
 }

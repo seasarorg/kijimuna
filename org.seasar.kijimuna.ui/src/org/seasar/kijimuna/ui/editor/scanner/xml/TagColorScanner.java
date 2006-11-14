@@ -15,36 +15,31 @@
  */
 package org.seasar.kijimuna.ui.editor.scanner.xml;
 
-import org.eclipse.jface.text.TextAttribute;
 import org.eclipse.jface.text.rules.IRule;
 import org.eclipse.jface.text.rules.IToken;
-import org.eclipse.jface.text.rules.RuleBasedScanner;
 import org.eclipse.jface.text.rules.SingleLineRule;
-import org.eclipse.jface.text.rules.Token;
 import org.eclipse.jface.text.rules.WhitespaceRule;
-import org.eclipse.swt.graphics.RGB;
 
 import org.seasar.kijimuna.ui.editor.configuration.ColorManager;
-import org.seasar.kijimuna.ui.editor.configuration.xml.XmlConsts;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class TagColorScanner extends RuleBasedScanner {
-
-	private IToken getColorToken(ColorManager manager, RGB rgb) {
-		return new Token(new TextAttribute(manager.getColor(rgb)));
-	}
+public class TagColorScanner extends AbstractColorScanner {
 
 	public TagColorScanner(ColorManager manager) {
-		IToken attribute = getColorToken(manager, XmlConsts.COLOR_ATTRIBUTE);
+		super(manager);
+		configure();
+	}
+	
+	public void configure() {
+		IToken attribute = getColorToken(PREF_COLOR_ATTRIBUTE);
 		IRule[] rules = new IRule[3];
 		rules[0] = new SingleLineRule("\"", "\"", attribute, '\\');
 		rules[1] = new SingleLineRule("'", "'", attribute, '\\');
 		rules[2] = new WhitespaceRule(new WhitespaceDetector());
 		setRules(rules);
-		setDefaultReturnToken(new Token(new TextAttribute(manager
-				.getColor(XmlConsts.COLOR_TAG))));
+		setDefaultReturnToken(getColorToken(PREF_COLOR_TAG));
 	}
 
 }

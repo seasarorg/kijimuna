@@ -15,35 +15,29 @@
  */
 package org.seasar.kijimuna.ui.editor.scanner.xml;
 
-import org.eclipse.jface.text.TextAttribute;
 import org.eclipse.jface.text.rules.IRule;
-import org.eclipse.jface.text.rules.IToken;
-import org.eclipse.jface.text.rules.RuleBasedScanner;
-import org.eclipse.jface.text.rules.Token;
 import org.eclipse.jface.text.rules.WhitespaceRule;
-import org.eclipse.swt.graphics.RGB;
 
 import org.seasar.kijimuna.ui.editor.configuration.ColorManager;
-import org.seasar.kijimuna.ui.editor.configuration.xml.XmlConsts;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class DocColorScanner extends RuleBasedScanner {
-
-	private IToken getColorToken(ColorManager manager, RGB rgb) {
-		return new Token(new TextAttribute(manager.getColor(rgb)));
-	}
+public class DocColorScanner extends AbstractColorScanner {
 
 	public DocColorScanner(ColorManager manager) {
+		super(manager);
+		configure();
+	}
+	
+	public void configure() {
 		IRule[] rules = new IRule[4];
-		rules[0] = new CommentRule(getColorToken(manager, XmlConsts.COLOR_COMMENT));
-		rules[1] = new XmlDeclRule(getColorToken(manager, XmlConsts.COLOR_XML_DECL));
-		rules[2] = new DocDeclRule(getColorToken(manager, XmlConsts.COLOR_DOC_DECL));
+		rules[0] = new CommentRule(getColorToken(PREF_COLOR_COMMENT));
+		rules[1] = new XmlDeclRule(getColorToken(PREF_COLOR_XML_DECL));
+		rules[2] = new DocDeclRule(getColorToken(PREF_COLOR_DOC_DECL));
 		rules[3] = new WhitespaceRule(new WhitespaceDetector());
 		setRules(rules);
-		setDefaultReturnToken(new Token(new TextAttribute(manager
-				.getColor(XmlConsts.COLOR_DEFAULT))));
+		setDefaultReturnToken(getColorToken(PREF_COLOR_DEFAULT));
 	}
 
 }

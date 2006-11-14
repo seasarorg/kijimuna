@@ -20,6 +20,9 @@ import org.eclipse.ui.editors.text.TextEditor;
 import org.eclipse.ui.texteditor.ContentAssistAction;
 import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
 
+import org.seasar.kijimuna.core.KijimunaCore;
+import org.seasar.kijimuna.core.preference.IPreferenceChangeListener;
+import org.seasar.kijimuna.core.preference.IPreferences.PreferenceChangeEvent;
 import org.seasar.kijimuna.ui.ConstUI;
 import org.seasar.kijimuna.ui.KijimunaUI;
 import org.seasar.kijimuna.ui.editor.configuration.ColorManager;
@@ -30,7 +33,8 @@ import org.seasar.kijimuna.ui.internal.editor.dicon.configuration.DiconConfigura
  * @author Masataka Kurihara (Gluegent, Inc.)
  * @author Toshitaka Agata (Nulab, Inc.)
  */
-public class DiconXmlEditor extends TextEditor implements ConstUI {
+public class DiconXmlEditor extends TextEditor implements
+		IPreferenceChangeListener, ConstUI {
 
 	private ColorManager colorManager;
 
@@ -39,13 +43,22 @@ public class DiconXmlEditor extends TextEditor implements ConstUI {
 		colorManager = new ColorManager();
 		setSourceViewerConfiguration(new DiconConfiguration(this, colorManager));
 		setDocumentProvider(new XmlDocumentProvider());
+		KijimunaCore.getPreferences().addPreferenceChangeListener(this);
 	}
 
 	public void dispose() {
+		KijimunaCore.getPreferences().removePreferenceChangeListener(this);
 		colorManager.dispose();
 		super.dispose();
 	}
-
+	
+	public void preferenceChanged(PreferenceChangeEvent event) {
+		DiconConfiguration config = (DiconConfiguration)
+				getSourceViewerConfiguration();
+		config.updatePreferences();
+		getSourceViewer().invalidateTextPresentation();
+	}
+	
 	protected void createActions() {
 		super.createActions();
 		IAction action = new ContentAssistAction(KijimunaUI.getResourceBundle(),

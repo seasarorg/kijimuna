@@ -26,7 +26,6 @@ import org.eclipse.jface.text.hyperlink.URLHyperlinkDetector;
 import org.eclipse.jface.text.presentation.IPresentationReconciler;
 import org.eclipse.jface.text.presentation.PresentationReconciler;
 import org.eclipse.jface.text.rules.DefaultDamagerRepairer;
-import org.eclipse.jface.text.rules.ITokenScanner;
 import org.eclipse.jface.text.source.IAnnotationHover;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.text.source.SourceViewerConfiguration;
@@ -51,8 +50,8 @@ public class XmlConfiguration extends SourceViewerConfiguration implements XmlCo
 	private IEditorPart editor;
 	private XmlDoubleClickStrategy doubleClickStrategy;
 	private ColorManager colorManager;
-	private ITokenScanner docColorScanner;
-	private ITokenScanner tagColorScanner;
+	private DocColorScanner docColorScanner;
+	private TagColorScanner tagColorScanner;
 
 	public XmlConfiguration(IEditorPart editor, ColorManager colorManager) {
 		this.editor = editor;
@@ -76,14 +75,14 @@ public class XmlConfiguration extends SourceViewerConfiguration implements XmlCo
 		return doubleClickStrategy;
 	}
 
-	private ITokenScanner getTagColorScanner() {
+	private TagColorScanner getTagColorScanner() {
 		if (tagColorScanner == null) {
 			tagColorScanner = new TagColorScanner(colorManager);
 		}
 		return tagColorScanner;
 	}
 
-	private ITokenScanner getDocColorScanner() {
+	private DocColorScanner getDocColorScanner() {
 		if (docColorScanner == null) {
 			docColorScanner = new DocColorScanner(colorManager);
 		}
@@ -182,6 +181,11 @@ public class XmlConfiguration extends SourceViewerConfiguration implements XmlCo
 				new URLHyperlinkDetector(sourceViewer),
 				new HyperlinkDetector(sourceViewer, processor)
 		};
+	}
+	
+	public void updatePreferences() {
+		getTagColorScanner().configure();
+		getDocColorScanner().configure();
 	}
 
 	// static class TraceAnnotationHover implements IAnnotationHover {
