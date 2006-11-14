@@ -58,5 +58,42 @@ public interface IPreferences {
 
 	// flash
 	void flash();
+	
+	void addPreferenceChangeListener(IPreferenceChangeListener listener);
+	void removePreferenceChangeListener(IPreferenceChangeListener listener);
+	
+	
+	public final class PreferenceChangeEvent {
+
+		private IPreferences sourcePref;
+		private String preferenceName;
+		private Object oldValue;
+		private Object newValue;
+		
+		PreferenceChangeEvent(IPreferences sourcePref, String preferenceName,
+				Object oldValue, Object newValue) {
+			this.sourcePref = sourcePref;
+			this.preferenceName = preferenceName;
+			this.oldValue = oldValue;
+			this.newValue = newValue;
+		}
+		
+		public IPreferences getSourcePreferences() {
+			return sourcePref;
+		}
+		
+		public String getPreferenceName() {
+			return preferenceName;
+		}
+		
+		public Object getOldValue() {
+			return oldValue;
+		}
+		
+		public Object getNewValue() {
+			return newValue;
+		}
+
+	}
 
 }

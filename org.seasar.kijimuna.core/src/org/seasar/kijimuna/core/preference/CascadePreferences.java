@@ -15,6 +15,10 @@
  */
 package org.seasar.kijimuna.core.preference;
 
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
+
 import org.osgi.service.prefs.BackingStoreException;
 
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
@@ -29,6 +33,7 @@ public class CascadePreferences implements IPreferences {
 	private IEclipsePreferences pref;
 	private IEclipsePreferences defaultPref;
 	private IEclipsePreferences basePref;
+	private Set preferenceChangeListeners = new HashSet(); 
 
 	public CascadePreferences(IEclipsePreferences pref, IEclipsePreferences defaultPref) {
 		this(pref, defaultPref, null);
@@ -162,35 +167,58 @@ public class CascadePreferences implements IPreferences {
 	}
 
 	public void put(String key, String value) {
+		PreferenceChangeEvent e = createPreferenceChangeEvent(key, get(key), value);
 		pref.put(key, value);
+		firePreferenceChangeEvent(e);
 	}
 
 	public void putBoolean(String key, boolean value) {
+		PreferenceChangeEvent e = createPreferenceChangeEvent(key, Boolean
+				.valueOf(getBoolean(key)), Boolean.valueOf(value));
 		pref.putBoolean(key, value);
+		firePreferenceChangeEvent(e);
 	}
 
 	public void putByteArray(String key, byte[] value) {
+		PreferenceChangeEvent e = createPreferenceChangeEvent(key,
+				getByteArray(key), value);
 		pref.putByteArray(key, value);
+		firePreferenceChangeEvent(e);
 	}
 
 	public void putDouble(String key, double value) {
+		PreferenceChangeEvent e = createPreferenceChangeEvent(key,
+				new Double(getDouble(key)), new Double(value));
 		pref.putDouble(key, value);
+		firePreferenceChangeEvent(e);
 	}
 
 	public void putFloat(String key, float value) {
+		PreferenceChangeEvent e = createPreferenceChangeEvent(key,
+				new Float(getFloat(key)), new Float(value));
 		pref.putFloat(key, value);
+		firePreferenceChangeEvent(e);
 	}
 
 	public void putInt(String key, int value) {
+		PreferenceChangeEvent e = createPreferenceChangeEvent(key,
+				new Integer(getInt(key)), new Integer(value));
 		pref.putInt(key, value);
+		firePreferenceChangeEvent(e);
 	}
 
 	public void putLong(String key, long value) {
+		PreferenceChangeEvent e = createPreferenceChangeEvent(key,
+				new Long(getLong(key)), new Long(value));
 		pref.putLong(key, value);
+		firePreferenceChangeEvent(e);
 	}
 
 	public void remove(String key) {
+		PreferenceChangeEvent e = createPreferenceChangeEvent(key,
+				get(key), null);
 		pref.remove(key);
+		firePreferenceChangeEvent(e);
 	}
 
 	public void clear() {
@@ -208,6 +236,29 @@ public class CascadePreferences implements IPreferences {
 		} catch (BackingStoreException e) {
 			KijimunaCore.reportException(e);
 		}
+	}
+	
+	public void addPreferenceChangeListener(IPreferenceChangeListener listener) {
+		if (listener != null) {
+			preferenceChangeListeners.add(listener);
+		}
+	}
+	
+	public void removePreferenceChangeListener(IPreferenceChangeListener listener) {
+		preferenceChangeListeners.remove(listener);
+	}
+	
+	protected void firePreferenceChangeEvent(PreferenceChangeEvent event) {
+		for (Iterator it = preferenceChangeListeners.iterator(); it.hasNext();) {
+			IPreferenceChangeListener listener = (IPreferenceChangeListener)
+					it.next();
+			listener.preferenceChanged(event);
+		}
+	}
+	
+	private PreferenceChangeEvent createPreferenceChangeEvent(String preferenceName,
+			Object oldValue, Object newValue) {
+		return new PreferenceChangeEvent(this, preferenceName, oldValue, newValue);
 	}
 
 }
