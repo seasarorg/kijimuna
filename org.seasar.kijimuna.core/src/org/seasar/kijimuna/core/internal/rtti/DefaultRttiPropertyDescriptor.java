@@ -57,7 +57,14 @@ public class DefaultRttiPropertyDescriptor extends AbstractRttiValuableDescripto
 		}
 		writableType.add(type);
 	}
-
+	
+	public int hashCode() {
+		int ret = 17;
+		ret = 37 * ret + getParent().hashCode();
+		ret = 37 * ret + getName().hashCode();
+		return ret;
+	}
+	
 	public boolean equals(Object test) {
 		if (test instanceof IRttiPropertyDescriptor) {
 			IRttiPropertyDescriptor desc = (IRttiPropertyDescriptor) test;
