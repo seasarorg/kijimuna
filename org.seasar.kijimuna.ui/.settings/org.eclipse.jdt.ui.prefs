@@ -1,0 +1,7 @@
+#Wed Apr 05 21:35:32 JST 2006
+eclipse.preferences.version=1
+formatter_settings_version=8
+org.eclipse.jdt.ui.ignorelowercasenames=true
+org.eclipse.jdt.ui.importorder=java;javax;org;com;org.eclipse;org.seasar;
+org.eclipse.jdt.ui.ondemandthreshold=99
+org.eclipse.jdt.ui.text.custom_code_templates=<?xml version\="1.0" encoding\="UTF-8"?><templates/>
