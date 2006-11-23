@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.0"?>
+<plugin>
+
+   <extension
+         id="nature"
+         name="%nature.dicon"
+         point="org.eclipse.core.resources.natures">
+      <runtime>
+         <run
+               class="org.seasar.kijimuna.core.dicon.DiconNature">
+         </run>
+      </runtime>
+   </extension>
+   <extension
+         id="builder"
+         name="%builder.dicon"
+         point="org.eclipse.core.resources.builders">
+      <builder>
+         <run
+               class="org.seasar.kijimuna.core.dicon.DiconBuilder">
+         </run>
+      </builder>
+   </extension>
+   <extension
+         id="validator"
+         name="%builder.validator"
+         point="org.eclipse.core.resources.builders">
+      <builder>
+         <run class="org.seasar.kijimuna.core.dicon.DiconValidator"/>
+      </builder>
+   </extension>
+
+   <extension
+         id="marker"
+         name="%marker.kijimuna"
+         point="org.eclipse.core.resources.markers">
+      <super
+            type="org.eclipse.core.resources.textmarker">
+      </super>
+      <persistent
+            value="true">
+      </persistent>
+      <attribute name="category"/>
+   </extension>
+
+   <extension
+         id="marker.diconvalidation"
+         name="%marker.diconvalidation"
+         point="org.eclipse.core.resources.markers">
+      <super
+            type="org.eclipse.core.resources.problemmarker">
+      </super>
+      <super
+            type="org.seasar.kijimuna.core.marker">
+      </super>
+      <persistent
+            value="true">
+      </persistent>
+      <attribute name="category"/>
+   </extension>
+   <extension
+         id="marker.diconxml"
+         name="%marker.diconxml"
+         point="org.eclipse.core.resources.markers">
+      <super type="org.eclipse.core.resources.problemmarker"/>
+      <super type="org.seasar.kijimuna.core.marker"/>
+      <persistent value="true"/>
+      <attribute name="category"/>
+   </extension>
+
+   <extension point="org.eclipse.core.runtime.contentTypes">
+      <content-type id="contenttype.dicon" name="%contenttype.dicon"
+         base-type="org.eclipse.core.runtime.xml"
+         priority="high"
+         file-extensions="dicon"
+         default-charset="UTF-8">
+      </content-type>
+   </extension>
+
+   <extension
+         point="org.eclipse.core.runtime.preferences">
+      <scope
+            class="org.seasar.kijimuna.core.preference.PluginPreferences"
+            name="plugin"/>
+   </extension>
+
+   <extension point="org.eclipse.ltk.core.refactoring.renameParticipants">
+      <renameParticipant
+            class="org.seasar.kijimuna.core.internal.dicon.refactor.TypeRenameParticipant"
+            name="%refactoring.rename"
+            id="org.seasar.kijimuna.core.refactor.dicon.rename">
+         <enablement>
+           <with variable="affectedNatures">
+             <iterate operator="or">
+               <equals value="org.seasar.kijimuna.core.nature"/>
+             </iterate>
+           </with>
+           <with variable="element">
+   	         <instanceof value="org.eclipse.jdt.core.IType"/>
+           </with>
+         </enablement>
+      </renameParticipant>
+   </extension>
+
+</plugin>
