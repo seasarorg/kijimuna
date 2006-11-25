@@ -89,12 +89,16 @@ public class ProjectPreferencePage extends PropertyPage implements ConstCore {
 	}
 	
 	public boolean performOk() {
-		performApply();
+		applyModification();
 		cleanupDiconModel();
 		return true;
 	}
 	
 	protected void performApply() {
+		applyModification();
+	}
+	
+	private void applyModification() {
 		try {
 			IProject project = getProject();
 			if (natureCheck.getSelection()) {

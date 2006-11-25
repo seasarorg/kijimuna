@@ -69,7 +69,7 @@ public class PluginPreferencePage extends PreferencePage implements
 	}
 	
 	public boolean performOk() {
-		performApply();
+		applyModification();
 		IRunnableWithProgress runnable = new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor) throws
 					InvocationTargetException, InterruptedException {
@@ -88,13 +88,17 @@ public class PluginPreferencePage extends PreferencePage implements
 	}
 	
 	protected void performApply() {
-		markerDesign.store();
-		coloringDesign.store();
+		applyModification();
 	}
 	
 	protected void performDefaults() {
 		markerDesign.loadDefault();
 		coloringDesign.loadDefault();
+	}
+	
+	private void applyModification() {
+		markerDesign.store();
+		coloringDesign.store();
 	}
 
 }
