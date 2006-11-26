@@ -41,32 +41,19 @@ public class ComponentHolderValidation implements IValidation, ConstCore {
 			validComponentHolder(arg);
 		}
 	}
-
-	private void checkError(IComponentHolderElement componentHolder) {
-		IRtti rtti = (IRtti) componentHolder.getAdapter(IRtti.class);
+	
+	protected void validateComponentHolderValue(IComponentHolderElement holder) {
+		IRtti rtti = (IRtti) holder.getAdapter(IRtti.class);
 		if (rtti instanceof HasErrorRtti) {
-			if (componentHolder instanceof IPropertyElement &&
-					StringUtils.noneValue(componentHolder.getExpression())) {
-				// FIXME アノテーションのことも考える
-				String bt = ((IPropertyElement) componentHolder).getBindingType();
-				if (DICON_VAL_BINDING_TYPE_MUST.equals(bt)) {
-					MarkerSetting.createDiconMarker(
-							"dicon.validation.ComponentHolderValidation.1", componentHolder,
-							((HasErrorRtti) rtti).getErrorMessage());
-				} else if (DICON_VAL_BINDING_TYPE_SHOULD.equals(bt)) {
-					// TODO ここで警告
-				}
-			} else {
-				MarkerSetting.createDiconMarker(
-						"dicon.validation.ComponentHolderValidation.1", componentHolder,
-						((HasErrorRtti) rtti).getErrorMessage());
-			}
+			MarkerSetting.createDiconMarker(
+					"dicon.validation.ComponentHolderValidation.1", holder,
+					((HasErrorRtti) rtti).getErrorMessage());
 		}
 	}
-
-	private void validComponentHolder(IComponentHolderElement componentHolder) {
-		String el = componentHolder.getExpression();
-		List children = componentHolder.getChildren();
+	
+	protected void validateComponentHolder(IComponentHolderElement holder) {
+		String el = holder.getExpression();
+		List children = holder.getChildren();
 		int size = children.size();
 		if (StringUtils.existValue(el)) {
 			if (size > 0) {
@@ -75,8 +62,9 @@ public class ComponentHolderValidation implements IValidation, ConstCore {
 						"dicon.validation.ComponentHolderValidation.2", element);
 			}
 		} else {
-			if (size == 0 && componentHolder instanceof MetaElement == false) {
-				validateComponentHolderBinding(componentHolder);
+			if (size == 0 && holder instanceof MetaElement == false) {
+				MarkerSetting.createDiconMarker(
+						"dicon.validation.ComponentHolderValidation.3", holder);
 			}
 		}
 		if (size > 1) {
@@ -87,19 +75,17 @@ public class ComponentHolderValidation implements IValidation, ConstCore {
 			}
 		}
 	}
+
+	// FIXME
+	private void checkError(IComponentHolderElement holder) {
+		if (!(holder instanceof IPropertyElement)) {
+			validateComponentHolderValue(holder);
+		}
+	}
 	
-	private void validateComponentHolderBinding(IComponentHolderElement holder) {
-		if (holder instanceof IPropertyElement) {
-			String bt = ((IPropertyElement) holder).getBindingType();
-			if (DICON_VAL_BINDING_TYPE_MUST.equals(bt)) {
-				MarkerSetting.createDiconMarker(
-						"dicon.validation.ComponentHolderValidation.3", holder);
-			} else if (DICON_VAL_BINDING_TYPE_SHOULD.equals(bt)) {
-				// TODO ここで警告
-			}
-		} else {
-			MarkerSetting.createDiconMarker(
-					"dicon.validation.ComponentHolderValidation.3", holder);
+	private void validComponentHolder(IComponentHolderElement holder) {
+		if (!(holder instanceof IPropertyElement)) {
+			validateComponentHolder(holder);
 		}
 	}
 

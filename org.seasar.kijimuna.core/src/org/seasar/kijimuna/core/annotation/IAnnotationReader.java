@@ -15,9 +15,10 @@
  */
 package org.seasar.kijimuna.core.annotation;
 
+import org.seasar.kijimuna.core.ConstCore;
 import org.seasar.kijimuna.core.rtti.IRttiPropertyDescriptor;
 
-public interface IAnnotationReader {
+public interface IAnnotationReader extends ConstCore {
 	
 	IBindingAnnotation getBindingAnnotation(IRttiPropertyDescriptor prop);
 

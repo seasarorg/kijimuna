@@ -17,6 +17,7 @@ Bundle-Activator: org.seasar.kijimuna.core.KijimunaCore
 Provide-Package: org.seasar.kijimuna.core,
  org.seasar.kijimuna.core.annotation,
  org.seasar.kijimuna.core.dicon,
+ org.seasar.kijimuna.core.dicon.binding,
  org.seasar.kijimuna.core.dicon.info,
  org.seasar.kijimuna.core.dicon.model,
  org.seasar.kijimuna.core.dtd,

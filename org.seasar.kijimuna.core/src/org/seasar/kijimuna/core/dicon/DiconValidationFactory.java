@@ -19,7 +19,6 @@ import org.seasar.kijimuna.core.internal.dicon.validation.AspectAssemble;
 import org.seasar.kijimuna.core.internal.dicon.validation.AspectValidation;
 import org.seasar.kijimuna.core.internal.dicon.validation.AutoConstructorInvoke;
 import org.seasar.kijimuna.core.internal.dicon.validation.AutoMethodInvoke;
-import org.seasar.kijimuna.core.internal.dicon.validation.AutoSetterInjection;
 import org.seasar.kijimuna.core.internal.dicon.validation.ClasspathValidation;
 import org.seasar.kijimuna.core.internal.dicon.validation.ComponentHolderValidation;
 import org.seasar.kijimuna.core.internal.dicon.validation.ComponentValidation;
@@ -43,7 +42,6 @@ public class DiconValidationFactory {
 				new AspectValidation(),
 				new AutoConstructorInvoke(),
 				new AutoMethodInvoke(),
-				new AutoSetterInjection(),
 				new ComponentHolderValidation(),
 				new ComponentValidation(),
 				new DestroyMethodValidation(),

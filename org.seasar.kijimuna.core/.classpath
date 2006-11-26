@@ -2,8 +2,8 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="src" path="test"/>
-	<classpathentry exported="true" sourcepath="D:/ognl-3.0.0-pre-2-dist/java" kind="lib" path="ognl-3.0.0-pre-2.jar"/>
 	<classpathentry exported="true" sourcepath="C:/dtdparser-1.21/source" kind="lib" path="dtdparser-1.2.1.jar"/>
+	<classpathentry exported="true" sourcepath="C:/Documents and Settings/mich/デスクトップ/ognl-3.0.0-pre-1-dist.zip" kind="lib" path="ognl-3.0.0-pre-2.jar"/>
 	<classpathentry kind="con" path="org.eclipse.pde.core.requiredPlugins"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="output" path="bin"/>

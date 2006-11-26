@@ -17,6 +17,7 @@ package org.seasar.kijimuna.core.annotation;
 
 import org.eclipse.jdt.core.IPackageFragment;
 
+import org.seasar.kijimuna.core.ConstCore;
 import org.seasar.kijimuna.core.internal.dicon.info.AnnotationSupportRtti;
 import org.seasar.kijimuna.core.rtti.IRtti;
 import org.seasar.kijimuna.core.rtti.IRttiPropertyDescriptor;
@@ -25,7 +26,7 @@ import org.seasar.kijimuna.core.test.TestProject;
 
 import junit.framework.TestCase;
 
-public class ConstantBindingAnnotationTest extends TestCase {
+public class ConstantBindingAnnotationTest extends TestCase implements ConstCore {
 
 	private static final String testType =
 		"public class TestType {" +
@@ -61,8 +62,7 @@ public class ConstantBindingAnnotationTest extends TestCase {
 				IBindingAnnotation.class);
 		
 		assertNull(ba.getPropertyName());
-		assertEquals(IBindingAnnotation.BINDING_TYPE_MAY, ba.getBindingType());
-		assertEquals("may", ba.getIntactBindingType());
+		assertEquals(DICON_VAL_BINDING_TYPE_MAY, ba.getBindingType());
 	}
 	
 	public void testPropertyName() {
@@ -71,8 +71,7 @@ public class ConstantBindingAnnotationTest extends TestCase {
 				IBindingAnnotation.class);
 		
 		assertEquals("propName", ba.getPropertyName());
-		assertEquals(IBindingAnnotation.BINDING_TYPE_MUST, ba.getBindingType());
-		assertNull(ba.getIntactBindingType());
+		assertEquals(DICON_VAL_BINDING_TYPE_MUST, ba.getBindingType());
 	}
 	
 	public void testIncorrectBindingType() {
@@ -81,8 +80,7 @@ public class ConstantBindingAnnotationTest extends TestCase {
 				IBindingAnnotation.class);
 		
 		assertNull(ba.getPropertyName());
-		assertEquals(IBindingAnnotation.BINDING_TYPE_UNKNOWN, ba.getBindingType());
-		assertEquals("aaa", ba.getIntactBindingType());
+		assertFalse(DICON_VAL_BINDING_TYPE_MAY.equals(ba.getBindingType()));
 	}
 	
 	public void testNoExisting() {

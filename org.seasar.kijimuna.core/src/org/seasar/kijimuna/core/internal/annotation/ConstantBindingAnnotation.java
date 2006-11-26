@@ -21,33 +21,32 @@ public class ConstantBindingAnnotation implements IBindingAnnotation {
 
 	private String fieldName;
 	private String propertyName;
-	private int bindingType = BINDING_TYPE_SHOULD;
-	private String intactBindingType;
+	private String bindingType;
 	
 	public ConstantBindingAnnotation(String fieldName, String propertyName,
-			int bindingType, String intactBindingType) {
+			String bindingType) {
 		this.fieldName = fieldName;
 		this.propertyName = propertyName;
 		this.bindingType = bindingType;
-		this.intactBindingType = intactBindingType;
 	}
 	
 	public String getPropertyName() {
 		return propertyName;
 	}
 	
-	public int getBindingType() {
+	public String getBindingType() {
 		return bindingType;
 	}
 	
-	public String getIntactBindingType() {
-		return intactBindingType;
-	}
-	
 	public String toString() {
-		return fieldName + " = \"" + (propertyName != null ? propertyName :
-			"bindingType=" + IBindingAnnotation.Converter.convert(
-					bindingType)) + "\"";
+		StringBuffer sb = new StringBuffer(fieldName).append(" = \"");
+		if (propertyName != null) {
+			sb.append(propertyName);
+		} else {
+			sb.append("bindingType=")
+				.append("\"").append(bindingType).append("\"");
+		}
+		return sb.append("\"").toString();
 	}
 
 }

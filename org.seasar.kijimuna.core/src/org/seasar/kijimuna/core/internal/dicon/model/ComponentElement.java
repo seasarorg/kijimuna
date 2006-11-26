@@ -29,13 +29,15 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.seasar.kijimuna.core.ConstCore;
 import org.seasar.kijimuna.core.KijimunaCore;
 import org.seasar.kijimuna.core.annotation.IBindingAnnotation;
+import org.seasar.kijimuna.core.dicon.binding.IPropertyModel;
 import org.seasar.kijimuna.core.dicon.info.IComponentInfo;
 import org.seasar.kijimuna.core.dicon.info.IComponentKey;
+import org.seasar.kijimuna.core.dicon.info.IComponentNotFound;
 import org.seasar.kijimuna.core.dicon.model.IComponentElement;
 import org.seasar.kijimuna.core.dicon.model.IContainerElement;
 import org.seasar.kijimuna.core.dicon.model.IPropertyElement;
+import org.seasar.kijimuna.core.internal.dicon.binding.PropertyModel;
 import org.seasar.kijimuna.core.internal.dicon.info.ComponentNotFoundRtti;
-import org.seasar.kijimuna.core.internal.dicon.info.InjectedPropertyRtti;
 import org.seasar.kijimuna.core.rtti.HasErrorRtti;
 import org.seasar.kijimuna.core.rtti.IRtti;
 import org.seasar.kijimuna.core.rtti.IRttiConstructorDesctiptor;
@@ -55,8 +57,6 @@ public class ComponentElement extends AbstractExpressionElement implements
 	private Set componentKeySet;
 	private IComponentInfo info;
 	private IRttiConstructorDesctiptor suitableConstructor;
-	private IRttiPropertyDescriptor[] propertyDescriptors =
-		new IRttiPropertyDescriptor[0];
 
 	public ComponentElement(IProject project, IStorage storage) {
 		super(project, storage, DICON_TAG_COMPONENT);
@@ -76,6 +76,12 @@ public class ComponentElement extends AbstractExpressionElement implements
 			}
 		}
 		return suitableConstructor;
+	}
+
+	protected IRtti getExpressionValue(String el) {
+		String className = getComponentClassName();
+		return StringUtils.existValue(className) ? getRttiLoader().loadRtti(
+				className) : super.getExpressionValue(el);
 	}
 
 	protected IRtti getNonExpressionValue() {
@@ -235,48 +241,41 @@ public class ComponentElement extends AbstractExpressionElement implements
 		return null;
 	}
 	
-	private IRttiPropertyDescriptor[] autoInjectedProperties() {
+	private IPropertyModel[] getPropertyModels() {
+		IRtti rtti = (IRtti) getAdapter(IRtti.class);
+		if (rtti == null) {
+			return new IPropertyModel[0];
+		}
+		IRttiPropertyDescriptor[] propDescs = rtti.getProperties(PATTERN_ANY);
+		processAutoBinding(propDescs);
+		IPropertyModel[] propModels = new IPropertyModel[propDescs.length];
+		for (int i = 0; i < propDescs.length; i++) {
+			propModels[i] = new PropertyModel(propDescs[i],
+					getPropertyElementFrom(propDescs[i]));
+		}
+		return propModels;
+	}
+	
+	private void processAutoBinding(IRttiPropertyDescriptor[] propDescs) {
 		String autoBinding = getAutoBindingMode();
-		if (autoBinding.equals(DICON_VAL_AUTO_BINDING_AUTO)
-				|| autoBinding.equals(DICON_VAL_AUTO_BINDING_PROPERTY)) {
-			IRtti rtti = (IRtti) getAdapter(IRtti.class);
-			if (rtti != null) {
-				List list = new ArrayList();
-				IRttiPropertyDescriptor[] propDescs = rtti.getProperties(PATTERN_ANY);
-				for (int i = 0; i < propDescs.length; i++) {
-					IRttiPropertyDescriptor propDesc = propDescs[i];
-					if (!isAutoInjectableProperty(propDesc)) {
-						continue;
-					}
-					// FIXME: 自動バインディングされたときでも、diconでpropertyタグが
-					// 指定されている場合があるのでoutlineでpropertyが重複する
-					if (ModelUtils.hasPropertyElement(this, propDesc.getName()) &&
-							hasBodyInProperty(propDesc)) {
-						continue;
-					}
-					IPropertyElement prop = getPropertyAssociatedWith(propDesc);
-					if (prop != null) {
-						propDesc = new InjectedPropertyRtti(propDesc, prop);
-					}
-					if (ModelUtils.doDesignTimeAutoBinding(propDesc.getType())) {
-						injectRtti(propDesc);
-					}
-					list.add(propDesc);
+		if (DICON_VAL_AUTO_BINDING_AUTO.equals(autoBinding) ||
+				DICON_VAL_AUTO_BINDING_PROPERTY.equals(autoBinding)) {
+			for (int i = 0; i < propDescs.length; i++) {
+				IRttiPropertyDescriptor propDesc = propDescs[i];
+				if (ModelUtils.doDesignTimeAutoBinding(propDesc.getType())) {
+					createPropertyInjector(propDesc).inject();
 				}
-				return (IRttiPropertyDescriptor[]) list
-						.toArray(new IRttiPropertyDescriptor[list.size()]);
 			}
 		}
-		return new IRttiPropertyDescriptor[0];
 	}
 	
-	private boolean hasBodyInProperty(IRttiPropertyDescriptor propDesc) {
-		IPropertyElement prop = getPropertyAssociatedWith(propDesc);
-		return prop != null && prop.getPropertyName().equals(propDesc
-				.getName()) && StringUtils.existValue(prop.getExpression());
+	private IInjector createPropertyInjector(IRttiPropertyDescriptor propDesc) {
+		IPropertyElement prop = getPropertyElementFrom(propDesc);
+		return prop != null ? new ElementInjector(prop, propDesc) :
+				(IInjector) new NonElementInjector(propDesc);
 	}
 	
-	private IPropertyElement getPropertyAssociatedWith(IRttiPropertyDescriptor
+	private IPropertyElement getPropertyElementFrom(IRttiPropertyDescriptor
 			propDesc) {
 		List props = getPropertyList();
 		for (int i = 0; i < props.size(); i++) {
@@ -286,63 +285,6 @@ public class ComponentElement extends AbstractExpressionElement implements
 			}
 		}
 		return null;		
-	}
-	
-	private boolean isAutoInjectableProperty(IRttiPropertyDescriptor prop) {
-		IBindingAnnotation ba = (IBindingAnnotation) prop.getAdapter(
-				IBindingAnnotation.class);
-		boolean evalAnno = ba != null ? ba.getBindingType() != IBindingAnnotation
-				.BINDING_TYPE_NONE : true;
-		return evalAnno && prop.getType().isInterface() && prop.isWritable();
-	}
-	
-	private void injectRtti(IRttiPropertyDescriptor prop) {
-		if (!injectRttiByComponentName(prop)) {
-			injectRttiByPropertyType(prop);
-		}
-	}
-	
-	private boolean injectRttiByComponentName(IRttiPropertyDescriptor prop) {
-		IBindingAnnotation annotation = (IBindingAnnotation) prop.getAdapter(
-				IBindingAnnotation.class);
-		if (annotation != null) {
-			if (injectRttiByComponentNameUsingAnnotation(prop, annotation)) {
-				return true;
-			}
-		}
-		IRtti inject = getComponentRttiFromKeySource(prop.getName());
-		if (prop.getType().isAssignableFrom(inject)) {
-			prop.setValue(inject);
-			return true;
-		}
-		return false;
-	}
-	
-	private boolean injectRttiByComponentNameUsingAnnotation(
-			IRttiPropertyDescriptor prop, IBindingAnnotation annotation) {
-		String propertyName = annotation.getPropertyName();
-		IRtti inject = null;
-		if (annotation.getBindingType() == IBindingAnnotation.BINDING_TYPE_UNKNOWN) {
-			inject = new ComponentNotFoundRtti(createComponentKey(prop.getName()));
-		} else if (propertyName == null) {
-			return false;
-		} else {
-			inject = getComponentRttiFromKeySource(propertyName);
-		}
-		prop.setValue(inject);
-		return true;
-	}
-	
-	private void injectRttiByPropertyType(IRttiPropertyDescriptor prop) {
-		prop.setValue(getComponentRttiFromKeySource(prop.getType()));
-	}
-	
-	private IRtti getComponentRttiFromKeySource(Object keySource) {
-		return getContainerElement().getComponent(createComponentKey(keySource));
-	}
-	
-	private IComponentKey createComponentKey(Object keySource) {
-		return getContainerElement().createComponentKey(keySource);
 	}
 	
 	public Object getAdapter(Class adapter) {
@@ -364,7 +306,7 @@ public class ComponentElement extends AbstractExpressionElement implements
 					}
 
 					public IRttiPropertyDescriptor[] getAutoInjectedProperties() {
-						return autoInjectedProperties();
+						return new IRttiPropertyDescriptor[0];
 					}
 				};
 			}
@@ -372,6 +314,10 @@ public class ComponentElement extends AbstractExpressionElement implements
 		} else if (IRttiConstructorDesctiptor.class.equals(adapter)) {
 			getAdapter(IRtti.class);
 			return getConstructorDescriptor();
+		}
+		// FIXME IPropertyModel[]でなくてIComponentInfoに入れるかどうか
+		else if (IPropertyModel[].class.equals(adapter)) {
+			return getPropertyModels();
 		}
 		return super.getAdapter(adapter);
 	}
@@ -421,5 +367,137 @@ public class ComponentElement extends AbstractExpressionElement implements
 		}
 		return (IComponentKey[]) tooManyKey.toArray(new IComponentKey[tooManyKey.size()]);
 	}
+	
+	
+	private interface IInjector {
+		void inject();
+	}
+	
+	
+	private abstract class AbstractPropertyInjector implements IInjector {
+		
+		protected final IRttiPropertyDescriptor propDesc;
+		
+		public AbstractPropertyInjector(IRttiPropertyDescriptor propDesc) {
+			if (propDesc == null) {
+				throw new IllegalArgumentException();
+			}
+			this.propDesc = propDesc;
+		}
+		
+		public final void inject() {
+			if (canInject()) {
+				if (!injectByComponentName()) {
+					injectByPropertyType();
+				}
+			}
+		}
+		
+		protected abstract boolean canInject();
+		
+		protected boolean injectByComponentName() {
+			IRtti inject = getComponentRttiFromKeySource(propDesc.getName());
+			boolean assignable = propDesc.getType().isAssignableFrom(inject);
+			if (assignable || inject instanceof HasErrorRtti) {
+				propDesc.setValue(inject);
+			} else {
+				propDesc.setValue(createComponentNotFoundRtti(propDesc.getName()));
+			}
+			return assignable;
+		}
+		
+		protected void injectByPropertyType() {
+			if (propDesc.getType().isInterface() && propDesc.isWritable()) {
+				propDesc.setValue(getComponentRttiFromKeySource(propDesc.getType()));
+			}
+		}
+		
+		protected IRtti getComponentRttiFromKeySource(Object keySource) {
+			return getContainerElement().getComponent(createComponentKey(keySource));
+		}
+		
+		protected IComponentKey createComponentKey(Object keySource) {
+			return getContainerElement().createComponentKey(keySource);
+		}
+		
+		protected IComponentNotFound createComponentNotFoundRtti(Object key) {
+			return new ComponentNotFoundRtti(createComponentKey(key));
+		}
+		
+		protected boolean isAvailableBindingType(String bindingType) {
+			return isAutoBindingRequired(bindingType) ||
+					DICON_VAL_BINDING_TYPE_NONE.equals(bindingType);
+		}
+		
+		protected boolean isAutoBindingRequired(String bindingType) {
+			return DICON_VAL_BINDING_TYPE_MAY.equals(bindingType) ||
+					DICON_VAL_BINDING_TYPE_SHOULD.equals(bindingType) ||
+					DICON_VAL_BINDING_TYPE_MUST.equals(bindingType);
+		}
+	}
+	
+	private class ElementInjector extends AbstractPropertyInjector {
+		
+		private IPropertyElement prop;
+		
+		public ElementInjector(IPropertyElement prop,
+				IRttiPropertyDescriptor propDesc) {
+			super(propDesc);
+			if (prop == null) {
+				throw new IllegalArgumentException();
+			}
+			this.prop = prop;
+		}
+
+		protected boolean canInject() {
+			String bt = prop.getBindingType();
+			return prop.getChildren().size() == 0 &&
+					StringUtils.noneValue(prop.getExpression()) &&
+					isAutoBindingRequired(bt);
+		}
+	}
+	
+	
+	private class NonElementInjector extends AbstractPropertyInjector {
+		
+		public NonElementInjector(IRttiPropertyDescriptor propDesc) {
+			super(propDesc);
+		}
+		
+		protected boolean canInject() {
+			IBindingAnnotation ba = (IBindingAnnotation) propDesc.getAdapter(
+					IBindingAnnotation.class);
+			return ba == null || (ba != null && isAutoBindingRequired(ba
+					.getBindingType()));
+		}
+		
+		protected boolean injectByComponentName() {
+			IBindingAnnotation ba = (IBindingAnnotation) propDesc.getAdapter(
+					IBindingAnnotation.class);
+			if (injectByComponentNameUsingAnnotation(propDesc, ba)) {
+				return true;
+			}
+			return super.injectByComponentName();
+		}
+		
+		private boolean injectByComponentNameUsingAnnotation(
+				IRttiPropertyDescriptor propDesc, IBindingAnnotation ba) {
+			if (ba == null) {
+				return false;
+			}
+			IRtti inject = null;
+			String propertyName = ba.getPropertyName();
+			if (!isAvailableBindingType(ba.getBindingType())) {
+				inject = createComponentNotFoundRtti(propDesc.getName());
+			} else if (propertyName == null) {
+				return false;
+			} else {
+				inject = getComponentRttiFromKeySource(propertyName);
+			}
+			propDesc.setValue(inject);
+			return true;
+		}
+	}
+
 
 }

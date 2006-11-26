@@ -65,18 +65,17 @@ public class ConstantAnnotationReader implements IAnnotationReader {
 				// bindinTypeのとき
 				if (matcher.matches()) {
 					return new ConstantBindingAnnotation(fieldDesc.getName(), null,
-							IBindingAnnotation.Converter.convert(matcher.group(1)),
 							matcher.group(1));
 				}
 				// nullという文字列のとき
 				else if ("null".equals(source)) {
 					return new ConstantBindingAnnotation(fieldDesc.getName(), "null",
-							IBindingAnnotation.BINDING_TYPE_NONE, null);
+							DICON_VAL_BINDING_TYPE_NONE);
 				}
 				// それ以外はプロパティ名が指定されている
 				else {
 					return new ConstantBindingAnnotation(fieldDesc.getName(), source,
-							IBindingAnnotation.BINDING_TYPE_MUST, null);
+							DICON_VAL_BINDING_TYPE_MUST);
 				}
 			} catch (JavaModelException ignore) {
 				return null;

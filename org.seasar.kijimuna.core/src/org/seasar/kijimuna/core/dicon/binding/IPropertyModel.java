@@ -13,11 +13,22 @@
  * either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-package org.seasar.kijimuna.core.annotation;
+package org.seasar.kijimuna.core.dicon.binding;
 
-public interface IBindingAnnotation {
+import java.io.Serializable;
+
+import org.eclipse.core.runtime.IAdaptable;
+
+public interface IPropertyModel extends IAdaptable, Serializable {
 
 	String getPropertyName();
 	
 	String getBindingType();
+	
+	boolean wasDoneAutoBinding();
+	
+	boolean isAutoBindingType();
+	
+	boolean requiresAutoBinding();
+
 }
