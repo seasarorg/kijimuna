@@ -18,161 +18,125 @@ package org.seasar.kijimuna.ui.internal.provider.dicon.walker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.ui.views.properties.IPropertySource;
 
-import org.seasar.kijimuna.core.annotation.IBindingAnnotation;
 import org.seasar.kijimuna.core.dicon.MarkerSetting;
+import org.seasar.kijimuna.core.dicon.binding.IPropertyModel;
 import org.seasar.kijimuna.core.dicon.info.IComponentNotFound;
 import org.seasar.kijimuna.core.dicon.info.ITooManyRegisted;
 import org.seasar.kijimuna.core.dicon.model.IComponentElement;
-import org.seasar.kijimuna.core.dicon.model.IContainerElement;
 import org.seasar.kijimuna.core.dicon.model.IDiconElement;
+import org.seasar.kijimuna.core.dicon.model.IExpressionElement;
 import org.seasar.kijimuna.core.dicon.model.IPropertyElement;
 import org.seasar.kijimuna.core.rtti.IRtti;
 import org.seasar.kijimuna.core.rtti.IRttiPropertyDescriptor;
-import org.seasar.kijimuna.ui.ConstUI;
 import org.seasar.kijimuna.ui.KijimunaUI;
-import org.seasar.kijimuna.ui.internal.provider.dicon.IContentWalker;
 import org.seasar.kijimuna.ui.internal.provider.dicon.IInjectedComponent;
-import org.seasar.kijimuna.ui.internal.provider.dicon.IInternalContainer;
 import org.seasar.kijimuna.ui.internal.provider.dicon.property.AutoInjectedPropertyProperty;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
-public class AutoInjectedPropertyItem extends AbstractInternalContainer implements
-		IInjectedComponent, ConstUI {
+public class AutoInjectedPropertyItem extends AbstractInternalContainer
+		implements IInjectedComponent {
 
-	private IRttiPropertyDescriptor property;
-	private IPropertyStrategy strategy;
-
-	public AutoInjectedPropertyItem(ContentItem parent, IRttiPropertyDescriptor property) {
+	private IPropertyModel propModel;
+	
+	public AutoInjectedPropertyItem(IPropertyModel propModel, ContentItem parent) {
 		super(parent);
-		this.property = property;
-		this.strategy = new WithoutPropertyElementStrategy();
+		this.propModel = propModel;
 	}
 	
-	public AutoInjectedPropertyItem(IPropertyElement prop, IRttiPropertyDescriptor propDesc,
-			IContentWalker walker) {
-		super(prop, walker);
-		this.property = propDesc;
-		this.strategy = new WithPropertyElementStrategy();
+	public AutoInjectedPropertyItem(IPropertyModel propModel, IPropertyElement prop,
+			ContentItem parent) {
+		super(prop, parent);
+		this.propModel = propModel;
 	}
 	
-	protected IPropertySource createProperty() {
-		return new AutoInjectedPropertyProperty(property);
-	}
-
-	public int getMarkerSeverity() {
-		return strategy.getMarkerSeverity();
-//		IRtti arg = property.getValue();
-//		if (arg instanceof ITooManyRegisted) {
-//			IProject project = getElement().getProject();
-//			return MarkerSetting.getDiconMarkerPreference(project,
-//					MARKER_CATEGORY_DICON_FETAL, false);
-//		} else if (arg instanceof IComponentNotFound) {
-//			IProject project = getElement().getProject();
-//			IBindingAnnotation annotation = (IBindingAnnotation) property
-//					.getAdapter(IBindingAnnotation.class);
-//			if (annotation != null) {
-//				switch (annotation.getBindingType()) {
-//				case IBindingAnnotation.BINDING_TYPE_MAY:
-//					return MARKER_SEVERITY_NONE;
-//				case IBindingAnnotation.BINDING_TYPE_MUST:
-//				case IBindingAnnotation.BINDING_TYPE_UNKNOWN:
-//					return MarkerSetting.getDiconMarkerPreference(project,
-//							MARKER_CATEGORY_DICON_FETAL, false);
-//				}
-//			}
-//			return MarkerSetting.getDiconMarkerPreference(project,
-//					MARKER_CATEGORY_NULL_INJECTION, false);
-//		}
-//		return MARKER_SEVERITY_NONE;
-	}
-
-	public int getInjectedStatus() {
-		IRtti arg = property.getValue();
-		if (arg instanceof ITooManyRegisted) {
-			return IInjectedComponent.INJECTED_AUTO_TOOMANY;
-		} else if (arg instanceof IComponentNotFound) {
-			return IInjectedComponent.INJECTED_AUTO_NULL;
-		} else {
-			return IInjectedComponent.INJECTED_AUTO;
-		}
-	}
-
-	public IDiconElement getInjectedElement() {
-		IRtti arg = property.getValue();
-		if (arg != null) {
-			return (IDiconElement) arg.getAdapter(IComponentElement.class);
-		}
-		return null;
-	}
-
 	public String getDisplayName() {
-		IBindingAnnotation ba = (IBindingAnnotation) property.getAdapter(
-				IBindingAnnotation.class);
-		StringBuffer buf = new StringBuffer();
-		if (ba != null && ba.getPropertyName() != null) {
-			buf.append("<").append(ba.getPropertyName()).append(">");
+		if (propModel.wasDoneAutoBinding()) {
+			StringBuffer buf = new StringBuffer();
+			if (propModel.getPropertyName() != null &&
+					!getPropDesc().getName().equals(propModel.getPropertyName())) {
+				buf.append("<").append(propModel.getPropertyName()).append(">");
+			}
+			return KijimunaUI.getResourceString(
+					"dicon.provider.walker.AutoInjectedArgItem.1",
+					new Object[] {
+							buf.insert(0, getPropDesc().getName()).toString()
+					});
 		}
-		return KijimunaUI.getResourceString(
-				"dicon.provider.walker.AutoInjectedArgItem.1", new Object[] {
-					buf.insert(0, property.getName()).toString()
-				});
+		return propModel.getPropertyName();
 	}
 
 	public String getImageName() {
 		return IMAGE_ICON_PROPERTY;
 	}
 	
-	
-	private interface IPropertyStrategy {
-		int getMarkerSeverity();
-	}
-	
-	private class WithPropertyElementStrategy implements IPropertyStrategy {
-		
-		public int getMarkerSeverity() {
-			IRtti arg = property.getValue();
-			if (arg instanceof ITooManyRegisted) {
-				IProject project = getElement().getProject();
-				return MarkerSetting.getDiconMarkerPreference(project,
-						MARKER_CATEGORY_DICON_FETAL, false);
-			} else if (arg instanceof IComponentNotFound) {
-				IProject project = getElement().getProject();
-				return MarkerSetting.getDiconMarkerPreference(project,
-						MARKER_CATEGORY_NULL_INJECTION, false);
-			}
-			return MARKER_SEVERITY_NONE;
+	public int getMarkerSeverity() {
+		IRtti propValue = getPropDesc().getValue();
+		if (propValue instanceof ITooManyRegisted) {
+			return MarkerSetting.getDiconMarkerPreference(getProject(),
+					MARKER_CATEGORY_DICON_FETAL, false);
 		}
-	}
-	
-	private class WithoutPropertyElementStrategy implements IPropertyStrategy {
-		
-		public int getMarkerSeverity() {
-			IRtti arg = property.getValue();
-			if (arg instanceof ITooManyRegisted) {
-				IProject project = getElement().getProject();
-				return MarkerSetting.getDiconMarkerPreference(project,
-						MARKER_CATEGORY_DICON_FETAL, false);
-			} else if (arg instanceof IComponentNotFound) {
-				IProject project = getElement().getProject();
-				IBindingAnnotation annotation = (IBindingAnnotation) property
-						.getAdapter(IBindingAnnotation.class);
-				if (annotation != null) {
-					switch (annotation.getBindingType()) {
-					case IBindingAnnotation.BINDING_TYPE_MAY:
-						return MARKER_SEVERITY_NONE;
-					case IBindingAnnotation.BINDING_TYPE_MUST:
-					case IBindingAnnotation.BINDING_TYPE_UNKNOWN:
-						return MarkerSetting.getDiconMarkerPreference(project,
-								MARKER_CATEGORY_DICON_FETAL, false);
-					}
+		if (propValue instanceof IComponentNotFound) {
+			String bt = propModel.getBindingType();
+			if (propModel.isAutoBindingType()) {
+				if (DICON_VAL_BINDING_TYPE_MAY.equals(bt) ||
+						DICON_VAL_BINDING_TYPE_NONE.equals(bt)) {
+					return MARKER_SEVERITY_NONE;
+				} else if (DICON_VAL_BINDING_TYPE_SHOULD.equals(bt) ||
+						DICON_VAL_BINDING_TYPE_NONE.equals(bt)) {
+					return MarkerSetting.getDiconMarkerPreference(getProject(),
+							MARKER_CATEGORY_NULL_INJECTION, false);
+				} else  {
+					return MarkerSetting.getDiconMarkerPreference(getProject(),
+							MARKER_CATEGORY_DICON_FETAL, false);
 				}
-				return MarkerSetting.getDiconMarkerPreference(project,
-						MARKER_CATEGORY_NULL_INJECTION, false);
+			} else {
+				// mustのときだけエラーでそれ以外は何もしない（S2.3.x）
+				if (DICON_VAL_BINDING_TYPE_MUST.equals(bt)) {
+					return MarkerSetting.getDiconMarkerPreference(getProject(),
+							MARKER_CATEGORY_DICON_FETAL, false);
+				}
 			}
-			return MARKER_SEVERITY_NONE;
 		}
+		return MARKER_SEVERITY_NONE;
+	}
+
+	public int getInjectedStatus() {
+		if (getPropDesc().getValue() instanceof ITooManyRegisted) {
+			return IInjectedComponent.INJECTED_AUTO_TOOMANY;
+		} else if (propModel.wasDoneAutoBinding()) {
+			return IInjectedComponent.INJECTED_AUTO;
+		}
+		return INJECTED_AUTO_NULL;
+	}
+
+	public IDiconElement getInjectedElement() {
+		IRtti arg = getPropDesc().getValue();
+		if (arg != null) {
+			return (IDiconElement) arg.getAdapter(IComponentElement.class);
+		}
+		return null;
+	}
+	
+	public boolean isOGNL() {
+		IDiconElement element = getElement();
+		return element instanceof IExpressionElement ? ((IExpressionElement)
+				element).isOGNL() : false;
+	}
+
+	protected IPropertySource createProperty() {
+		return new AutoInjectedPropertyProperty(getPropDesc());
+	}
+
+	private IProject getProject() {
+		return getPropDesc().getParent().getRttiLoader()
+				.getProject().getProject();
+	}
+	
+	private IRttiPropertyDescriptor getPropDesc() {
+		return (IRttiPropertyDescriptor) propModel.getAdapter(
+				IRttiPropertyDescriptor.class);
 	}
 
 }

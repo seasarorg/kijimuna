@@ -68,7 +68,7 @@ public class DiconLabelProvider extends LabelProvider implements ConstUI {
 			int status = ((IInjectedComponent) walker).getInjectedStatus();
 			if (status == IInjectedComponent.INJECTED_AUTO) {
 				right = IMAGE_DECORATOR_AUTO;
-			} else {
+			} else if (status == IInjectedComponent.INJECTED_AUTO_NULL) {
 				right = IMAGE_DECORATOR_AUTO_NULL;
 			}
 		}

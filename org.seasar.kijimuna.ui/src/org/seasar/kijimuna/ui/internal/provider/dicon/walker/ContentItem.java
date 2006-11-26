@@ -18,15 +18,13 @@ package org.seasar.kijimuna.ui.internal.provider.dicon.walker;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.Iterator;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 import org.eclipse.ui.views.properties.IPropertySource;
 
+import org.seasar.kijimuna.core.annotation.IBindingAnnotation;
+import org.seasar.kijimuna.core.dicon.binding.IPropertyModel;
 import org.seasar.kijimuna.core.dicon.info.IApplyMethodInfo;
 import org.seasar.kijimuna.core.dicon.info.IAspectInfo;
 import org.seasar.kijimuna.core.dicon.info.IComponentInfo;
@@ -46,7 +44,6 @@ import org.seasar.kijimuna.core.dicon.model.IPropertyElement;
 import org.seasar.kijimuna.core.rtti.IRtti;
 import org.seasar.kijimuna.core.rtti.IRttiConstructorDesctiptor;
 import org.seasar.kijimuna.core.rtti.IRttiMethodDesctiptor;
-import org.seasar.kijimuna.core.rtti.IRttiPropertyDescriptor;
 import org.seasar.kijimuna.ui.ConstUI;
 import org.seasar.kijimuna.ui.internal.provider.dicon.IContentWalker;
 import org.seasar.kijimuna.ui.internal.provider.dicon.property.ContentProperty;
@@ -71,44 +68,37 @@ public class ContentItem extends AbstractInternalContainer implements ConstUI {
 		if (!(getElement() instanceof IComponentElement)) {
 			return Collections.EMPTY_LIST;
 		}
-		
-		// 自動バインディングのプロパティ
-		Map ret = new LinkedHashMap();
 		IComponentElement component = (IComponentElement) getElement();
-		IComponentInfo info = (IComponentInfo) component.getAdapter(
-				IComponentInfo.class);
-		if (info != null) {
-			IRttiPropertyDescriptor[] propDescs = info.getAutoInjectedProperties();
-			for (int i = 0; i < propDescs.length; i++) {
-				IPropertyElement prop = (IPropertyElement) propDescs[i].getAdapter(
-						IPropertyElement.class);
-				ret.put(propDescs[i], prop != null ?
-						new AutoInjectedPropertyItem(prop, propDescs[i], this) :
-							new AutoInjectedPropertyItem(this, propDescs[i]));
+		IPropertyModel[] propModels = (IPropertyModel[]) component.getAdapter(
+				IPropertyModel[].class);
+		List ret = new ArrayList(propModels.length);
+		for (int i = 0; i < propModels.length; i++) {
+			if (isDisplayable(component, propModels[i])) {
+				ret.add(PropertyItemFactory.createPropertyItem(propModels[i],
+						this));
 			}
 		}
-		
-		// 自動バインディングでないもの
-		IRtti componentRtti = (IRtti) component.getAdapter(IRtti.class);
-		List props = component.getPropertyList();
-		for (int i = 0; i < props.size(); i++) {
-			IPropertyElement prop = (IPropertyElement) props.get(i);
-			IRttiPropertyDescriptor propDesc = componentRtti.getProperty(
-					prop.getPropertyName());
-			if (!ret.containsKey(propDesc)) {
-				ret.put(propDesc, new PropertyItem(prop, this));
-			}
+		return ret;
+	}
+	
+	private boolean isDisplayable(IComponentElement component, IPropertyModel
+			propModel) {
+		IBindingAnnotation ba = (IBindingAnnotation) propModel.getAdapter(
+				IBindingAnnotation.class);
+		String ab = component.getAutoBindingMode();
+		if (DICON_VAL_AUTO_BINDING_AUTO.equals(ab) ||
+				DICON_VAL_AUTO_BINDING_PROPERTY.equals(ab)) {
+			return propModel.wasDoneAutoBinding() ||
+			(ba != null && propModel.requiresAutoBinding()) ||
+			(propModel.isAutoBindingType() && propModel.requiresAutoBinding());
+		} else {
+			return propModel.getAdapter(IPropertyElement.class) != null;
 		}
-		
-		return ret.values();
 	}
 	
 	public Object[] getChildren() {
 		List children = getElement().getChildren();
 		List ret = new ArrayList();
-		// FIXME: ここで判断するんじゃなくて、IDiconElement自身が表示されるべきかどうか
-		// 判断するようにする。じゃないとアノテーションのことも含めて汚くなりつつある
-		Set already = new HashSet();
 		IComponentInfo info = (IComponentInfo) getElement().getAdapter(
 				IComponentInfo.class);
 		if (info != null) {
@@ -130,7 +120,6 @@ public class ContentItem extends AbstractInternalContainer implements ConstUI {
 //				ret.add(new AutoInjectedPropertyItem(this, properties[i]));
 //				already.add(properties[i]);
 //			}
-			ret.addAll(createPropertyItems());
 		} else {
 			IApplyMethodInfo methodInfo = (IApplyMethodInfo) getElement().getAdapter(
 					IApplyMethodInfo.class);
@@ -156,12 +145,13 @@ public class ContentItem extends AbstractInternalContainer implements ConstUI {
 				if (obj instanceof IIncludeElement) {
 					ret.add(new IncludeItem((IIncludeElement) obj, this));
 				} else if (obj instanceof IPropertyElement) {
-					IRtti r = (IRtti) getElement().getAdapter(IRtti.class);
-					IRttiPropertyDescriptor prop = r.getProperty(
-							((IPropertyElement) obj).getPropertyName());
-					if (!already.contains(prop)) {
+					// TODO 現在のところプロパティだけ回避
+//					IRtti r = (IRtti) getElement().getAdapter(IRtti.class);
+//					IRttiPropertyDescriptor prop = r.getProperty(
+//							((IPropertyElement) obj).getPropertyName());
+//					if (!already.contains(prop)) {
 //						ret.add(new PropertyItem((IPropertyElement) obj, this));
-					}
+//					}
 				} else if (obj instanceof IDiconElement) {
 					ret.add(new ContentItem((IDiconElement) obj, this, true));
 				}
@@ -175,6 +165,7 @@ public class ContentItem extends AbstractInternalContainer implements ConstUI {
 				}
 			}
 		}
+		ret.addAll(createPropertyItems());
 		return ret.toArray();
 	}
 

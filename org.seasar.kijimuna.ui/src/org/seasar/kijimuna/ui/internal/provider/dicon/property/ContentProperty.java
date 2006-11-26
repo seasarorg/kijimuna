@@ -28,6 +28,7 @@ import org.seasar.kijimuna.core.dicon.model.IDiconElement;
 import org.seasar.kijimuna.core.rtti.HasErrorRtti;
 import org.seasar.kijimuna.core.rtti.IRtti;
 import org.seasar.kijimuna.core.util.ModelUtils;
+import org.seasar.kijimuna.core.util.StringUtils;
 import org.seasar.kijimuna.ui.KijimunaUI;
 
 /**
@@ -104,7 +105,7 @@ public class ContentProperty extends NullProperty implements ConstCore {
 
 	public Object getPropertyValue(Object id) {
 		if (DICON_BODY.equals(id)) {
-			return element.getBody();
+			return StringUtils.replaceIgnorableChars(element.getBody());
 		} else if ((element instanceof IContainerElement) && DICON_ATTR_PATH.equals(id)) {
 			return ((IContainerElement) element).getPath();
 		} else if (DICON_INJECTED_VALUE.equals(id)) {
