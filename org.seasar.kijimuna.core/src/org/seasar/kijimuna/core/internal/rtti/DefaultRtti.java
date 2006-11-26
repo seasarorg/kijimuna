@@ -477,6 +477,16 @@ public class DefaultRtti implements IRtti {
 		return ret;
 	}
 
+	public int hashCode() {
+		if (autoConvert && isPrimitive()) {
+			return getWrapperName().hashCode();
+		} else if (isArray()) {
+			return getArrayItemClass().hashCode();
+		} else {
+			return getQualifiedName().hashCode();
+		}
+	}
+
 	public boolean equals(Object test) {
 		if ((test != null) && (test instanceof IRtti)) {
 			IRtti testRtti = (IRtti) test;
