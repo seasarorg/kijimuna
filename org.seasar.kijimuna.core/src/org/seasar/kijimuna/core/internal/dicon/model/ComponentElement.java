@@ -20,7 +20,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
-import java.util.regex.Pattern;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IStorage;
@@ -28,16 +27,12 @@ import org.eclipse.core.runtime.IAdaptable;
 
 import org.seasar.kijimuna.core.ConstCore;
 import org.seasar.kijimuna.core.KijimunaCore;
-import org.seasar.kijimuna.core.annotation.IBindingAnnotation;
-import org.seasar.kijimuna.core.dicon.binding.IPropertyModel;
+import org.seasar.kijimuna.core.dicon.binding.IComponentModel;
 import org.seasar.kijimuna.core.dicon.info.IComponentInfo;
 import org.seasar.kijimuna.core.dicon.info.IComponentKey;
-import org.seasar.kijimuna.core.dicon.info.IComponentNotFound;
 import org.seasar.kijimuna.core.dicon.model.IComponentElement;
 import org.seasar.kijimuna.core.dicon.model.IContainerElement;
-import org.seasar.kijimuna.core.dicon.model.IPropertyElement;
-import org.seasar.kijimuna.core.internal.dicon.binding.PropertyModel;
-import org.seasar.kijimuna.core.internal.dicon.info.ComponentNotFoundRtti;
+import org.seasar.kijimuna.core.internal.dicon.binding.ComponentModel;
 import org.seasar.kijimuna.core.rtti.HasErrorRtti;
 import org.seasar.kijimuna.core.rtti.IRtti;
 import org.seasar.kijimuna.core.rtti.IRttiConstructorDesctiptor;
@@ -52,11 +47,10 @@ import org.seasar.kijimuna.core.util.StringUtils;
 public class ComponentElement extends AbstractExpressionElement implements
 		IComponentElement, ConstCore {
 
-	private static final Pattern PATTERN_ANY = Pattern.compile(".*");
-	
 	private Set componentKeySet;
 	private IComponentInfo info;
 	private IRttiConstructorDesctiptor suitableConstructor;
+	private IComponentModel componentModel;
 
 	public ComponentElement(IProject project, IStorage storage) {
 		super(project, storage, DICON_TAG_COMPONENT);
@@ -241,50 +235,12 @@ public class ComponentElement extends AbstractExpressionElement implements
 		return null;
 	}
 	
-	private IPropertyModel[] getPropertyModels() {
-		IRtti rtti = (IRtti) getAdapter(IRtti.class);
-		if (rtti == null) {
-			return new IPropertyModel[0];
+	private IComponentModel getComponentModel() {
+		if (componentModel == null) {
+			componentModel = new ComponentModel((IRtti) getAdapter(IRtti.class),
+					this);
 		}
-		IRttiPropertyDescriptor[] propDescs = rtti.getProperties(PATTERN_ANY);
-		processAutoBinding(propDescs);
-		IPropertyModel[] propModels = new IPropertyModel[propDescs.length];
-		for (int i = 0; i < propDescs.length; i++) {
-			propModels[i] = new PropertyModel(propDescs[i],
-					getPropertyElementFrom(propDescs[i]));
-		}
-		return propModels;
-	}
-	
-	private void processAutoBinding(IRttiPropertyDescriptor[] propDescs) {
-		String autoBinding = getAutoBindingMode();
-		if (DICON_VAL_AUTO_BINDING_AUTO.equals(autoBinding) ||
-				DICON_VAL_AUTO_BINDING_PROPERTY.equals(autoBinding)) {
-			for (int i = 0; i < propDescs.length; i++) {
-				IRttiPropertyDescriptor propDesc = propDescs[i];
-				if (ModelUtils.doDesignTimeAutoBinding(propDesc.getType())) {
-					createPropertyInjector(propDesc).inject();
-				}
-			}
-		}
-	}
-	
-	private IInjector createPropertyInjector(IRttiPropertyDescriptor propDesc) {
-		IPropertyElement prop = getPropertyElementFrom(propDesc);
-		return prop != null ? new ElementInjector(prop, propDesc) :
-				(IInjector) new NonElementInjector(propDesc);
-	}
-	
-	private IPropertyElement getPropertyElementFrom(IRttiPropertyDescriptor
-			propDesc) {
-		List props = getPropertyList();
-		for (int i = 0; i < props.size(); i++) {
-			IPropertyElement prop = (IPropertyElement) props.get(i);
-			if (propDesc.getName().equals(prop.getPropertyName())) {
-				return prop;
-			}
-		}
-		return null;		
+		return componentModel;
 	}
 	
 	public Object getAdapter(Class adapter) {
@@ -314,10 +270,8 @@ public class ComponentElement extends AbstractExpressionElement implements
 		} else if (IRttiConstructorDesctiptor.class.equals(adapter)) {
 			getAdapter(IRtti.class);
 			return getConstructorDescriptor();
-		}
-		// FIXME IPropertyModel[]でなくてIComponentInfoに入れるかどうか
-		else if (IPropertyModel[].class.equals(adapter)) {
-			return getPropertyModels();
+		} else if (IComponentModel.class.equals(adapter)) {
+			return getComponentModel();
 		}
 		return super.getAdapter(adapter);
 	}
@@ -367,137 +321,5 @@ public class ComponentElement extends AbstractExpressionElement implements
 		}
 		return (IComponentKey[]) tooManyKey.toArray(new IComponentKey[tooManyKey.size()]);
 	}
-	
-	
-	private interface IInjector {
-		void inject();
-	}
-	
-	
-	private abstract class AbstractPropertyInjector implements IInjector {
-		
-		protected final IRttiPropertyDescriptor propDesc;
-		
-		public AbstractPropertyInjector(IRttiPropertyDescriptor propDesc) {
-			if (propDesc == null) {
-				throw new IllegalArgumentException();
-			}
-			this.propDesc = propDesc;
-		}
-		
-		public final void inject() {
-			if (canInject()) {
-				if (!injectByComponentName()) {
-					injectByPropertyType();
-				}
-			}
-		}
-		
-		protected abstract boolean canInject();
-		
-		protected boolean injectByComponentName() {
-			IRtti inject = getComponentRttiFromKeySource(propDesc.getName());
-			boolean assignable = propDesc.getType().isAssignableFrom(inject);
-			if (assignable || inject instanceof HasErrorRtti) {
-				propDesc.setValue(inject);
-			} else {
-				propDesc.setValue(createComponentNotFoundRtti(propDesc.getName()));
-			}
-			return assignable;
-		}
-		
-		protected void injectByPropertyType() {
-			if (propDesc.getType().isInterface() && propDesc.isWritable()) {
-				propDesc.setValue(getComponentRttiFromKeySource(propDesc.getType()));
-			}
-		}
-		
-		protected IRtti getComponentRttiFromKeySource(Object keySource) {
-			return getContainerElement().getComponent(createComponentKey(keySource));
-		}
-		
-		protected IComponentKey createComponentKey(Object keySource) {
-			return getContainerElement().createComponentKey(keySource);
-		}
-		
-		protected IComponentNotFound createComponentNotFoundRtti(Object key) {
-			return new ComponentNotFoundRtti(createComponentKey(key));
-		}
-		
-		protected boolean isAvailableBindingType(String bindingType) {
-			return isAutoBindingRequired(bindingType) ||
-					DICON_VAL_BINDING_TYPE_NONE.equals(bindingType);
-		}
-		
-		protected boolean isAutoBindingRequired(String bindingType) {
-			return DICON_VAL_BINDING_TYPE_MAY.equals(bindingType) ||
-					DICON_VAL_BINDING_TYPE_SHOULD.equals(bindingType) ||
-					DICON_VAL_BINDING_TYPE_MUST.equals(bindingType);
-		}
-	}
-	
-	private class ElementInjector extends AbstractPropertyInjector {
-		
-		private IPropertyElement prop;
-		
-		public ElementInjector(IPropertyElement prop,
-				IRttiPropertyDescriptor propDesc) {
-			super(propDesc);
-			if (prop == null) {
-				throw new IllegalArgumentException();
-			}
-			this.prop = prop;
-		}
-
-		protected boolean canInject() {
-			String bt = prop.getBindingType();
-			return prop.getChildren().size() == 0 &&
-					StringUtils.noneValue(prop.getExpression()) &&
-					isAutoBindingRequired(bt);
-		}
-	}
-	
-	
-	private class NonElementInjector extends AbstractPropertyInjector {
-		
-		public NonElementInjector(IRttiPropertyDescriptor propDesc) {
-			super(propDesc);
-		}
-		
-		protected boolean canInject() {
-			IBindingAnnotation ba = (IBindingAnnotation) propDesc.getAdapter(
-					IBindingAnnotation.class);
-			return ba == null || (ba != null && isAutoBindingRequired(ba
-					.getBindingType()));
-		}
-		
-		protected boolean injectByComponentName() {
-			IBindingAnnotation ba = (IBindingAnnotation) propDesc.getAdapter(
-					IBindingAnnotation.class);
-			if (injectByComponentNameUsingAnnotation(propDesc, ba)) {
-				return true;
-			}
-			return super.injectByComponentName();
-		}
-		
-		private boolean injectByComponentNameUsingAnnotation(
-				IRttiPropertyDescriptor propDesc, IBindingAnnotation ba) {
-			if (ba == null) {
-				return false;
-			}
-			IRtti inject = null;
-			String propertyName = ba.getPropertyName();
-			if (!isAvailableBindingType(ba.getBindingType())) {
-				inject = createComponentNotFoundRtti(propDesc.getName());
-			} else if (propertyName == null) {
-				return false;
-			} else {
-				inject = getComponentRttiFromKeySource(propertyName);
-			}
-			propDesc.setValue(inject);
-			return true;
-		}
-	}
-
 
 }

@@ -22,6 +22,7 @@ import org.seasar.kijimuna.core.dicon.model.IPropertyElement;
 import org.seasar.kijimuna.core.rtti.HasErrorRtti;
 import org.seasar.kijimuna.core.rtti.IRtti;
 import org.seasar.kijimuna.core.rtti.IRttiPropertyDescriptor;
+import org.seasar.kijimuna.core.util.BindingTypeUtil;
 import org.seasar.kijimuna.core.util.StringUtils;
 
 public class PropertyModel implements IPropertyModel, ConstCore {
@@ -63,7 +64,14 @@ public class PropertyModel implements IPropertyModel, ConstCore {
 
 	public Object getAdapter(Class adapter) {
 		if (IRtti.class.equals(adapter)) {
-			return propDesc.getValue();
+			// FIXME IPropertyElementのRTTIと自動バインディングされた
+			// IRttiPropertyDescriptor#getValueのRTTIが一致していないための回避作...
+			// PropertyElement#getAdapterはcomponentModel#getPropertyModelを呼び出す？
+			if (requiresAutoBinding()) {
+				return propDesc.getValue();
+			} else if (prop != null) {
+				return prop.getAdapter(IRtti.class);
+			}
 		} else if (IPropertyElement.class.equals(adapter)) {
 			return prop;
 		} else if (IRttiPropertyDescriptor.class.equals(adapter)) {
@@ -104,11 +112,7 @@ public class PropertyModel implements IPropertyModel, ConstCore {
 		}
 		
 		public boolean requiresAutoBinding() {
-			return prop.getChildren().size() == 0 &&
-					(DICON_VAL_BINDING_TYPE_MAY.equals(getBindingType()) ||
-							DICON_VAL_BINDING_TYPE_SHOULD.equals(getBindingType()) ||
-							DICON_VAL_BINDING_TYPE_MUST.equals(getBindingType())) &&
-					StringUtils.noneValue(prop.getExpression());
+			return BindingTypeUtil.needsAutoBinding(prop);
 		}
 	}
 	
@@ -131,10 +135,7 @@ public class PropertyModel implements IPropertyModel, ConstCore {
 		}
 		
 		public boolean requiresAutoBinding() {
-			String bt = annotation.getBindingType();
-			return DICON_VAL_BINDING_TYPE_MAY.equals(bt) ||
-					DICON_VAL_BINDING_TYPE_MUST.equals(bt) ||
-					DICON_VAL_BINDING_TYPE_SHOULD.equals(bt);
+			return BindingTypeUtil.isRequiredAutoBinding(getBindingType());
 		}
 	}
 	

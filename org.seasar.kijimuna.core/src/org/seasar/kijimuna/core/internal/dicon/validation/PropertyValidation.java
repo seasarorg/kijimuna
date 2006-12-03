@@ -18,14 +18,18 @@ package org.seasar.kijimuna.core.internal.dicon.validation;
 import org.seasar.kijimuna.core.ConstCore;
 import org.seasar.kijimuna.core.dicon.IValidation;
 import org.seasar.kijimuna.core.dicon.MarkerSetting;
+import org.seasar.kijimuna.core.dicon.binding.IComponentModel;
 import org.seasar.kijimuna.core.dicon.binding.IPropertyModel;
 import org.seasar.kijimuna.core.dicon.info.IComponentNotFound;
 import org.seasar.kijimuna.core.dicon.info.ITooManyRegisted;
 import org.seasar.kijimuna.core.dicon.model.IComponentElement;
 import org.seasar.kijimuna.core.dicon.model.IDiconElement;
 import org.seasar.kijimuna.core.dicon.model.IPropertyElement;
+import org.seasar.kijimuna.core.rtti.HasErrorRtti;
 import org.seasar.kijimuna.core.rtti.IRtti;
 import org.seasar.kijimuna.core.rtti.IRttiPropertyDescriptor;
+import org.seasar.kijimuna.core.util.AutoBindingUtil;
+import org.seasar.kijimuna.core.util.BindingTypeUtil;
 import org.seasar.kijimuna.core.util.ModelUtils;
 
 /**
@@ -40,19 +44,21 @@ public class PropertyValidation implements IValidation, ConstCore {
 	}
 	
 	protected void validate(IComponentElement component) {
-		IPropertyModel[] propModels = (IPropertyModel[]) component.getAdapter(
-				IPropertyModel[].class);
+		IComponentModel cm = (IComponentModel) component.getAdapter(
+				IComponentModel.class);
+		IPropertyModel[] propModels = cm.getPropertyModels();
 		for (int i = 0; i < propModels.length; i++) {
 			IPropertyElement prop = (IPropertyElement) propModels[i].getAdapter(
 					IPropertyElement.class);
 			IDiconElement element = prop != null ? (IDiconElement) prop : component;
 			validateBindingType(element, propModels[i]);
 			if (propModels[i].requiresAutoBinding()) {
-				String autoBinding = component.getAutoBindingMode();
-				if (DICON_VAL_AUTO_BINDING_AUTO.equals(autoBinding) ||
-						DICON_VAL_AUTO_BINDING_PROPERTY.equals(autoBinding)) {
+				if (AutoBindingUtil.isRequiredPropertyAutoBinding(component
+						.getAutoBindingMode())) {
 					validateAutoBinding(element, propModels[i]);
 				}
+			} else {
+				validateNoneBinding(element, propModels[i]);
 			}
 		}
 	}
@@ -60,10 +66,7 @@ public class PropertyValidation implements IValidation, ConstCore {
 	protected void validateBindingType(IDiconElement element,
 			IPropertyModel propModel) {
 		String bt = propModel.getBindingType();
-		if (!(DICON_VAL_BINDING_TYPE_MAY.equals(bt) ||
-				DICON_VAL_BINDING_TYPE_SHOULD.equals(bt) ||
-				DICON_VAL_BINDING_TYPE_MUST.equals(bt) ||
-				DICON_VAL_BINDING_TYPE_NONE.equals(bt))) {
+		if (!BindingTypeUtil.isAvailable(bt)) {
 			MarkerSetting.createDiconMarker(
 					"dicon.validation.AutoSetterInjection.5", element,
 					new Object[] {
@@ -92,6 +95,16 @@ public class PropertyValidation implements IValidation, ConstCore {
 					}
 				}
 			}
+		}
+	}
+	
+	protected void validateNoneBinding(IDiconElement element, IPropertyModel
+			propModel) {
+		IRtti rtti = (IRtti) propModel.getAdapter(IRtti.class);
+		if (rtti instanceof HasErrorRtti) {
+			MarkerSetting.createDiconMarker(
+					"dicon.validation.ComponentHolderValidation.1", element,
+					((HasErrorRtti) rtti).getErrorMessage());
 		}
 	}
 	
