@@ -67,6 +67,12 @@ public class PropertyItem extends AbstractInternalContainer {
 				element).isOGNL() : false;
 	}
 	
+	public int getMarkerSeverity() {
+		IPropertyElement prop = (IPropertyElement) propModel.getAdapter(
+				IPropertyElement.class);
+		return prop != null ? prop.getMarkerSeverity() : super.getMarkerSeverity();
+	}
+	
 	protected IPropertySource createProperty() {
 		IDiconElement element = getElement();
 		return element != null ? new ContentProperty(element) : null;

@@ -24,6 +24,7 @@ import java.util.List;
 import org.eclipse.ui.views.properties.IPropertySource;
 
 import org.seasar.kijimuna.core.annotation.IBindingAnnotation;
+import org.seasar.kijimuna.core.dicon.binding.IComponentModel;
 import org.seasar.kijimuna.core.dicon.binding.IPropertyModel;
 import org.seasar.kijimuna.core.dicon.info.IApplyMethodInfo;
 import org.seasar.kijimuna.core.dicon.info.IAspectInfo;
@@ -44,6 +45,7 @@ import org.seasar.kijimuna.core.dicon.model.IPropertyElement;
 import org.seasar.kijimuna.core.rtti.IRtti;
 import org.seasar.kijimuna.core.rtti.IRttiConstructorDesctiptor;
 import org.seasar.kijimuna.core.rtti.IRttiMethodDesctiptor;
+import org.seasar.kijimuna.core.util.AutoBindingUtil;
 import org.seasar.kijimuna.ui.ConstUI;
 import org.seasar.kijimuna.ui.internal.provider.dicon.IContentWalker;
 import org.seasar.kijimuna.ui.internal.provider.dicon.property.ContentProperty;
@@ -69,8 +71,9 @@ public class ContentItem extends AbstractInternalContainer implements ConstUI {
 			return Collections.EMPTY_LIST;
 		}
 		IComponentElement component = (IComponentElement) getElement();
-		IPropertyModel[] propModels = (IPropertyModel[]) component.getAdapter(
-				IPropertyModel[].class);
+		IComponentModel cm = (IComponentModel) component.getAdapter(
+				IComponentModel.class);
+		IPropertyModel[] propModels = cm.getPropertyModels();
 		List ret = new ArrayList(propModels.length);
 		for (int i = 0; i < propModels.length; i++) {
 			if (isDisplayable(component, propModels[i])) {
@@ -83,14 +86,15 @@ public class ContentItem extends AbstractInternalContainer implements ConstUI {
 	
 	private boolean isDisplayable(IComponentElement component, IPropertyModel
 			propModel) {
-		IBindingAnnotation ba = (IBindingAnnotation) propModel.getAdapter(
-				IBindingAnnotation.class);
-		String ab = component.getAutoBindingMode();
-		if (DICON_VAL_AUTO_BINDING_AUTO.equals(ab) ||
-				DICON_VAL_AUTO_BINDING_PROPERTY.equals(ab)) {
+		if (AutoBindingUtil.isRequiredPropertyAutoBinding(component
+				.getAutoBindingMode())) {
+			IBindingAnnotation ba = (IBindingAnnotation) propModel.getAdapter(
+					IBindingAnnotation.class);
 			return propModel.wasDoneAutoBinding() ||
-			(ba != null && propModel.requiresAutoBinding()) ||
-			(propModel.isAutoBindingType() && propModel.requiresAutoBinding());
+					propModel.getAdapter(IPropertyElement.class) != null ||
+					(ba != null && propModel.requiresAutoBinding()) ||
+					(propModel.isAutoBindingType() && propModel
+							.requiresAutoBinding());
 		} else {
 			return propModel.getAdapter(IPropertyElement.class) != null;
 		}
