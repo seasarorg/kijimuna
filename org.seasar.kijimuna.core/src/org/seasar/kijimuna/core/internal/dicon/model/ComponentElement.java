@@ -236,19 +236,21 @@ public class ComponentElement extends AbstractExpressionElement implements
 			IRtti rtti = (IRtti) getAdapter(IRtti.class);
 			if (rtti != null) {
 				List list = new ArrayList();
-				IRttiPropertyDescriptor[] props = rtti.getProperties(PATTERN_ANY);
-				for (int i = 0; i < props.length; i++) {
-					IRttiPropertyDescriptor prop = props[i];
-					if (!isAutoInjectableProperty(prop)) {
+				IRttiPropertyDescriptor[] propDescs = rtti.getProperties(PATTERN_ANY);
+				for (int i = 0; i < propDescs.length; i++) {
+					IRttiPropertyDescriptor propDesc = propDescs[i];
+					if (!propDesc.isWritable()) {
 						continue;
 					}
-					if (ModelUtils.hasPropertyElement(this, prop.getName())) {
+					if (ModelUtils.hasPropertyElement(this, propDesc.getName())) {
 						continue;
 					}
-					if (ModelUtils.doDesignTimeAutoBinding(prop.getType())) {
-						injectRtti(prop);
+					if (ModelUtils.doDesignTimeAutoBinding(propDesc.getType())) {
+						processAutoBinding(propDesc);
 					}
-					list.add(prop);
+					if (propDesc.getValue() != null) { 
+						list.add(propDesc);
+					}
 				}
 				return (IRttiPropertyDescriptor[]) list
 						.toArray(new IRttiPropertyDescriptor[list.size()]);
@@ -257,31 +259,37 @@ public class ComponentElement extends AbstractExpressionElement implements
 		return new IRttiPropertyDescriptor[0];
 	}
 	
-	private boolean isAutoInjectableProperty(IRttiPropertyDescriptor prop) {
-		return prop.getType().isInterface() && prop.isWritable();
-	}
-	
-	private void injectRtti(IRttiPropertyDescriptor prop) {
-		if (!injectRttiByComponentName(prop)) {
-			injectRttiByPropertyType(prop);
+	private void processAutoBinding(IRttiPropertyDescriptor propDesc) {
+		if (!injectByComponentName(propDesc)) {
+			injectByPropertyType(propDesc);
 		}
 	}
 	
-	private boolean injectRttiByComponentName(IRttiPropertyDescriptor prop) {
-		IContainerElement container = getContainerElement();
-		IComponentKey key = container.createComponentKey(prop.getName());
-		IRtti inject = container.getComponent(key);
-		if (prop.getType().isAssignableFrom(inject)) {
-			prop.setValue(inject);
-			return true;
+	private boolean injectByComponentName(IRttiPropertyDescriptor propDesc) {
+		IRtti inject = getComponentRttiFromKeySource(propDesc.getName());
+		if (!propDesc.getType().isInterface() &&
+				inject instanceof HasErrorRtti) {
+			return false;
 		}
-		return false;
+		boolean assignable = propDesc.getType().isAssignableFrom(inject);
+		if (assignable) {
+			propDesc.setValue(inject);
+		}
+		return assignable;
 	}
 	
-	private void injectRttiByPropertyType(IRttiPropertyDescriptor prop) {
-		IContainerElement container = getContainerElement();
-		IComponentKey key = container.createComponentKey(prop.getType());
-		prop.setValue(container.getComponent(key));
+	private void injectByPropertyType(IRttiPropertyDescriptor propDesc) {
+		if (propDesc.getType().isInterface()) {
+			propDesc.setValue(getComponentRttiFromKeySource(propDesc.getType()));
+		}
+	}
+	
+	private IRtti getComponentRttiFromKeySource(Object key) {
+		return getContainerElement().getComponent(createComponentKey(key));
+	}
+	
+	private IComponentKey createComponentKey(Object key) {
+		return getContainerElement().createComponentKey(key);
 	}
 	
 	public Object getAdapter(Class adapter) {
