@@ -15,6 +15,8 @@
  */
 package org.seasar.kijimuna.core.rtti.ognl;
 
+import org.ognl.el.ClassResolver;
+import org.ognl.el.Environment;
 import org.ognl.el.Expression;
 import org.ognl.el.ExpressionSyntaxException;
 import org.ognl.el.OgnlException;
@@ -27,6 +29,7 @@ import org.seasar.kijimuna.core.internal.rtti.ognl.OgnlRttiUnprocessable;
 import org.seasar.kijimuna.core.internal.rtti.ognl.OgnlRttiUnsupportedOperationException;
 import org.seasar.kijimuna.core.rtti.IRtti;
 import org.seasar.kijimuna.core.rtti.RttiLoader;
+import org.seasar.kijimuna.core.util.JavaProjectClassLoader;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
@@ -37,11 +40,25 @@ public class OgnlRtti {
 	private OgnlExtensions extensions;
 	private RttiLoader rootLoader;
 
-	public OgnlRtti(RttiLoader rootLoader) {
+	public OgnlRtti(final RttiLoader rootLoader) {
 		this.rootLoader = rootLoader;
 		extensions = new OgnlExtensions(rootLoader);
 		environment = new DefaultExecutionEnvironment();
 		environment.setExtensions(extensions);
+		environment.setClassResolver(new ClassResolver() {
+			public Class classForName(Environment environment,
+					String className) throws OgnlException {
+				// デフォルトのClassResolverは、staticフィールドにアクセスしようとすると
+				// リフレクションが使われるためプロジェクト内のクラスを見つけられない
+				JavaProjectClassLoader loader = new JavaProjectClassLoader(
+						rootLoader.getProject());
+				try {
+					return loader.loadClass(className);
+				} catch (ClassNotFoundException e) {
+					throw new OgnlException(e);
+				}
+			}
+		});
 	}
 
 	public void setVariableValue(String key, Object value) {
@@ -66,7 +83,7 @@ public class OgnlRtti {
 				}
 				return rootLoader.loadRtti(ret.getClass());
 			}
-		} catch (OgnlRttiUnsupportedOperationException e) {
+		} catch (OgnlRttiUnsupportedOperationException ignore) {
 		} catch (OgnlRttiUnprocessable e) {
 			return rootLoader.loadHasErrorRtti(null, KijimunaCore.getResourceString(
 					"rtti.ognl.OgnlRtti.2", new Object[] {e.getMessage()}));
