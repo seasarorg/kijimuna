@@ -21,7 +21,7 @@ import org.ognl.el.PropertyAccessor;
 
 import org.seasar.kijimuna.core.dicon.info.IComponentKey;
 import org.seasar.kijimuna.core.dicon.model.IContainerElement;
-import org.seasar.kijimuna.core.internal.rtti.ognl.OgnlRttiUnprocessable;
+import org.seasar.kijimuna.core.internal.rtti.ognl.OgnlRttiUnsupportedOperationException;
 import org.seasar.kijimuna.core.rtti.HasErrorRtti;
 import org.seasar.kijimuna.core.rtti.IRtti;
 import org.seasar.kijimuna.core.rtti.RttiWrapper;
@@ -50,28 +50,28 @@ public class ContainerPropertyAccessor implements PropertyAccessor {
 
 	public Object getIndexedPropertyValue(ExecutionEnvironment environment,
 			Object target, Object index) throws OgnlException {
-		throw new OgnlRttiUnprocessable();
+		throw new OgnlRttiUnsupportedOperationException();
 	}
 
 	public Object getNamedIndexedPropertyValue(ExecutionEnvironment environment,
 			Object target, String propertyName, Object index) throws OgnlException {
-		throw new OgnlRttiUnprocessable();
+		throw new OgnlRttiUnsupportedOperationException();
 	}
 
 	public void setIndexedPropertyValue(ExecutionEnvironment environment, Object target,
 			Object index, Object value) throws OgnlException {
-		throw new OgnlRttiUnprocessable();
+		throw new OgnlRttiUnsupportedOperationException();
 	}
 
 	public void setNamedIndexedPropertyValue(ExecutionEnvironment environment,
 			Object target, String propertyName, Object index, Object value)
 			throws OgnlException {
-		throw new OgnlRttiUnprocessable();
+		throw new OgnlRttiUnsupportedOperationException();
 	}
 
 	public void setPropertyValue(ExecutionEnvironment environment, Object target,
 			Object property, Object value) throws OgnlException {
-		throw new OgnlRttiUnprocessable();
+		throw new OgnlRttiUnsupportedOperationException();
 	}
 
 }

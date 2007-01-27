@@ -24,6 +24,7 @@ import org.ognl.el.extensions.DefaultExecutionEnvironment;
 import org.seasar.kijimuna.core.KijimunaCore;
 import org.seasar.kijimuna.core.internal.rtti.ognl.OgnlExtensions;
 import org.seasar.kijimuna.core.internal.rtti.ognl.OgnlRttiUnprocessable;
+import org.seasar.kijimuna.core.internal.rtti.ognl.OgnlRttiUnsupportedOperationException;
 import org.seasar.kijimuna.core.rtti.IRtti;
 import org.seasar.kijimuna.core.rtti.RttiLoader;
 
@@ -65,7 +66,10 @@ public class OgnlRtti {
 				}
 				return rootLoader.loadRtti(ret.getClass());
 			}
+		} catch (OgnlRttiUnsupportedOperationException e) {
 		} catch (OgnlRttiUnprocessable e) {
+			return rootLoader.loadHasErrorRtti(null, KijimunaCore.getResourceString(
+					"rtti.ognl.OgnlRtti.2", new Object[] {e.getMessage()}));
 		} catch (ExpressionSyntaxException e) {
 			return rootLoader.loadHasErrorRtti(null, KijimunaCore.getResourceString(
 					"rtti.ognl.OgnlRtti.1", new Object[] {

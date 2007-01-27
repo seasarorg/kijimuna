@@ -135,12 +135,12 @@ public class OgnlExtensions extends Extensions {
 
 	public Object getIndexedPropertyValue(ExecutionEnvironment environment,
 			Object source, Object index) throws OgnlException {
-		throw new OgnlRttiUnprocessable();
+		throw new OgnlRttiUnsupportedOperationException();
 	}
 
 	public Object getNamedIndexedPropertyValue(ExecutionEnvironment environment,
 			Object source, String propertyName, Object index) throws OgnlException {
-		throw new OgnlRttiUnprocessable();
+		throw new OgnlRttiUnsupportedOperationException();
 	}
 
 	public Object getPropertyValue(ExecutionEnvironment environment, Object source,
@@ -186,13 +186,13 @@ public class OgnlExtensions extends Extensions {
 
 	public void setIndexedPropertyValue(ExecutionEnvironment environment, Object target,
 			Object index, Object value) throws OgnlException {
-		throw new OgnlRttiUnprocessable();
+		throw new OgnlRttiUnsupportedOperationException();
 	}
 
 	public void setNamedIndexedPropertyValue(ExecutionEnvironment environment,
 			Object target, String propertyName, Object index, Object value)
 			throws OgnlException {
-		throw new OgnlRttiUnprocessable();
+		throw new OgnlRttiUnsupportedOperationException();
 	}
 
 	public void setPropertyValue(ExecutionEnvironment environment, Object target,
