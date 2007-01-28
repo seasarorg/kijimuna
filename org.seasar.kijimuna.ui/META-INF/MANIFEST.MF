@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-Name: %plugin.name
 Bundle-SymbolicName: org.seasar.kijimuna.ui; singleton=true
-Bundle-Version: 1.1.2
+Bundle-Version: 1.1.3
 Bundle-ClassPath: KijimunaUI.jar
 Bundle-Vendor: %author
 Bundle-Localization: plugin
