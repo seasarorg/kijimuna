@@ -127,11 +127,21 @@ public class RttiLoader implements Serializable {
 			IRtti arrayItemRtti = null;
 			if (arrayDepth > 0) {
 				arrayItemRtti = getArrayRtti(loaderHostName, arrayDepth - 1);
+				if (arrayItemRtti instanceof HasErrorRtti) {
+					return arrayItemRtti;
+				}
 			}
 			IType newType = null;
 			try {
 				newType = getProject().findType(qualifiedName.replace('$', '.'));
 			} catch (JavaModelException ignore) {
+			}
+			if (newType == null) {
+				try {
+					qualifiedName = "java.lang." + qualifiedName;
+					newType = getProject().findType(qualifiedName.replace('$', '.'));
+				} catch (JavaModelException ignore) {
+				}
 			}
 			if (newType == null) {
 				return loadHasErrorRtti(qualifiedName, KijimunaCore.getResourceString(

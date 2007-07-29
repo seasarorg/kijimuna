@@ -747,16 +747,16 @@ public class DefaultRtti implements IRtti {
 	}
 
 	public IRttiConstructorDesctiptor[] getConstructors() {
+		if (isArray()) {
+			return new IRttiConstructorDesctiptor[0];
+		}
 		Pattern pattern = Pattern.compile(getShortName());
 		List descriptors = getSortedInvokableList(pattern, true);
-		if (descriptors.size() == 0) {
+		if (descriptors.isEmpty()) {
 			IRttiConstructorDesctiptor def = createDefaultConstructor();
 			if (def != null) {
-				return new IRttiConstructorDesctiptor[] {
-					def
-				};
+				descriptors.add(def);
 			}
-			return new IRttiConstructorDesctiptor[0];
 		}
 		return (IRttiConstructorDesctiptor[]) descriptors
 				.toArray(new IRttiConstructorDesctiptor[descriptors.size()]);
