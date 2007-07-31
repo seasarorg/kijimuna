@@ -22,4 +22,5 @@ public interface IPropertyElement extends IComponentHolderElement {
 
 	String getPropertyName();
 
+	String getBindingType();
 }

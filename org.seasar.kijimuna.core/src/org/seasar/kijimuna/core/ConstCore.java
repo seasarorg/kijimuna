@@ -211,7 +211,8 @@ public interface ConstCore {
 	public static final String[] MARKER_SET_NULL_INJECTION = new String[] {
 			"dicon.validation.AutoConstructorInvoke.3",
 			"dicon.validation.AutoMethodInvoke.2",
-			"dicon.validation.AutoSetterInjection.2"
+			"dicon.validation.AutoSetterInjection.2",
+			"dicon.validation.PropertyValidation.2"
 	};
 	public static final String[] MARKER_SET_AUTO_INJECTION = new String[] {
 			"dicon.validation.AutoConstructorInvoke.2",

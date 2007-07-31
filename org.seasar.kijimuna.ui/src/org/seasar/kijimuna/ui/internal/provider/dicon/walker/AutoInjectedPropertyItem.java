@@ -23,6 +23,7 @@ import org.seasar.kijimuna.core.dicon.info.IComponentNotFound;
 import org.seasar.kijimuna.core.dicon.info.ITooManyRegisted;
 import org.seasar.kijimuna.core.dicon.model.IComponentElement;
 import org.seasar.kijimuna.core.dicon.model.IDiconElement;
+import org.seasar.kijimuna.core.dicon.model.IPropertyElement;
 import org.seasar.kijimuna.core.rtti.IRtti;
 import org.seasar.kijimuna.core.rtti.IRttiPropertyDescriptor;
 import org.seasar.kijimuna.ui.ConstUI;
@@ -36,25 +37,46 @@ import org.seasar.kijimuna.ui.internal.provider.dicon.property.AutoInjectedPrope
 public class AutoInjectedPropertyItem extends AbstractInternalContainer implements
 		IInjectedComponent, ConstUI {
 
-	private IRttiPropertyDescriptor property;
+	private IRttiPropertyDescriptor propDesc;
+	private IPropertyElement prop;
+	private String propName;
+	private IRtti propValue;
 
-	public AutoInjectedPropertyItem(ContentItem parent, IRttiPropertyDescriptor property) {
+	public AutoInjectedPropertyItem(ContentItem parent, IRttiPropertyDescriptor propDesc) {
 		super(parent);
-		this.property = property;
+		this.propDesc = propDesc;
+		this.propName = propDesc.getName();
+		this.propValue = propDesc.getValue();
+	}
+	
+	public AutoInjectedPropertyItem(ContentItem parent, IPropertyElement prop) {
+		super(parent);
+		this.prop = prop;
+		this.propName = prop.getPropertyName();
+		this.propValue = (IRtti) prop.getAdapter(IRtti.class);
 	}
 
 	protected IPropertySource createProperty() {
-		return new AutoInjectedPropertyProperty(property);
+		// TODO プロパティページの実装
+		return propDesc != null ? new AutoInjectedPropertyProperty(propDesc) : null;
 	}
 
 	public int getMarkerSeverity() {
-		IRtti arg = property.getValue();
+		IRtti arg = propValue;
 		if (arg instanceof ITooManyRegisted) {
 			IProject project = getElement().getProject();
 			return MarkerSetting.getDiconMarkerPreference(project,
 					MARKER_CATEGORY_DICON_FETAL, false);
 		} else if (arg instanceof IComponentNotFound) {
 			IProject project = getElement().getProject();
+			if (prop != null) {
+				if (DICON_VAL_BINDING_TYPE_MAY.equals(prop.getBindingType())) {
+					return MARKER_SEVERITY_NONE;
+				} else if (DICON_VAL_BINDING_TYPE_MUST.equals(prop.getBindingType())) {
+					return MarkerSetting.getDiconMarkerPreference(project,
+							MARKER_CATEGORY_DICON_FETAL, false);
+				}
+			}
 			return MarkerSetting.getDiconMarkerPreference(project,
 					MARKER_CATEGORY_NULL_INJECTION, false);
 		} else {
@@ -63,7 +85,7 @@ public class AutoInjectedPropertyItem extends AbstractInternalContainer implemen
 	}
 
 	public int getInjectedStatus() {
-		IRtti arg = property.getValue();
+		IRtti arg = propValue;
 		if (arg instanceof ITooManyRegisted) {
 			return IInjectedComponent.INJECTED_AUTO_TOOMANY;
 		} else if (arg instanceof IComponentNotFound) {
@@ -74,7 +96,7 @@ public class AutoInjectedPropertyItem extends AbstractInternalContainer implemen
 	}
 
 	public IDiconElement getInjectedElement() {
-		IRtti arg = property.getValue();
+		IRtti arg = propValue;
 		if (arg != null) {
 			return (IDiconElement) arg.getAdapter(IComponentElement.class);
 		}
@@ -84,12 +106,16 @@ public class AutoInjectedPropertyItem extends AbstractInternalContainer implemen
 	public String getDisplayName() {
 		return KijimunaUI.getResourceString(
 				"dicon.provider.walker.AutoInjectedArgItem.1", new Object[] {
-					property.getName()
+					propName
 				});
 	}
 
 	public String getImageName() {
 		return IMAGE_ICON_PROPERTY;
+	}
+	
+	public IDiconElement getElement() {
+		return prop != null ? prop : super.getElement();
 	}
 
 }
