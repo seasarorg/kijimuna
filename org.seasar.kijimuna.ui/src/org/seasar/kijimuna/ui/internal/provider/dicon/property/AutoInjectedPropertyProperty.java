@@ -21,6 +21,7 @@ import org.eclipse.ui.views.properties.PropertyDescriptor;
 import org.seasar.kijimuna.core.dicon.info.IComponentKey;
 import org.seasar.kijimuna.core.dicon.info.IComponentNotFound;
 import org.seasar.kijimuna.core.dicon.info.ITooManyRegisted;
+import org.seasar.kijimuna.core.dicon.model.IPropertyElement;
 import org.seasar.kijimuna.core.rtti.IRtti;
 import org.seasar.kijimuna.core.rtti.IRttiPropertyDescriptor;
 import org.seasar.kijimuna.core.util.ModelUtils;
@@ -62,9 +63,14 @@ public class AutoInjectedPropertyProperty extends NullProperty {
 	}
 
 	private IRttiPropertyDescriptor property;
+	private IPropertyElement prop;
 
 	public AutoInjectedPropertyProperty(IRttiPropertyDescriptor property) {
 		this.property = property;
+	}
+	
+	public AutoInjectedPropertyProperty(IPropertyElement prop) {
+		this.prop = prop;
 	}
 
 	public IPropertyDescriptor[] getPropertyDescriptors() {
@@ -73,13 +79,13 @@ public class AutoInjectedPropertyProperty extends NullProperty {
 
 	public Object getPropertyValue(Object id) {
 		if ("dicon.provider.property.AutoInjectedPropertyProperty.1".equals(id)) {
-			return property.getParent().getQualifiedName();
+			return getQualifiedClassNameOfParent();
 		} else if ("dicon.provider.property.AutoInjectedPropertyProperty.2".equals(id)) {
-			return property.getName();
+			return getPropertyName();
 		} else if ("dicon.provider.property.AutoInjectedPropertyProperty.3".equals(id)) {
-			return property.getType().getQualifiedName();
+			return getQualifiedClassNameOfProperty();
 		} else if ("dicon.provider.property.AutoInjectedPropertyProperty.4".equals(id)) {
-			IRtti value = property.getValue();
+			IRtti value = getPropertyValue();
 			if (value instanceof IComponentNotFound) {
 				return KijimunaUI.getResourceString(
 						"dicon.provider.property.AutoInjectedPropertyProperty.5",
@@ -93,6 +99,32 @@ public class AutoInjectedPropertyProperty extends NullProperty {
 			}
 		}
 		return null;
+	}
+	
+	private String getQualifiedClassNameOfParent() {
+		if (prop != null) {
+			IRtti parent = (IRtti) prop.getParent().getAdapter(IRtti.class);
+			return parent != null ? parent.getQualifiedName() : "";
+		}
+		return property.getParent().getQualifiedName();
+	}
+	
+	private String getPropertyName() {
+		return prop != null ? prop.getPropertyName() : property.getName();
+	}
+	
+	private String getQualifiedClassNameOfProperty() {
+		if (prop != null) {
+			IRtti parent = (IRtti) prop.getParent().getAdapter(IRtti.class);
+			IRttiPropertyDescriptor propDesc = parent != null ? parent
+					.getProperty(prop.getPropertyName()) : null;
+			return propDesc != null ? propDesc.getType().getQualifiedName() : "";
+		}
+		return property.getType().getQualifiedName();
+	}
+	
+	private IRtti getPropertyValue() {
+		return prop != null ? (IRtti) prop.getAdapter(IRtti.class) : property.getValue();
 	}
 
 }

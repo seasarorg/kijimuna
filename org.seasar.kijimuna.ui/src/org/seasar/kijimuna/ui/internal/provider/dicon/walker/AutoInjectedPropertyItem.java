@@ -57,8 +57,8 @@ public class AutoInjectedPropertyItem extends AbstractInternalContainer implemen
 	}
 
 	protected IPropertySource createProperty() {
-		// TODO プロパティページの実装
-		return propDesc != null ? new AutoInjectedPropertyProperty(propDesc) : null;
+		return propDesc != null ? new AutoInjectedPropertyProperty(propDesc) :
+				new AutoInjectedPropertyProperty(prop);
 	}
 
 	public int getMarkerSeverity() {
