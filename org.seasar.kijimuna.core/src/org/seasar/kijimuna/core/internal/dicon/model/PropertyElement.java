@@ -77,8 +77,7 @@ public class PropertyElement extends ComponentHolderElement implements IProperty
 			IRttiPropertyDescriptor propDesc = rtti.getProperty(getPropertyName());
 			AutoBindingComponentProvider provider =
 				new AutoBindingComponentProvider(getContainerElement());
-			IRtti injected = provider.getAutoBindingComponentRtti(propDesc);
-			return injected != null ? injected : loadChildElementNotFoundRtti();
+			return provider.getAutoBindingComponentRtti(propDesc);
 		}
 		return super.getNonExpressionValue();
 	}

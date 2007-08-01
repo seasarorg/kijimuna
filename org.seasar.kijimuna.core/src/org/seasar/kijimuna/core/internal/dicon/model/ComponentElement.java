@@ -32,6 +32,7 @@ import org.seasar.kijimuna.core.dicon.info.IComponentInfo;
 import org.seasar.kijimuna.core.dicon.info.IComponentKey;
 import org.seasar.kijimuna.core.dicon.model.IComponentElement;
 import org.seasar.kijimuna.core.dicon.model.IContainerElement;
+import org.seasar.kijimuna.core.internal.dicon.autobinding.AutoBindingComponentProvider;
 import org.seasar.kijimuna.core.rtti.HasErrorRtti;
 import org.seasar.kijimuna.core.rtti.IRtti;
 import org.seasar.kijimuna.core.rtti.IRttiConstructorDesctiptor;
@@ -260,36 +261,10 @@ public class ComponentElement extends AbstractExpressionElement implements
 	}
 	
 	private void processAutoBinding(IRttiPropertyDescriptor propDesc) {
-		if (!injectByComponentName(propDesc)) {
-			injectByPropertyType(propDesc);
-		}
-	}
-	
-	private boolean injectByComponentName(IRttiPropertyDescriptor propDesc) {
-		IRtti inject = getComponentRttiFromKeySource(propDesc.getName());
-		if (!propDesc.getType().isInterface() &&
-				inject instanceof HasErrorRtti) {
-			return false;
-		}
-		boolean assignable = propDesc.getType().isAssignableFrom(inject);
-		if (assignable) {
-			propDesc.setValue(inject);
-		}
-		return assignable;
-	}
-	
-	private void injectByPropertyType(IRttiPropertyDescriptor propDesc) {
-		if (propDesc.getType().isInterface()) {
-			propDesc.setValue(getComponentRttiFromKeySource(propDesc.getType()));
-		}
-	}
-	
-	private IRtti getComponentRttiFromKeySource(Object key) {
-		return getContainerElement().getComponent(createComponentKey(key));
-	}
-	
-	private IComponentKey createComponentKey(Object key) {
-		return getContainerElement().createComponentKey(key);
+		AutoBindingComponentProvider provider =
+			new AutoBindingComponentProvider(getContainerElement());
+		IRtti rtti = provider.getAutoBindingComponentRtti(propDesc);
+		propDesc.setValue(rtti);
 	}
 	
 	public Object getAdapter(Class adapter) {
