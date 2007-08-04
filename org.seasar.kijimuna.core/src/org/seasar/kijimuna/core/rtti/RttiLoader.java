@@ -136,7 +136,8 @@ public class RttiLoader implements Serializable {
 				newType = getProject().findType(qualifiedName.replace('$', '.'));
 			} catch (JavaModelException ignore) {
 			}
-			if (newType == null) {
+			if (newType == null &&
+					qualifiedName.indexOf('.') == -1) {
 				try {
 					qualifiedName = "java.lang." + qualifiedName;
 					newType = getProject().findType(qualifiedName.replace('$', '.'));
