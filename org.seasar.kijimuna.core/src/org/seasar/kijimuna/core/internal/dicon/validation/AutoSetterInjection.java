@@ -25,6 +25,7 @@ import org.seasar.kijimuna.core.dicon.model.IComponentElement;
 import org.seasar.kijimuna.core.dicon.model.IDiconElement;
 import org.seasar.kijimuna.core.dicon.model.IPropertyElement;
 import org.seasar.kijimuna.core.parser.IElement;
+import org.seasar.kijimuna.core.rtti.HasErrorRtti;
 import org.seasar.kijimuna.core.rtti.IRtti;
 import org.seasar.kijimuna.core.rtti.IRttiPropertyDescriptor;
 import org.seasar.kijimuna.core.util.ModelUtils;
@@ -89,11 +90,15 @@ public class AutoSetterInjection implements IValidation, ConstCore {
 	private void validate(IDiconElement element, IRtti value,
 			String parentName, String propName) {
 		if (value instanceof IComponentNotFound) {
-			// mustでnullは許容しない。mayで警告はしない。
+			// mustならエラー。mayなら警告なし。
 			if (element instanceof IPropertyElement) {
 				String bindingType = ((IPropertyElement) element).getBindingType();
-				if (DICON_VAL_BINDING_TYPE_MUST.equals(bindingType) ||
-						DICON_VAL_BINDING_TYPE_MAY.equals(bindingType)) {
+				if (DICON_VAL_BINDING_TYPE_MAY.equals(bindingType)) {
+					return;
+				} else if (DICON_VAL_BINDING_TYPE_MUST.equals(bindingType)) {
+					MarkerSetting.createDiconMarker(
+							"dicon.validation.AutoSetterInjection.4", element,
+							((HasErrorRtti) value).getErrorMessage());
 					return;
 				}
 			}

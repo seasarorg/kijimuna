@@ -34,23 +34,22 @@ public class AutoBindingComponentProvider {
 	}
 	
 	public IRtti getAutoBindingComponentRtti(IRttiPropertyDescriptor propDesc) {
-		IRtti rtti = findByComponentName(propDesc);
-		return rtti != null ? rtti : findByPropertyType(propDesc);
+		IRtti inject = findByComponentName(propDesc);
+		if (inject == null) {
+			IRtti rtti = findByPropertyType(propDesc);
+			inject = rtti != null && !(rtti instanceof HasErrorRtti) ? rtti :
+					new ComponentNotFoundRtti(createComponentKey(propDesc.getName()));
+		}
+		return inject;
 	}
 	
 	private IRtti findByComponentName(IRttiPropertyDescriptor propDesc) {
-		IRtti inject = getComponentRttiFromKeySource(propDesc.getName());
-		if (!propDesc.getType().isInterface() &&
-				inject instanceof HasErrorRtti) {
-			return null;
-		}
-		return propDesc.getType().isAssignableFrom(inject) ? inject : null;
+		IRtti rtti = getComponentRttiFromKeySource(propDesc.getName());
+		return propDesc.getType().isAssignableFrom(rtti) ? rtti : null;
 	}
 	
 	private IRtti findByPropertyType(IRttiPropertyDescriptor propDesc) {
-		IRtti type = propDesc.getType();
-		return type.isInterface() ? getComponentRttiFromKeySource(type) :
-				new ComponentNotFoundRtti(createComponentKey(type));
+		return getComponentRttiFromKeySource(propDesc.getType());
 	}
 	
 	private IRtti getComponentRttiFromKeySource(Object key) {

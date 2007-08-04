@@ -228,7 +228,8 @@ public interface ConstCore {
 			"dicon.validation.ComponentValidation.1",
 			"dicon.validation.ManualConstructorInvoke.2",
 			"dicon.validation.ManualSetterInjection.1",
-			"dicon.validation.ManualMethodInvoke.1"
+			"dicon.validation.ManualMethodInvoke.1",
+			"dicon.validation.AutoSetterInjection.4"
 	};
 	public static final String[] MARKER_SET_DICON_FETAL = new String[] {
 			"dicon.validation.AspectAssemble.1",

@@ -199,6 +199,7 @@ public class ModelUtils implements ConstCore {
 	public static boolean isAutoBindingProperty(IPropertyElement prop) {
 		return prop != null &&
 				prop.getChildren().isEmpty() &&
+				StringUtils.noneValue(prop.getExpression()) &&
 				!DICON_VAL_BINDING_TYPE_NONE.equals(prop.getBindingType());
 	}
 

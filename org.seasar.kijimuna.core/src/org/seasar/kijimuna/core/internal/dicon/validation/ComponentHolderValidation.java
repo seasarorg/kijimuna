@@ -27,6 +27,7 @@ import org.seasar.kijimuna.core.dicon.model.IPropertyElement;
 import org.seasar.kijimuna.core.internal.dicon.model.MetaElement;
 import org.seasar.kijimuna.core.rtti.HasErrorRtti;
 import org.seasar.kijimuna.core.rtti.IRtti;
+import org.seasar.kijimuna.core.util.ModelUtils;
 import org.seasar.kijimuna.core.util.StringUtils;
 
 /**
@@ -37,13 +38,13 @@ public class ComponentHolderValidation implements IValidation, ConstCore {
 	public void validation(IDiconElement element) {
 		if (element instanceof IComponentHolderElement) {
 			IComponentHolderElement arg = (IComponentHolderElement) element;
-			if (arg instanceof IPropertyElement) {
-				IPropertyElement prop = (IPropertyElement) arg;
-				if (!DICON_VAL_BINDING_TYPE_MUST.equals(prop.getBindingType())) {
-					return;
-				}
+			if (arg instanceof IPropertyElement &&
+					ModelUtils.isAutoBindingProperty((IPropertyElement) arg)) {
+				return;
 			}
-			checkError(arg);
+			if (!isBindingTypeNone(arg)) {
+				checkError(arg);
+			}					
 			validComponentHolder(arg);
 		}
 	}
@@ -76,17 +77,17 @@ public class ComponentHolderValidation implements IValidation, ConstCore {
 			}
 		} else {
 			if (size == 0 && componentHolder instanceof MetaElement == false) {
-				if (!isAutoBindingProperty(componentHolder)) {
+				if (!isBindingTypeNone(componentHolder)) {
 					MarkerSetting.createDiconMarker(
 							"dicon.validation.ComponentHolderValidation.3", componentHolder);
 				}
 			}
 		}
 	}
-	
-	private boolean isAutoBindingProperty(IComponentHolderElement holder) {
+
+	private boolean isBindingTypeNone(IComponentHolderElement holder) {
 		return holder instanceof IPropertyElement &&
-				!(holder.getAdapter(IRtti.class) instanceof HasErrorRtti);
+				DICON_VAL_BINDING_TYPE_NONE.equals(((IPropertyElement) holder).getBindingType());
 	}
 
 }
