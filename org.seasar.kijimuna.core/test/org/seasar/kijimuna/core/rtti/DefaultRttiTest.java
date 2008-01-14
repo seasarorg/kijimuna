@@ -100,6 +100,10 @@ public class DefaultRttiTest extends TestCase {
 		);
 		project.createType(pack, "DefaultPerson.java",
 				"public class DefaultPerson extends Person {" + "}");
+		project.createType(pack,
+				"Sample.java", "public class Sample {" +
+				"  public String str = \"string\";"+
+				"}");
 		loader = new RttiLoader(project.getJavaProject().getElementName(), false);
 	}
 
@@ -296,7 +300,7 @@ public class DefaultRttiTest extends TestCase {
 		IRttiPropertyDescriptor prop = person.getProperty("list");
 		assertNotNull(prop);
 		assertEquals(prop.getType(), type);
-		assertFalse(prop.isReadable());
+		assertTrue(prop.isReadable());
 		assertTrue(prop.isWritable());
 	}
 
@@ -307,13 +311,23 @@ public class DefaultRttiTest extends TestCase {
 		assertNotNull(prop);
 		assertEquals(prop.getType(), type);
 		assertTrue(prop.isReadable());
-		assertFalse(prop.isWritable());
+		assertTrue(prop.isWritable());
 	}
 
 	public void testGetProperty3() throws Exception {
 		IRtti person = loader.loadRtti("test.Person");
 		IRtti type = loader.loadRtti("int");
 		IRttiPropertyDescriptor prop = person.getProperty("integer");
+		assertNotNull(prop);
+		assertEquals(prop.getType(), type);
+		assertTrue(prop.isWritable());
+		assertTrue(prop.isReadable());
+	}
+	
+	public void testGetProperty4() throws Exception {
+		IRtti person = loader.loadRtti("test.Sample");
+		IRtti type = loader.loadRtti("java.lang.String");
+		IRttiPropertyDescriptor prop = person.getProperty("str");
 		assertNotNull(prop);
 		assertEquals(prop.getType(), type);
 		assertTrue(prop.isWritable());

@@ -253,6 +253,17 @@ public class DefaultRtti implements IRtti {
 		}
 		return true;
 	}
+	
+	private boolean isInstanceField(IField field) {
+		try {
+			int flags = field.getFlags();
+			if (!Flags.isFinal(flags) && !Flags.isStatic(flags)) {
+				return true;
+			} 
+		} catch (JavaModelException e) {
+		}
+		return false;
+	}
 
 	private Map getInvokableMap(Pattern pattern, boolean isConstructor) {
 		Map descriptors = new HashMap();
@@ -388,6 +399,18 @@ public class DefaultRtti implements IRtti {
 		return new DefaultRttiPropertyDescriptor(this, propertyName, propertyRtti,
 				isReader);
 	}
+	
+	private DefaultRttiPropertyDescriptor getPropertyDescriptor(IField field, Pattern pattern) {
+		String propertyName = field.getElementName();
+		String propertyType=null;
+		try {
+			String signature = field.getTypeSignature();
+			propertyType = Signature.toString(signature);
+		} catch (JavaModelException e) {
+		}
+		IRtti propertyRtti = loader.loadRtti(propertyType);
+		return new DefaultRttiPropertyDescriptor(this, propertyName, propertyRtti, true);
+	}
 
 	private void margePropertyDescriptor(Map map, DefaultRttiPropertyDescriptor descriptor) {
 		String propertyName = descriptor.getName();
@@ -424,6 +447,19 @@ public class DefaultRtti implements IRtti {
 						}
 					}
 				}
+				
+				IField[] fields = getType().getFields();
+				for (int i = 0; i < fields.length; i++) {
+					if (isPublicMember(fields[i]) && isInstanceField(fields[i])) {
+						DefaultRttiPropertyDescriptor descriptor = getPropertyDescriptor(
+								fields[i], pattern);
+						if (descriptor != null) {
+							descriptor.doWritable(descriptor.getType());
+							map.put(descriptor.getName(), descriptor);
+						}
+					}
+				}
+				
 				IRtti parent = getSuperClass();
 				if (parent != null) {
 					IRttiPropertyDescriptor[] props = parent.getProperties(pattern);
