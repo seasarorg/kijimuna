@@ -17,6 +17,7 @@ package org.seasar.kijimuna.core.search;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.jdt.core.Flags;
@@ -32,9 +33,7 @@ import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.core.search.IJavaSearchConstants;
 import org.eclipse.jdt.core.search.SearchEngine;
 import org.eclipse.jdt.core.search.SearchPattern;
-import org.eclipse.jdt.internal.core.search.JavaSearchScope;
-import org.eclipse.jdt.internal.corext.util.TypeInfo;
-import org.eclipse.jdt.internal.corext.util.TypeInfoRequestor;
+import org.eclipse.jdt.core.search.TypeNameRequestor;
 
 import org.seasar.kijimuna.core.KijimunaCore;
 import org.seasar.kijimuna.core.internal.search.DefaultPackageRequestor;
@@ -115,23 +114,43 @@ public class JavaPackageSearcher {
 
 			// direct search types
 			if (lastDot == -1 && prefix.length() > 0) {
-				char[] prefixCharArray = prefix.toCharArray();
-				ArrayList res = new ArrayList();
 				IPackageFragmentRoot[] pkgs = javaProject.getAllPackageFragmentRoots();
-				JavaSearchScope scope = (JavaSearchScope) SearchEngine
-						.createJavaSearchScope(pkgs);
-				// TODO: binary not compatible
-				new SearchEngine().searchAllTypeNames(null, prefixCharArray,
-						SearchPattern.R_PREFIX_MATCH, IJavaSearchConstants.TYPE, scope,
-						new TypeInfoRequestor(res),
-						IJavaSearchConstants.FORCE_IMMEDIATE_SEARCH, null);
-				for (int i = 0; i < res.size(); i++) {
-					TypeInfo typeInfo = (TypeInfo) res.get(i);
-					IType type = typeInfo.resolveType(scope);
-					int flag = type.getFlags();
-					if (Flags.isPublic(flag)) {
-						requestor.acceptType(type);
+				char[][] typeNames = {prefix.toCharArray()};
+				
+				final ArrayList res = new ArrayList();
+				TypeNameRequestor typeNameRequestor = new TypeNameRequestor(){
+					public void acceptType(
+							int modifiers, 
+							char[] packageName,
+							char[] simpleTypeName, 
+							char[][] enclosingTypeNames,
+							String path) {
+						
+						if (enclosingTypeNames.length == 0 && Flags.isPublic(modifiers)) {
+							StringBuffer fqcn = new StringBuffer();
+							if(packageName.length > 0){
+								fqcn.append(packageName).append(".");
+							}
+							fqcn.append(simpleTypeName);
+							res.add(fqcn.toString());
+						}
 					}
+				};
+				//TODO:3.2との互換性をとるため,deprecatedメソッドを使用した。
+				new SearchEngine().searchAllTypeNames(
+						null, 
+						prefix.toCharArray(),
+						SearchPattern.R_PREFIX_MATCH,
+						IJavaSearchConstants.CLASS,
+						SearchEngine.createJavaSearchScope(pkgs),
+						typeNameRequestor,
+						IJavaSearchConstants.WAIT_UNTIL_READY_TO_SEARCH,
+						null);
+				
+				for (Iterator iterator = res.iterator(); iterator.hasNext();) {
+					String fqcn = (String) iterator.next();
+					IType type = javaProject.findType(fqcn);
+					requestor.acceptType(type);
 				}
 			}
 		} catch (JavaModelException e) {

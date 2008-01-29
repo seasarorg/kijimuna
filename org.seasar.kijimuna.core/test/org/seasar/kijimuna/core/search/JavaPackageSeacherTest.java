@@ -69,4 +69,14 @@ public class JavaPackageSeacherTest extends TestCase implements ConstCore {
 		assertEquals(type.getFullyQualifiedName(), "com.wutka.dtd.DTDElement");
 	}
 
+	public void testSearchPackagesAndTypes3() throws Exception {
+		JavaPackageSearcher searcher = new JavaPackageSearcher(project);
+		List list = new ArrayList();
+		IPackageRequestor requestor = searcher.createDefaultRequestor(list);
+		searcher.searchPackagesAndTypes("DTDEl", requestor);
+		assertEquals(1, list.size());
+		IType type = (IType) list.get(0);
+		assertEquals(type.getFullyQualifiedName(), "com.wutka.dtd.DTDElement");
+	}
+
 }
