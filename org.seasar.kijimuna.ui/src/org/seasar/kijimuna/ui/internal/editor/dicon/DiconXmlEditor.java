@@ -16,13 +16,13 @@
 package org.seasar.kijimuna.ui.internal.editor.dicon;
 
 import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.ui.editors.text.TextEditor;
 import org.eclipse.ui.texteditor.ContentAssistAction;
 import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
 
-import org.seasar.kijimuna.core.KijimunaCore;
-import org.seasar.kijimuna.core.preference.IPreferenceChangeListener;
-import org.seasar.kijimuna.core.preference.IPreferences.PreferenceChangeEvent;
+import org.seasar.kijimuna.core.util.PreferencesUtil;
 import org.seasar.kijimuna.ui.ConstUI;
 import org.seasar.kijimuna.ui.KijimunaUI;
 import org.seasar.kijimuna.ui.editor.configuration.ColorManager;
@@ -34,7 +34,7 @@ import org.seasar.kijimuna.ui.internal.editor.dicon.configuration.DiconConfigura
  * @author Toshitaka Agata (Nulab, Inc.)
  */
 public class DiconXmlEditor extends TextEditor implements
-		IPreferenceChangeListener, ConstUI {
+		IPropertyChangeListener, ConstUI {
 
 	private ColorManager colorManager;
 
@@ -43,29 +43,27 @@ public class DiconXmlEditor extends TextEditor implements
 		colorManager = new ColorManager();
 		setSourceViewerConfiguration(new DiconConfiguration(this, colorManager));
 		setDocumentProvider(new XmlDocumentProvider());
-		KijimunaCore.getPreferences().addPreferenceChangeListener(this);
+		PreferencesUtil.getPreferenceStoreOfWorkspace().addPropertyChangeListener(this);
 	}
 
 	public void dispose() {
-		KijimunaCore.getPreferences().removePreferenceChangeListener(this);
+		PreferencesUtil.getPreferenceStoreOfWorkspace().removePropertyChangeListener(this);
 		colorManager.dispose();
 		super.dispose();
 	}
 	
-	public void preferenceChanged(PreferenceChangeEvent event) {
-		DiconConfiguration config = (DiconConfiguration)
-				getSourceViewerConfiguration();
-		config.updatePreferences();
-		getSourceViewer().invalidateTextPresentation();
-	}
-	
 	protected void createActions() {
 		super.createActions();
-		IAction action = new ContentAssistAction(KijimunaUI.getResourceBundle(),
-				ACTION_CONTENTASSIST_PROPOSAL, this);
-		action
-				.setActionDefinitionId(ITextEditorActionDefinitionIds.CONTENT_ASSIST_PROPOSALS);
+		IAction action = new ContentAssistAction(KijimunaUI.getResourceBundle(),ACTION_CONTENTASSIST_PROPOSAL, this);
+		action.setActionDefinitionId(ITextEditorActionDefinitionIds.CONTENT_ASSIST_PROPOSALS);
 		setAction(ACTION_CONTENTASSIST_PROPOSAL, action);
 	}
 
+	public void propertyChange(PropertyChangeEvent event) {
+		DiconConfiguration config = (DiconConfiguration) getSourceViewerConfiguration();
+		if(config != null){
+			config.updatePreferences();
+			getSourceViewer().invalidateTextPresentation();
+		}
+	}
 }

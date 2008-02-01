@@ -15,6 +15,7 @@
  */
 package org.seasar.kijimuna.ui.editor.scanner.xml;
 
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.DataFormatException;
 import org.eclipse.jface.resource.StringConverter;
 import org.eclipse.jface.text.TextAttribute;
@@ -23,7 +24,6 @@ import org.eclipse.jface.text.rules.RuleBasedScanner;
 import org.eclipse.jface.text.rules.Token;
 import org.eclipse.swt.graphics.RGB;
 
-import org.seasar.kijimuna.core.preference.IPreferences;
 import org.seasar.kijimuna.core.util.PreferencesUtil;
 import org.seasar.kijimuna.ui.editor.configuration.ColorManager;
 import org.seasar.kijimuna.ui.editor.configuration.xml.XmlConsts;
@@ -50,9 +50,9 @@ public abstract class AbstractColorScanner extends RuleBasedScanner
 	}
 	
 	protected RGB getRGB(String prefKey) {
-		IPreferences pref = PreferencesUtil.getPreferencesExactly(null);
+		IPreferenceStore pref = PreferencesUtil.getPreferenceStoreOfWorkspace();
 		try {
-			return StringConverter.asRGB(pref.get(prefKey));
+			return StringConverter.asRGB(pref.getString(prefKey));
 		} catch (DataFormatException e) {
 			return COLOR_DEFAULT;
 		}

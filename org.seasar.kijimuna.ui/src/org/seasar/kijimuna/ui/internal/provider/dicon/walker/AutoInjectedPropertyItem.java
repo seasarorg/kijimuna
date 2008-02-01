@@ -16,9 +16,9 @@
 package org.seasar.kijimuna.ui.internal.provider.dicon.walker;
 
 import org.eclipse.core.resources.IProject;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.ui.views.properties.IPropertySource;
 
-import org.seasar.kijimuna.core.dicon.MarkerSetting;
 import org.seasar.kijimuna.core.dicon.info.IComponentNotFound;
 import org.seasar.kijimuna.core.dicon.info.ITooManyRegisted;
 import org.seasar.kijimuna.core.dicon.model.IComponentElement;
@@ -26,6 +26,7 @@ import org.seasar.kijimuna.core.dicon.model.IDiconElement;
 import org.seasar.kijimuna.core.dicon.model.IPropertyElement;
 import org.seasar.kijimuna.core.rtti.IRtti;
 import org.seasar.kijimuna.core.rtti.IRttiPropertyDescriptor;
+import org.seasar.kijimuna.core.util.PreferencesUtil;
 import org.seasar.kijimuna.ui.ConstUI;
 import org.seasar.kijimuna.ui.KijimunaUI;
 import org.seasar.kijimuna.ui.internal.provider.dicon.IInjectedComponent;
@@ -62,23 +63,21 @@ public class AutoInjectedPropertyItem extends AbstractInternalContainer implemen
 	}
 
 	public int getMarkerSeverity() {
+		IProject project = getElement().getProject();
+		IPreferenceStore store = PreferencesUtil.getPreferenceStore(project);
+		
 		IRtti arg = propValue;
 		if (arg instanceof ITooManyRegisted) {
-			IProject project = getElement().getProject();
-			return MarkerSetting.getDiconMarkerPreference(project,
-					MARKER_CATEGORY_DICON_FETAL, false);
+			return store.getInt(MARKER_SEVERITY_DICON_FETAL);
 		} else if (arg instanceof IComponentNotFound) {
-			IProject project = getElement().getProject();
 			if (prop != null) {
 				if (DICON_VAL_BINDING_TYPE_MAY.equals(prop.getBindingType())) {
 					return MARKER_SEVERITY_NONE;
 				} else if (DICON_VAL_BINDING_TYPE_MUST.equals(prop.getBindingType())) {
-					return MarkerSetting.getDiconMarkerPreference(project,
-							MARKER_CATEGORY_DICON_FETAL, false);
+					return store.getInt(MARKER_SEVERITY_DICON_FETAL);
 				}
 			}
-			return MarkerSetting.getDiconMarkerPreference(project,
-					MARKER_CATEGORY_NULL_INJECTION, false);
+			return store.getInt(MARKER_SEVERITY_NULL_INJECTION);
 		} else {
 			return MARKER_SEVERITY_NONE;
 		}

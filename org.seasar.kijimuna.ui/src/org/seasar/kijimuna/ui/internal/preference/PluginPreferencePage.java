@@ -19,6 +19,7 @@ import java.lang.reflect.InvocationTargetException;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
@@ -32,6 +33,7 @@ import org.eclipse.ui.PlatformUI;
 
 import org.seasar.kijimuna.core.ConstCore;
 import org.seasar.kijimuna.core.KijimunaCore;
+import org.seasar.kijimuna.core.util.PreferencesUtil;
 import org.seasar.kijimuna.ui.internal.preference.design.DesignPane;
 import org.seasar.kijimuna.ui.internal.preference.design.DiconEditorColoringDesign;
 import org.seasar.kijimuna.ui.internal.preference.design.ErrorMarkerDesign;
@@ -47,20 +49,24 @@ public class PluginPreferencePage extends PreferencePage implements
 	private DiconEditorColoringDesign coloringDesign;
 
 	public void init(IWorkbench workbench) {
+		IPreferenceStore store = PreferencesUtil.getPreferenceStoreOfWorkspace();
+		setPreferenceStore(store);
 	}
 	
 	protected Control createContents(Composite parent) {
+		IPreferenceStore store = getPreferenceStore();
+
 		DesignPane pane = new DesignPane(parent, SWT.NULL);
 		TabFolder folder = pane.getTabFolder();
 		
 		// error marker tab
-		markerDesign = new ErrorMarkerDesign(folder, SWT.NULL);
+		markerDesign = new ErrorMarkerDesign(folder, SWT.NULL, store);
 		TabItem item = new TabItem(folder, SWT.NULL);
 		item.setText(Messages.getString("ErrorMarkerDesign.1"));
 		item.setControl(markerDesign);
 		
 		// editor coloring tab
-		coloringDesign = new DiconEditorColoringDesign(folder, SWT.NULL);
+		coloringDesign = new DiconEditorColoringDesign(folder, SWT.NULL, store);
 		item = new TabItem(folder, SWT.NULL);
 		item.setText(Messages.getString("DiconEditorColoringDesign.1"));
 		item.setControl(coloringDesign);
@@ -82,7 +88,9 @@ public class PluginPreferencePage extends PreferencePage implements
 				w.run(true, true, runnable);
 			}
 		} catch (InvocationTargetException e) {
+			KijimunaCore.reportException(e);
 		} catch (InterruptedException e) {
+			KijimunaCore.reportException(e);
 		}
 		return true;
 	}

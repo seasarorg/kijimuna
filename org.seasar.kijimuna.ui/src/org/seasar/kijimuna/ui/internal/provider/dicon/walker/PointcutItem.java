@@ -15,13 +15,13 @@
  */
 package org.seasar.kijimuna.ui.internal.provider.dicon.walker;
 
-import org.eclipse.core.resources.IProject;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.ui.views.properties.IPropertySource;
 
-import org.seasar.kijimuna.core.dicon.MarkerSetting;
 import org.seasar.kijimuna.core.dicon.info.IPointcut;
 import org.seasar.kijimuna.core.rtti.IRtti;
 import org.seasar.kijimuna.core.rtti.IRttiMethodDesctiptor;
+import org.seasar.kijimuna.core.util.PreferencesUtil;
 import org.seasar.kijimuna.ui.ConstUI;
 import org.seasar.kijimuna.ui.internal.provider.dicon.property.PointcutProperty;
 
@@ -43,9 +43,8 @@ public class PointcutItem extends AbstractInternalContainer implements ConstUI {
 
 	public int getMarkerSeverity() {
 		if (pointcut.hasError()) {
-			IProject project = getElement().getProject();
-			return MarkerSetting.getDiconMarkerPreference(project,
-					MARKER_CATEGORY_DICON_PROBLEM, false);
+			IPreferenceStore pref = PreferencesUtil.getPreferenceStore(getElement().getProject());
+			return pref.getInt(MARKER_SEVERITY_DICON_PROBLEM);
 		}
 		return MARKER_SEVERITY_NONE;
 	}

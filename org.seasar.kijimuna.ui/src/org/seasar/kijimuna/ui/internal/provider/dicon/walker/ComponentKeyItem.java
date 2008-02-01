@@ -17,11 +17,12 @@ package org.seasar.kijimuna.ui.internal.provider.dicon.walker;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.jdt.core.IJavaElement;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.ui.views.properties.IPropertySource;
 
-import org.seasar.kijimuna.core.dicon.MarkerSetting;
 import org.seasar.kijimuna.core.dicon.info.IComponentKey;
 import org.seasar.kijimuna.core.rtti.IRtti;
+import org.seasar.kijimuna.core.util.PreferencesUtil;
 import org.seasar.kijimuna.ui.ConstUI;
 import org.seasar.kijimuna.ui.internal.provider.dicon.IHasJavaElement;
 import org.seasar.kijimuna.ui.internal.provider.dicon.property.ComponentKeyProperty;
@@ -44,15 +45,14 @@ public class ComponentKeyItem extends AbstractInternalContainer implements
 	}
 
 	public int getMarkerSeverity() {
+		IProject project = getElement().getProject();
+		IPreferenceStore store = PreferencesUtil.getPreferenceStore(project);
+		
 		int tooMany = key.getTooMany();
 		if (tooMany == IComponentKey.TOO_MANY_PROBLEM) {
-			IProject project = getElement().getProject();
-			return MarkerSetting.getDiconMarkerPreference(project,
-					MARKER_CATEGORY_DICON_PROBLEM, false);
+			store.getInt(MARKER_SEVERITY_DICON_PROBLEM);
 		} else if (tooMany == IComponentKey.TOO_MANY_FETAL) {
-			IProject project = getElement().getProject();
-			return MarkerSetting.getDiconMarkerPreference(project,
-					MARKER_CATEGORY_DICON_FETAL, false);
+			store.getInt(MARKER_SEVERITY_DICON_FETAL);
 		}
 		return super.getMarkerSeverity();
 	}

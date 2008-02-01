@@ -21,24 +21,26 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.TabFolder;
-import org.eclipse.swt.widgets.TabItem;
+import org.eclipse.swt.widgets.Group;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.PropertyPage;
 
 import org.seasar.kijimuna.core.ConstCore;
 import org.seasar.kijimuna.core.KijimunaCore;
+import org.seasar.kijimuna.core.util.PreferencesUtil;
 import org.seasar.kijimuna.core.util.ProjectUtils;
 import org.seasar.kijimuna.ui.KijimunaUI;
-import org.seasar.kijimuna.ui.internal.preference.design.DesignPane;
 import org.seasar.kijimuna.ui.internal.preference.design.ErrorMarkerDesign;
 import org.seasar.kijimuna.ui.internal.preference.design.Messages;
 
@@ -48,44 +50,100 @@ import org.seasar.kijimuna.ui.internal.preference.design.Messages;
 public class ProjectPreferencePage extends PropertyPage implements ConstCore {
 
 	private Button natureCheck;
+	private Button enableProjectCustomSetting;
 	private ErrorMarkerDesign markerDesign;
+	private Composite base;
 	
-	private IProject getProject() {
-		return (IProject) getElement();
-	}
-
 	protected Control createContents(Composite parent) {
-		DesignPane pane = new DesignPane(parent, SWT.NULL);
+		IPreferenceStore store = PreferencesUtil.getPreferenceStoreOfProject(getProject());
+		setPreferenceStore(store);
+
+		GridLayout layout = new GridLayout(1, true);
+		layout.marginHeight = 0;
+		layout.marginWidth = 0;
+		parent.setLayout(layout);
 		
 		// nature checkbox
-		GridData gd = new GridData();
-		gd.horizontalAlignment = GridData.FILL;
-		gd.grabExcessHorizontalSpace = true;
-		natureCheck = new Button(pane, SWT.CHECK | SWT.LEFT);
+		natureCheck = new Button(parent, SWT.CHECK | SWT.LEFT);
 		natureCheck.setText(Messages.getString("ProjectPreferencePage.1")); //$NON-NLS-1$
-		natureCheck.setLayoutData(gd);
 		natureCheck.setFont(parent.getFont());
 		natureCheck.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				markerDesign.setEnabled(natureCheck.getSelection());
+				handleNatureCheck();
+			}
+		});
+
+		Label separator = new Label(parent, SWT.SEPARATOR | SWT.HORIZONTAL);
+		GridData separatorGd = new GridData();
+		separatorGd.horizontalAlignment = GridData.FILL;
+		separator.setLayoutData(separatorGd);
+		
+		base = new Composite(parent, SWT.NONE){
+			public void setEnabled(boolean enabled) {
+				enableProjectCustomSetting.setEnabled(enabled);
+				if(enabled){
+					markerDesign.setEnabled(enableProjectCustomSetting.getSelection());
+				}else{
+					markerDesign.setEnabled(false);
+				}
+			}
+		};
+		base.setLayout(layout);
+		GridData pgd = new GridData();
+		pgd.horizontalAlignment = GridData.FILL;
+		pgd.verticalAlignment = GridData.FILL;
+		pgd.grabExcessVerticalSpace = true;
+		pgd.grabExcessHorizontalSpace = true;
+		base.setLayoutData(pgd);
+		
+		enableProjectCustomSetting = new Button(base, SWT.CHECK | SWT.LEFT);
+		enableProjectCustomSetting.setText("プロジェクト固有の設定を有効にする");
+		enableProjectCustomSetting.addSelectionListener(new SelectionAdapter(){
+			public void widgetSelected(SelectionEvent e) {
+				handleEnableProjectCustomSetting();
 			}
 		});
 		
-		// error marker tab
-		TabFolder folder = pane.getTabFolder();
-		markerDesign = new ErrorMarkerDesign(folder, SWT.NULL, getProject());
-		TabItem item = new TabItem(folder, SWT.NULL);
-		item.setText(Messages.getString("ErrorMarkerDesign.1"));
-		item.setControl(markerDesign);
+		Group group = new Group(base, SWT.SHADOW_NONE);
+		group.setLayout(new GridLayout(1, true));
+		group.setText("エラーマーカー");
+		GridData gd = new GridData();
+		gd.horizontalAlignment = GridData.FILL;
+		gd.grabExcessHorizontalSpace = true;
+		group.setLayoutData(gd);
 		
+		// error marker
+		markerDesign = new ErrorMarkerDesign(group, SWT.NULL, getPreferenceStore());
+		markerDesign.setLayoutData(gd);
+		
+		init();
+		
+		return parent;
+	}
+
+	private void init() {
 		try {
 			boolean hasNature = getProject().hasNature(ID_NATURE_DICON);
 			natureCheck.setSelection(hasNature);
-			markerDesign.setEnabled(hasNature);
+			handleNatureCheck();
 		} catch (CoreException e) {
 			KijimunaUI.reportException(e);
 		}
-		return pane;
+		IPreferenceStore store = getPreferenceStore();
+		boolean projectCustom = store.getBoolean(MARKER_SEVERITY_ENABLE_PROJECT_CUSTOM);
+		enableProjectCustomSetting.setSelection(projectCustom);
+		handleEnableProjectCustomSetting();
+	}
+	
+	private void handleNatureCheck(){
+		base.setEnabled(natureCheck.getSelection());
+	}
+	private void handleEnableProjectCustomSetting() {
+		markerDesign.setEnabled(enableProjectCustomSetting.getSelection());
+	}
+	
+	private IProject getProject() {
+		return (IProject) getElement();
 	}
 	
 	public boolean performOk() {
@@ -105,11 +163,16 @@ public class ProjectPreferencePage extends PropertyPage implements ConstCore {
 				if (!project.hasNature(ID_NATURE_DICON)) {
 					ProjectUtils.addNature(project, ID_NATURE_DICON);
 				}
-				markerDesign.store();
 			} else {
-				markerDesign.store();
 				ProjectUtils.removeNature(project, ID_NATURE_DICON);
 			}
+			IPreferenceStore store = getPreferenceStore();
+			
+			boolean enablePrjCustom = enableProjectCustomSetting.getSelection();
+			store.setValue(MARKER_SEVERITY_ENABLE_PROJECT_CUSTOM, enablePrjCustom);
+			
+			markerDesign.store();
+			
 		} catch (CoreException e) {
 			KijimunaUI.reportException(e);
 		}
@@ -118,6 +181,10 @@ public class ProjectPreferencePage extends PropertyPage implements ConstCore {
 	protected void performDefaults() {
 		if (natureCheck.getSelection()) {
 			markerDesign.loadDefault();
+
+			boolean b = getPreferenceStore().getDefaultBoolean(MARKER_SEVERITY_ENABLE_PROJECT_CUSTOM);
+			enableProjectCustomSetting.setSelection(b);
+			handleEnableProjectCustomSetting();
 		}
 	}
 	
@@ -135,7 +202,9 @@ public class ProjectPreferencePage extends PropertyPage implements ConstCore {
 				w.run(true, true, runnable);
 			}
 		} catch (InvocationTargetException e) {
+			KijimunaCore.reportException(e);
 		} catch (InterruptedException e) {
+			KijimunaCore.reportException(e);
 		}
 	}
 

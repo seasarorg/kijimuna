@@ -19,13 +19,14 @@ import java.util.regex.Pattern;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.jdt.core.IJavaElement;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.ui.views.properties.IPropertySource;
 
-import org.seasar.kijimuna.core.dicon.MarkerSetting;
 import org.seasar.kijimuna.core.rtti.HasErrorRtti;
 import org.seasar.kijimuna.core.rtti.IRtti;
 import org.seasar.kijimuna.core.rtti.IRttiMethodDesctiptor;
 import org.seasar.kijimuna.core.util.ModelUtils;
+import org.seasar.kijimuna.core.util.PreferencesUtil;
 import org.seasar.kijimuna.ui.ConstUI;
 import org.seasar.kijimuna.ui.internal.provider.dicon.IHasJavaElement;
 import org.seasar.kijimuna.ui.internal.provider.dicon.IInternalContainer;
@@ -75,8 +76,8 @@ public class InterfaceItem extends AbstractInternalContainer implements IHasJava
 	public int getMarkerSeverity() {
 		if (implemeniting instanceof HasErrorRtti) {
 			IProject project = getElement().getProject();
-			return MarkerSetting.getDiconMarkerPreference(project,
-					MARKER_CATEGORY_JAVA_FETAL, false);
+			IPreferenceStore pref = PreferencesUtil.getPreferenceStore(project);
+			return pref.getInt(MARKER_SEVERITY_JAVA_FETAL);
 		}
 		return MARKER_SEVERITY_NONE;
 	}

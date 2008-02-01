@@ -17,12 +17,8 @@ package org.seasar.kijimuna.ui.util;
 
 import java.net.URL;
 
-import org.eclipse.core.resources.IProject;
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Combo;
 
-import org.seasar.kijimuna.core.dicon.MarkerSetting;
 import org.seasar.kijimuna.ui.ConstUI;
 import org.seasar.kijimuna.ui.KijimunaUI;
 
@@ -41,26 +37,4 @@ public class WidgetUtils implements ConstUI {
 		}
 		return descriptor;
 	}
-
-	public static void setDiconMarkerSettingCombo(IProject project, Combo combo,
-			int category, boolean isDefault) {
-		combo.setData(new Integer(category));
-		if (combo.getItemCount() == 0) {
-			combo.add("Error");
-			combo.add("Warning");
-			combo.add("Info");
-			combo.add("Ignore");
-		}
-		int severity = MarkerSetting.getDiconMarkerPreference(project, category,
-				isDefault);
-		combo.select(severity);
-	}
-
-	public static void setDiconValidationSetting(IProject project, Button button,
-			boolean isDefault) {
-		boolean isValidation = MarkerSetting.getDiconValidationPreference(project,
-				isDefault);
-		button.setSelection(isValidation);
-	}
-
 }

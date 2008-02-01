@@ -38,6 +38,7 @@ public class DesignPane extends Composite {
 		if (folder == null) {
 			GridData gd = new GridData();
 			gd.horizontalAlignment = GridData.FILL;
+			gd.grabExcessHorizontalSpace = true;
 			folder = new TabFolder(this, SWT.NULL);
 			folder.setLayoutData(gd);
 			folder.setFont(getParent().getFont());

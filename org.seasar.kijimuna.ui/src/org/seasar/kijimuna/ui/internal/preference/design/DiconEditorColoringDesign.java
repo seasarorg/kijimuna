@@ -16,53 +16,42 @@
 package org.seasar.kijimuna.ui.internal.preference.design;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
-import org.eclipse.core.resources.IProject;
 import org.eclipse.jface.preference.ColorFieldEditor;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.DataFormatException;
 import org.eclipse.jface.resource.StringConverter;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Group;
 
-import org.seasar.kijimuna.core.preference.IPreferences;
-import org.seasar.kijimuna.core.util.PreferencesUtil;
+import org.seasar.kijimuna.core.KijimunaCore;
 import org.seasar.kijimuna.ui.editor.configuration.xml.XmlConsts;
 
-public class DiconEditorColoringDesign extends Composite implements
-		XmlConsts, IStorableDesigin {
+public class DiconEditorColoringDesign extends Composite implements XmlConsts {
 
 	private List colorFieldEditors = new ArrayList();
-	private IProject project;
 	
-	public DiconEditorColoringDesign(Composite parent, int style) {
+	private IPreferenceStore store;
+
+	private Group group;
+	
+	public DiconEditorColoringDesign(Composite parent, int style, IPreferenceStore store) {
 		super(parent, style);
+		this.store = store;
 		buildDesign();
-	}
-	
-	public void store() {
-		for (int i = 0; i < colorFieldEditors.size(); i++) {
-			ColorFieldEditor c = (ColorFieldEditor) colorFieldEditors.get(i);
-			putRGB(c.getPreferenceName(), c.getColorSelector().getColorValue());
-		}
-	}
-	
-	public void loadDefault() {
-		for (int i = 0; i < colorFieldEditors.size(); i++) {
-			ColorFieldEditor c = (ColorFieldEditor) colorFieldEditors.get(i);
-			setColor(c, c.getPreferenceName(), true);
-		}
-	}
-	
-	public void setProject(IProject project) {
-		this.project = project;
 	}
 	
 	public void buildDesign() {
 		setLayout(new GridLayout(2, false));
 		setFont(getParent().getFont());
 		
+		group = new Group(this, SWT.SHADOW_ETCHED_IN);
+				
 		addColorFieldEditor("DiconEditorColoringDesign.2", PREF_COLOR_COMMENT);
 		addColorFieldEditor("DiconEditorColoringDesign.3", PREF_COLOR_XML_DECL);
 		addColorFieldEditor("DiconEditorColoringDesign.4", PREF_COLOR_DOC_DECL);
@@ -72,36 +61,40 @@ public class DiconEditorColoringDesign extends Composite implements
 	}
 	
 	private ColorFieldEditor addColorFieldEditor(String labelKey, String prefKey) {
-		ColorFieldEditor c = new ColorFieldEditor(prefKey, Messages.getString(
-				labelKey), this);
-		setColor(c, prefKey, false);
+		ColorFieldEditor c = new ColorFieldEditor(prefKey, Messages.getString(labelKey), group);
+		setColor(c, store.getString(prefKey));
 		colorFieldEditors.add(c);
 		return c;
 	}
 	
-	private void setColor(ColorFieldEditor c, String prefKey, boolean isDefault) {
-		c.getColorSelector().setColorValue(getRGB(prefKey, isDefault));
-	}
-	
-	private RGB getRGB(String prefKey, boolean isDefault) {
-		IPreferences pref = PreferencesUtil.getPreferencesExactly(getProject());
+	private void setColor(ColorFieldEditor editor, String rgbStr) {
+		RGB rgb;
 		try {
-			return StringConverter.asRGB(isDefault ? pref.getDefault(prefKey) :
-				pref.get(prefKey));
+			rgb = StringConverter.asRGB(rgbStr);
 		} catch (DataFormatException e) {
-			return COLOR_DEFAULT;
+			KijimunaCore.reportException(e);
+			rgb = COLOR_DEFAULT;
+		}
+		editor.getColorSelector().setColorValue(rgb);
+		
+	}
+	
+	public void store() {
+		for (Iterator iterator = colorFieldEditors.iterator(); iterator.hasNext();) {
+			ColorFieldEditor editor = (ColorFieldEditor) iterator.next();
+			String prefKey = editor.getPreferenceName();
+			RGB rgb = editor.getColorSelector().getColorValue();
+			String color = StringConverter.asString(rgb);
+			store.putValue(prefKey, color);
 		}
 	}
 	
-	private void putRGB(String prefKey, RGB rgb) {
-		IPreferences pref = PreferencesUtil.getPreferences(getProject());
-		if (pref != null) {
-			pref.put(prefKey, StringConverter.asString(rgb));
+	public void loadDefault() {
+		for (Iterator iterator = colorFieldEditors.iterator(); iterator.hasNext();) {
+			ColorFieldEditor editor = (ColorFieldEditor) iterator.next();
+			String prefName = editor.getPreferenceName();
+			setColor(editor, store.getDefaultString(prefName));
 		}
-	}
-	
-	private IProject getProject() {
-		return project;
 	}
 
 }

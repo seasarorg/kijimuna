@@ -16,11 +16,12 @@
 package org.seasar.kijimuna.ui.internal.provider.dicon.walker;
 
 import org.eclipse.jdt.core.IJavaElement;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.ui.views.properties.IPropertySource;
 
-import org.seasar.kijimuna.core.dicon.MarkerSetting;
 import org.seasar.kijimuna.core.rtti.IRttiMethodDesctiptor;
 import org.seasar.kijimuna.core.util.ModelUtils;
+import org.seasar.kijimuna.core.util.PreferencesUtil;
 import org.seasar.kijimuna.ui.ConstUI;
 import org.seasar.kijimuna.ui.internal.provider.dicon.IHasJavaElement;
 import org.seasar.kijimuna.ui.internal.provider.dicon.IInternalContainer;
@@ -49,8 +50,8 @@ public class MethodItem extends AbstractInternalContainer implements IHasJavaEle
 	public int getMarkerSeverity() {
 		if (needsSeverity) {
 			if (method.isFinal() || method.isStatic()) {
-				return MarkerSetting.getDiconMarkerPreference(getElement().getProject(),
-						MARKER_CATEGORY_DICON_PROBLEM, false);
+				IPreferenceStore pref = PreferencesUtil.getPreferenceStore(getElement().getProject());
+				return pref.getInt(MARKER_SEVERITY_DICON_PROBLEM);
 			}
 		}
 		return super.getMarkerSeverity();

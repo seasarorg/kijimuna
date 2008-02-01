@@ -16,12 +16,14 @@
 package org.seasar.kijimuna.ui.internal.preference.design;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
-import org.eclipse.core.resources.IProject;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Combo;
@@ -30,54 +32,27 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 
 import org.seasar.kijimuna.core.ConstCore;
-import org.seasar.kijimuna.core.dicon.MarkerSetting;
-import org.seasar.kijimuna.ui.util.WidgetUtils;
 
-public class ErrorMarkerDesign extends Composite implements ConstCore,
-		IStorableDesigin {
+/**
+ * plugin/projectの設定ページ->エラーマーカー設定のUI 
+ */
+public class ErrorMarkerDesign extends Composite implements ConstCore {
 
-	private IProject project;
-	private Button validationCheck;
-	private List markerLabels = new ArrayList();
-	private List markerCombos = new ArrayList();
-	private List validationLabels = new ArrayList();
-	private List validationCombos = new ArrayList();
+	private Button diconValidationCheck;
+	private List xmlValidationLabels = new ArrayList();
+	private List xmlValidationCombos = new ArrayList();
+	private List diconValidationLabels = new ArrayList();
+	private List diconValidationCombos = new ArrayList();
 	
-	public ErrorMarkerDesign(Composite parent, int style) {
-		this(parent, style, null);
-	}
+	private IPreferenceStore store;
 	
-	public ErrorMarkerDesign(Composite parent, int style, IProject project) {
+	public ErrorMarkerDesign(Composite parent, int style, IPreferenceStore store) {
 		super(parent, style);
-		setProject(project);
+		this.store = store;
 		buildDesign();
 	}
 	
-	public void store() {
-		MarkerSetting.setDiconValidationPreference(getProject(),
-				validationCheck.getSelection());
-		List combos = addList(markerCombos, validationCombos);
-		for (int i = 0; i < combos.size(); i++) {
-			Combo combo = (Combo) combos.get(i);
-			MarkerSetting.setDiconMarkerPreference(getProject(),
-					((Integer) combo.getData()).intValue(),
-					combo.getSelectionIndex());
-		}
-	}
-	
-	public void loadDefault() {
-		setValidationCheck(true);
-		List combos = addList(markerCombos, validationCombos);
-		for (int i = 0; i < combos.size(); i++) {
-			setComboSelection((Combo) combos.get(i), true);
-		}
-	}
-	
-	public void setProject(IProject project) {
-		this.project = project;
-	}
-	
-	public void buildDesign() {
+	private void buildDesign() {
 		setFont(getParent().getFont());
 		setLayout(new GridLayout(2, false));
 		
@@ -87,21 +62,21 @@ public class ErrorMarkerDesign extends Composite implements ConstCore,
 		
 		// xml error
 		createMarkerLabel("ErrorMarkerDesign.3");
-		createMarkerCombo(MARKER_CATEGORY_XML_ERROR);
+		createMarkerCombo(MARKER_SEVERITY_XML_ERROR);
 		
 		// xml warning
 		createMarkerLabel("ErrorMarkerDesign.4");
-		createMarkerCombo(MARKER_CATEGORY_XML_WARNING);
+		createMarkerCombo(MARKER_SEVERITY_XML_WARNING);
 		
 		// dummy line
 		createLabelSpace();
 		createLabelSpace();
 		
 		// validation check
-		validationCheck = createCheck("ErrorMarkerDesign.11");
-		validationCheck.addSelectionListener(new SelectionAdapter() {
+		diconValidationCheck = createCheck("ErrorMarkerDesign.11");
+		diconValidationCheck.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent evt) {
-				validationCheckWidgetSelected(validationCheck.getSelection());
+				handleDiconValidationCheck();
 			}
 		});
 		createLabelSpace();
@@ -112,31 +87,42 @@ public class ErrorMarkerDesign extends Composite implements ConstCore,
 		
 		// null injection
 		createValidationLabel("ErrorMarkerDesign.5");
-		createValidationCombo(MARKER_CATEGORY_NULL_INJECTION);
+		createValidationCombo(MARKER_SEVERITY_NULL_INJECTION);
 		
 		// auto injection
 		createValidationLabel("ErrorMarkerDesign.6");
-		createValidationCombo(MARKER_CATEGORY_AUTO_INJECTION);
+		createValidationCombo(MARKER_SEVERITY_AUTO_INJECTION);
 		
 		// java fetal
 		createValidationLabel("ErrorMarkerDesign.7");
-		createValidationCombo(MARKER_CATEGORY_JAVA_FETAL);
+		createValidationCombo(MARKER_SEVERITY_JAVA_FETAL);
 		
 		// dicon fetail
 		createValidationLabel("ErrorMarkerDesign.8");
-		createValidationCombo(MARKER_CATEGORY_DICON_FETAL);
+		createValidationCombo(MARKER_SEVERITY_DICON_FETAL);
 		
 		// problem dicon
 		createValidationLabel("ErrorMarkerDesign.9");
-		createValidationCombo(MARKER_CATEGORY_DICON_PROBLEM);
-		
-		setValidationCheck(false);
+		createValidationCombo(MARKER_SEVERITY_DICON_PROBLEM);
+
+		// dicon checkbox 初期化
+		boolean diconCheck = store.getBoolean(MARKER_SEVERITY_ENABLE_DICON_VALIDATION);
+		diconValidationCheck.setSelection(diconCheck);
+		handleDiconValidationCheck();
 	}
-	
-	private IProject getProject() {
-		return project;
+
+	private void handleDiconValidationCheck() {
+		boolean sel = diconValidationCheck.getSelection();
+		setControlsEnable(diconValidationLabels, sel);
+		setControlsEnable(diconValidationCombos, sel);
 	}
-	
+
+	private List getAllCombos() {
+		List list = new ArrayList(xmlValidationCombos);
+		list.addAll(diconValidationCombos);
+		return list;
+	}
+
 	private Button createCheck(String labelKey) {
 		Button check = new Button(this, SWT.CHECK | SWT.LEFT);
 		check.setText(Messages.getString(labelKey));
@@ -145,17 +131,21 @@ public class ErrorMarkerDesign extends Composite implements ConstCore,
 	}
 	
 	private Label createMarkerLabel(String labelKey) {
-		return createLabel(labelKey, markerLabels);
+		return createLabel(labelKey, xmlValidationLabels);
 	}
 	
 	private Label createValidationLabel(String labelKey) {
-		return createLabel(labelKey, validationLabels);
+		return createLabel(labelKey, diconValidationLabels);
 	}
 	
 	private Label createLabel(String labelKey, List controls) {
 		Label label = new Label(this, SWT.NULL);
 		label.setText(Messages.getString(labelKey));
 		label.setFont(getParent().getFont());
+		GridData data = new GridData();
+		data.horizontalAlignment = GridData.FILL;
+		data.grabExcessHorizontalSpace = true;
+		label.setLayoutData(data);
 		controls.add(label);
 		return label;
 	}
@@ -164,59 +154,71 @@ public class ErrorMarkerDesign extends Composite implements ConstCore,
 		return new Label(this, SWT.NULL);
 	}
 	
-	private Combo createMarkerCombo(int category) {
-		return createCombo(category, markerCombos);
+	private Combo createMarkerCombo(String key) {
+		return createCombo(key, xmlValidationCombos);
 	}
 	
-	private Combo createValidationCombo(int category) {
-		return createCombo(category, validationCombos);
+	private Combo createValidationCombo(String key) {
+		return createCombo(key, diconValidationCombos);
 	}
 	
-	private Combo createCombo(int category, List combos) {
+	private Combo createCombo(String key, List combos) {
 		Combo combo = new Combo(this, SWT.READ_ONLY);
-		setComboSelection(combo, false, category);
+		combo.add("Error");
+		combo.add("Warning");
+		combo.add("Info");
+		combo.add("Ignore");
+		combo.setData(key);
+		
+		int severity = store.getInt(key);
+		combo.select(severity);
+
 		combo.setFont(getParent().getFont());
 		combos.add(combo);
 		return combo;
 	}
-	
-	private void setComboSelection(Combo combo, boolean isDefault) {
-		setComboSelection(combo, isDefault, ((Integer) combo.getData()).intValue());
-	}
-	
-	private void setComboSelection(Combo combo, boolean isDefault, int selection) {
-		WidgetUtils.setDiconMarkerSettingCombo(getProject(), combo, selection,
-				isDefault);
-	}
-	
-	private void setValidationCheck(boolean isDefault) {
-		boolean isValidation = MarkerSetting.getDiconValidationPreference(
-				getProject(), isDefault);
-		validationCheck.setSelection(isValidation);
-		validationCheckWidgetSelected(isValidation);
-	}
-	
-	public void setEnabled(boolean enabled) {
-		super.setEnabled(enabled);
-		setControlsEnable(addList(markerCombos, markerLabels), enabled);
-		validationCheck.setEnabled(enabled);
-		validationCheckWidgetSelected(enabled && validationCheck.getSelection());
-	}
-
-	public void validationCheckWidgetSelected(boolean flg) {
-		setControlsEnable(addList(validationCombos, validationLabels), flg);
-	}
-	
+		
 	private void setControlsEnable(List controls, boolean enabled) {
-		for (int i = 0; i < controls.size(); i++) {
-			((Control) controls.get(i)).setEnabled(enabled);
+		for (Iterator iterator = controls.iterator(); iterator.hasNext();) {
+			Control control = (Control) iterator.next();
+			control.setEnabled(enabled);
 		}
 	}
-	
-	private List addList(List list1, List list2) {
-		List ret = new ArrayList(list1);
-		ret.addAll(list2);
-		return ret;
+
+	public void setEnabled(boolean enabled) {
+		super.setEnabled(enabled);
+		setControlsEnable(xmlValidationLabels, enabled);
+		setControlsEnable(xmlValidationCombos, enabled);
+		diconValidationCheck.setEnabled(enabled);
+		setControlsEnable(diconValidationLabels, enabled);
+		if(enabled){
+			setControlsEnable(diconValidationCombos, diconValidationCheck.getSelection());
+		}else{
+			setControlsEnable(diconValidationCombos, false);
+		}
 	}
 
+	public void store() {
+		store.setValue(MARKER_SEVERITY_ENABLE_DICON_VALIDATION, diconValidationCheck.getSelection());
+		List allCombos = getAllCombos();
+		for (Iterator iterator = allCombos.iterator(); iterator.hasNext();) {
+			Combo combo = (Combo) iterator.next();
+			String key = (String) combo.getData();
+			int sel = combo.getSelectionIndex();
+			store.setValue(key, sel);
+		}
+	}
+
+	public void loadDefault() {
+		boolean check = store.getDefaultBoolean(MARKER_SEVERITY_ENABLE_DICON_VALIDATION);
+		this.diconValidationCheck.setSelection(check);
+		handleDiconValidationCheck();
+		
+		List combos = getAllCombos();
+		for (Iterator iterator = combos.iterator(); iterator.hasNext();) {
+			Combo combo = (Combo) iterator.next();
+			String key = (String) combo.getData();
+			combo.select(store.getDefaultInt(key));
+		}
+	}
 }
