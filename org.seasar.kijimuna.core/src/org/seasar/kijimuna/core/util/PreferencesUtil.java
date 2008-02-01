@@ -16,33 +16,69 @@
 package org.seasar.kijimuna.core.util;
 
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.ProjectScope;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.preferences.IScopeContext;
+import org.eclipse.core.runtime.preferences.InstanceScope;
+import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.ui.preferences.ScopedPreferenceStore;
 
+import org.seasar.kijimuna.core.ConstCore;
 import org.seasar.kijimuna.core.KijimunaCore;
-import org.seasar.kijimuna.core.dicon.DiconNature;
-import org.seasar.kijimuna.core.preference.IPreferences;
+import org.seasar.kijimuna.core.preference.KijimunaPreferenceInitializer;
 
-public class PreferencesUtil {
+/**
+ * 設定ストアを取得するためのユーティリティクラスです
+ * @author kenmaz (http://d.hatena.ne.jp/kenmaz)
+ *
+ */
+public class PreferencesUtil implements ConstCore{
 
-	public static IPreferences getPreferencesExactly(IProject project) {
-		IPreferences pref = getProjectPreferences(project);
-		return pref != null ? pref : getWorkbenchPreferences();
-	}
-	
-	public static IPreferences getPreferences(IProject project) {
-		return project != null ? getProjectPreferences(project) :
-			getWorkbenchPreferences();
-	}
-	
-	public static IPreferences getProjectPreferences(IProject project) {
-		if (project == null) {
-			return null;
+	/**
+	 * プロジェクト固有の設定ストアを取得します。<br>
+	 * プロジェクト固有設定が行われていない場合はワークスペースの設定ストアを取得します。
+	 */
+	public static IPreferenceStore getPreferenceStore(IProject project){
+		IPreferenceStore store = getPreferenceStoreOfProject(project);
+		boolean isPrjCustom = store.getBoolean(MARKER_SEVERITY_ENABLE_PROJECT_CUSTOM);
+		if(!isPrjCustom){
+			return getPreferenceStoreOfWorkspace();
+		}else{
+			return store;	
 		}
-		DiconNature nature = DiconNature.getInstance(project);
-		return nature != null ? nature.getPreferences() : null;
 	}
-	
-	public static IPreferences getWorkbenchPreferences() {
-		return KijimunaCore.getPreferences();
+	/**
+	 * プロジェクト固有の設定ストアを取得します。
+	 */
+	public static IPreferenceStore getPreferenceStoreOfProject(IProject project) {
+		ProjectScope scope = new ProjectScope(project);
+		String id = KijimunaCore.getInstance().getBundle().getSymbolicName();
+		IPreferenceStore store = getStore(scope, id);
+		return store;
 	}
 
+	/**
+	 * ワークスペースの設定ストアを取得します。 
+	 */
+	public static IPreferenceStore getPreferenceStoreOfWorkspace(){
+		String id = KijimunaCore.getInstance().getBundle().getSymbolicName();
+		return getStore(new InstanceScope(),id);
+	}
+	
+	private static IPreferenceStore getStore(IScopeContext scope, String id){
+		ScopedPreferenceStore store = new ScopedPreferenceStore(scope, id);
+		String version = store.getString(PREFERENCES_KEY_VERSION);
+		
+		//以前のバージョンの設定がのこっている場合
+		if (!version.equals(KijimunaCore.getVersion())) {
+			//ストアをクリア
+			KijimunaPreferenceInitializer.setToDefalutAll(store);
+			//マーカーをクリア
+			MarkerUtils.removeAllMarker(ConstCore.ID_MARKER);
+			//modelデータを削除
+			IPath stateLoc = KijimunaCore.getInstance().getStateLocation(); //TODO:what?
+			FileUtils.deleteAllFiles(stateLoc);
+		}
+		return store;
+	}
 }

@@ -78,13 +78,6 @@
       </content-type>
    </extension>
 
-   <extension
-         point="org.eclipse.core.runtime.preferences">
-      <scope
-            class="org.seasar.kijimuna.core.preference.PluginPreferences"
-            name="plugin"/>
-   </extension>
-
    <extension point="org.eclipse.ltk.core.refactoring.renameParticipants">
       <renameParticipant
             class="org.seasar.kijimuna.core.internal.dicon.refactor.TypeRenameParticipant"
@@ -101,6 +94,12 @@
            </with>
          </enablement>
       </renameParticipant>
+   </extension>
+   <extension
+         point="org.eclipse.core.runtime.preferences">
+      <initializer
+            class="org.seasar.kijimuna.core.preference.KijimunaPreferenceInitializer">
+      </initializer>
    </extension>
 
 </plugin>

@@ -12,7 +12,9 @@ Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.jdt.ui,
  org.eclipse.jdt.launching,
  org.junit,
- org.eclipse.ltk.core.refactoring
+ org.eclipse.ltk.core.refactoring,
+ org.eclipse.jface,
+ org.eclipse.ui
 Bundle-Activator: org.seasar.kijimuna.core.KijimunaCore
 Provide-Package: org.seasar.kijimuna.core,
  org.seasar.kijimuna.core.dicon,

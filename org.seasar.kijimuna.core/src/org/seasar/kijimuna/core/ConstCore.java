@@ -30,8 +30,6 @@ public interface ConstCore {
 	public static final String ID_MARKER_DICONVALIDAION = ID_MARKER + ".diconvalidation";
 	public static final String ID_MARKER_DICONXML = ID_MARKER + ".diconxml";
 
-	public static final String PREFERENCES_KEY_VERSION = ID_PLUGIN_CORE + ".version";
-
 	public static final String PATH_RESOURCE = ID_PLUGIN_CORE + ".resources";
 
 	public static final String SYSTEM_ID_DICON_20 = "http://www.seasar.org/dtd/components.dtd";
@@ -174,34 +172,25 @@ public interface ConstCore {
 	public static final int MARKER_SEVERITY_INFO = 2;
 	public static final int MARKER_SEVERITY_IGNORE = 3;
 
-	public static final int MARKER_CATEGORY_XML_ERROR = 0;
-	public static final int MARKER_CATEGORY_XML_WARNING = 1;
-	public static final int MARKER_CATEGORY_NULL_INJECTION = 2;
-	public static final int MARKER_CATEGORY_AUTO_INJECTION = 3;
-	public static final int MARKER_CATEGORY_JAVA_FETAL = 4;
-	public static final int MARKER_CATEGORY_DICON_FETAL = 5;
-	public static final int MARKER_CATEGORY_DICON_PROBLEM = 6;
-	public static final int MARKER_CATEGORY_UNKNOWN = 7;
-
+	//preference設定項目
+	public static final String PREFERENCES_KEY_VERSION = ID_PLUGIN_CORE + ".version";
+	public static final String MARKER_SEVERITY_ENABLE_PROJECT_CUSTOM = "marker.severity.enable_project_custom";
+	public static final String MARKER_SEVERITY_ENABLE_DICON_VALIDATION = "marker.severity.not_validation";
 	public static final String MARKER_SEVERITY_XML_ERROR = "marker.severity.xml_error";
 	public static final String MARKER_SEVERITY_XML_WARNING = "marker.severity.xml_warning";
-	public static final String MARKER_SEVERITY_NOT_VALIDATION = "marker.severity.not_validation";
 	public static final String MARKER_SEVERITY_NULL_INJECTION = "marker.severity.null_injection";
 	public static final String MARKER_SEVERITY_AUTO_INJECTION = "marker.severity.auto_injection";
 	public static final String MARKER_SEVERITY_JAVA_FETAL = "marker.severity.java_fetal";
 	public static final String MARKER_SEVERITY_DICON_FETAL = "marker.severity.dicon_fetal";
 	public static final String MARKER_SEVERITY_DICON_PROBLEM = "marker.severity.dicon_problem";
 
-	public static final String[] MARKER_SEVERITY_ALL = new String[] {
-			MARKER_SEVERITY_XML_ERROR,
-			MARKER_SEVERITY_XML_WARNING,
-			MARKER_SEVERITY_NULL_INJECTION,
-			MARKER_SEVERITY_AUTO_INJECTION,
-			MARKER_SEVERITY_JAVA_FETAL,
-			MARKER_SEVERITY_DICON_FETAL,
-			MARKER_SEVERITY_DICON_PROBLEM,
-	};
-
+	public static final String EDITOR_COLOR_COMMENT = "editor.color.comment";
+	public static final String EDITOR_COLOR_XMLDECL = "editor.color.xmldecl";
+	public static final String EDITOR_COLOR_DOCDECL = "editor.color.docdecl";
+	public static final String EDITOR_COLOR_TAG = "editor.color.tag";
+	public static final String EDITOR_COLOR_ATTRIBUTE = "editor.color.attribute";
+	public static final String EDITOR_COLOR_DEFALUT = "editor.color.default";
+	
 	public static final String[] MARKER_SET_XML_ERROR = new String[] {
 			"parser.DocumentHandler.1"
 	};

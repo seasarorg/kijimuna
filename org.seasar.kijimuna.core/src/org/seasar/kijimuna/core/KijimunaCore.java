@@ -24,13 +24,8 @@ import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Plugin;
-import org.eclipse.core.runtime.preferences.IScopeContext;
-import org.eclipse.core.runtime.preferences.InstanceScope;
 
-import org.seasar.kijimuna.core.preference.IPreferences;
 import org.seasar.kijimuna.core.project.ProjectRecorder;
-import org.seasar.kijimuna.core.util.FileUtils;
-import org.seasar.kijimuna.core.util.MarkerUtils;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc)
@@ -41,7 +36,6 @@ public class KijimunaCore extends Plugin implements ConstCore {
 	// -------------------------------------------------------------------
 
 	private static KijimunaCore kijimuna;
-	private static IPreferences preferences;
 
 	public static KijimunaCore getInstance() {
 		return kijimuna;
@@ -75,24 +69,6 @@ public class KijimunaCore extends Plugin implements ConstCore {
 		return kijimuna.getBundle().getHeaders().get("Bundle-Version").toString();
 	}
 
-	public static IPreferences getPreferences() {
-		if (preferences == null) {
-			preferences = new KijimunaPreferences();
-			String version = preferences.get(PREFERENCES_KEY_VERSION);
-			if (!version.equals(KijimunaCore.getVersion())) {
-				preferences.clear();
-				preferences.put(PREFERENCES_KEY_VERSION, KijimunaCore.getVersion());
-				initPluginData();
-			}
-		}
-		return preferences;
-	}
-
-	private static void initPluginData() {
-		MarkerUtils.removeAllMarker(ID_MARKER);
-		FileUtils.deleteAllFiles(kijimuna.getStateLocation());
-	}
-
 	// instance
 	// -------------------------------------------------------------------
 
@@ -107,7 +83,6 @@ public class KijimunaCore extends Plugin implements ConstCore {
 
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
-		getPreferences();
 		IWorkspace workspace = ResourcesPlugin.getWorkspace();
 		recorder = new ProjectRecorder(this);
 		recorder.inithialize(null);
@@ -115,11 +90,7 @@ public class KijimunaCore extends Plugin implements ConstCore {
 	}
 
 	public void stop(BundleContext context) throws Exception {
-		IScopeContext scope = new InstanceScope();
-		Preferences pref = scope.getNode(ID_PLUGIN_CORE);
-		pref.flush();
-		Preferences pluginPref = Platform.getPreferencesService().getRootNode().node(
-				"plugin");
+		Preferences pluginPref = Platform.getPreferencesService().getRootNode().node("plugin");
 		pluginPref.flush();
 		recorder = null;
 		messageManager = null;

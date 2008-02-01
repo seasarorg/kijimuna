@@ -15,157 +15,36 @@
  */
 package org.seasar.kijimuna.core.dicon;
 
+import java.util.Arrays;
+
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IStorage;
+import org.eclipse.jface.preference.IPreferenceStore;
 
 import org.seasar.kijimuna.core.ConstCore;
 import org.seasar.kijimuna.core.KijimunaCore;
 import org.seasar.kijimuna.core.dicon.model.IDiconElement;
-import org.seasar.kijimuna.core.preference.IPreferences;
 import org.seasar.kijimuna.core.util.MarkerUtils;
+import org.seasar.kijimuna.core.util.PreferencesUtil;
 
 /**
+ * @author kenmaz (http://d.hatena.ne.jp/kenmaz)
  * @author Masataka Kurihara (Gluegent, Inc.)
  */
 public class MarkerSetting implements ConstCore {
-
-	private static String convertKey(int category) {
-		return MARKER_SEVERITY_ALL[category];
-	}
-
-	private static boolean hasSetting(String[] settings, String key) {
-		for (int i = 0; i < settings.length; i++) {
-			if (settings[i].equals(key)) {
-				return true;
-			}
-		}
-		return false;
-	}
-
-	private static int getCategoryID(String key) {
-		if (hasSetting(MARKER_SET_XML_ERROR, key)) {
-			return MARKER_CATEGORY_XML_ERROR;
-		} else if (hasSetting(MARKER_SET_XML_WARNING, key)) {
-			return MARKER_CATEGORY_XML_WARNING;
-		} else if (hasSetting(MARKER_SET_NULL_INJECTION, key)) {
-			return MARKER_CATEGORY_NULL_INJECTION;
-		} else if (hasSetting(MARKER_SET_AUTO_INJECTION, key)) {
-			return MARKER_CATEGORY_AUTO_INJECTION;
-		} else if (hasSetting(MARKER_SET_JAVA_FETAL, key)) {
-			return MARKER_CATEGORY_JAVA_FETAL;
-		} else if (hasSetting(MARKER_SET_DICON_FETAL, key)) {
-			return MARKER_CATEGORY_DICON_FETAL;
-		} else if (hasSetting(MARKER_SET_DICON_PROBLEM, key)) {
-			return MARKER_CATEGORY_DICON_PROBLEM;
-		} else {
-			return MARKER_CATEGORY_UNKNOWN;
-		}
-	}
-
-	private static String getCategory(String key) {
-		int category = getCategoryID(key);
-		if (category == MARKER_CATEGORY_UNKNOWN) {
-			return "";
-		}
-		return convertKey(category);
-	}
-
-	private static int getSeveritySetting(IProject project, String key) {
-		int category = getCategoryID(key);
-		if (category == MARKER_CATEGORY_UNKNOWN) {
-			KijimunaCore.reportInfo("unknown marker id [" + key + "]");
-			return MARKER_SEVERITY_IGNORE;
-		}
-		return getDiconMarkerPreference(project, category, false);
-	}
-
-	public static void setDiconMarkerPreference(IProject project, int category,
-			int severity) {
-		IPreferences pref;
-		if (project == null) {
-			pref = KijimunaCore.getPreferences();
-		} else {
-			DiconNature nature = DiconNature.getInstance(project);
-			if (nature != null) {
-				pref = nature.getPreferences();
-			} else {
-				return;
-			}
-		}
-		String categoryKey = convertKey(category);
-		pref.putInt(categoryKey, severity);
-	}
-
-	public static int getDiconMarkerPreference(IProject project, int category,
-			boolean isDefault) {
-		IPreferences pref;
-		if (project == null) {
-			pref = KijimunaCore.getPreferences();
-		} else {
-			DiconNature nature = DiconNature.getInstance(project);
-			if (nature != null) {
-				pref = nature.getPreferences();
-			} else {
-				pref = KijimunaCore.getPreferences();
-			}
-		}
-		String categoryKey = convertKey(category);
-		if (isDefault) {
-			return pref.getDefaultInt(categoryKey);
-		}
-		return pref.getInt(categoryKey);
-	}
-
-	public static void setDiconValidationPreference(IProject project, boolean isValidation) {
-		IPreferences pref;
-		if (project == null) {
-			pref = KijimunaCore.getPreferences();
-		} else {
-			DiconNature nature = DiconNature.getInstance(project);
-			if (nature != null) {
-				pref = nature.getPreferences();
-			} else {
-				return;
-			}
-		}
-		pref.putBoolean(MARKER_SEVERITY_NOT_VALIDATION, !isValidation);
-	}
-
-	public static boolean getDiconValidationPreference(IProject project, boolean isDefault) {
-		IPreferences pref;
-		if (project == null) {
-			pref = KijimunaCore.getPreferences();
-		} else {
-			DiconNature nature = DiconNature.getInstance(project);
-			if (nature != null) {
-				pref = nature.getPreferences();
-			} else {
-				pref = KijimunaCore.getPreferences();
-			}
-		}
-		boolean notValidation;
-		if (isDefault) {
-			notValidation = pref.getDefaultBoolean(MARKER_SEVERITY_NOT_VALIDATION);
-		} else {
-			notValidation = pref.getBoolean(MARKER_SEVERITY_NOT_VALIDATION);
-		}
-		return !notValidation;
-	}
-
-	public static boolean isDiconValidation(IProject project) {
-		return getDiconValidationPreference(project, false);
-	}
-
+	
 	public static void createDiconMarker(String id, IDiconElement element, String message) {
 		IStorage storage = element.getStorage();
 		if ((storage != null) && (storage instanceof IFile)) {
 			IFile file = (IFile) storage;
-			int markerSeverity = getSeveritySetting(file.getProject(), id);
+			IPreferenceStore store = PreferencesUtil.getPreferenceStore(file.getProject());
+			int markerSeverity = store.getInt(convertToMarkerSeverityKey(id));
 			element.setMarkerServerity(markerSeverity);
-			MarkerUtils.createMarker(ID_MARKER_DICONVALIDAION, getCategory(id),
-					markerSeverity, file, element.getStartLine(), "["
-							+ element.getElementName() + "] " + message);
+			String msg = "[" + element.getElementName() + "] " + message;
+			
+			MarkerUtils.createMarker(ID_MARKER_DICONVALIDAION, id, 
+					markerSeverity, file, element.getStartLine(), msg);
 		}
 	}
 
@@ -178,8 +57,29 @@ public class MarkerSetting implements ConstCore {
 	}
 
 	public static void createProjectMarker(String id, IProject project, String message) {
-		MarkerUtils.createMarker(ID_MARKER_DICONVALIDAION, getCategory(id),
-				getSeveritySetting(project, id), project, 0, "[project] " + message);
+		IPreferenceStore pref = PreferencesUtil.getPreferenceStore(project);
+		int markerSeverity = pref.getInt(id);
+		
+		MarkerUtils.createMarker(ID_MARKER_DICONVALIDAION, id, markerSeverity, project, 0, "[project] " + message);
 	}
 
+
+	private static String convertToMarkerSeverityKey(String id){
+		if(Arrays.asList(MARKER_SET_AUTO_INJECTION).contains(id)){
+			return MARKER_SEVERITY_AUTO_INJECTION;
+		}else if(Arrays.asList(MARKER_SET_DICON_FETAL).contains(id)){
+			return MARKER_SEVERITY_DICON_FETAL;
+		}else if(Arrays.asList(MARKER_SET_DICON_PROBLEM).contains(id)){
+			return MARKER_SEVERITY_DICON_PROBLEM;
+		}else if(Arrays.asList(MARKER_SET_JAVA_FETAL).contains(id)){
+			return MARKER_SEVERITY_JAVA_FETAL;
+		}else if(Arrays.asList(MARKER_SET_NULL_INJECTION).contains(id)){
+			return MARKER_SEVERITY_NULL_INJECTION;
+		}else if(Arrays.asList(MARKER_SET_XML_ERROR).contains(id)){
+			return MARKER_SEVERITY_XML_ERROR;
+		}else if(Arrays.asList(MARKER_SET_XML_WARNING).contains(id)){
+			return MARKER_SEVERITY_XML_WARNING;
+		}
+		return "";//TODO:error log 
+	}
 }

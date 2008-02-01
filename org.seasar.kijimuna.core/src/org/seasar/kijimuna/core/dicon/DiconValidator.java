@@ -26,6 +26,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IStorage;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.jface.preference.IPreferenceStore;
 
 import org.seasar.kijimuna.core.ConstCore;
 import org.seasar.kijimuna.core.KijimunaCore;
@@ -36,6 +37,7 @@ import org.seasar.kijimuna.core.project.AbstractProcessor;
 import org.seasar.kijimuna.core.project.IFileProcessor;
 import org.seasar.kijimuna.core.util.FileUtils;
 import org.seasar.kijimuna.core.util.MarkerUtils;
+import org.seasar.kijimuna.core.util.PreferencesUtil;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
@@ -102,7 +104,10 @@ public class DiconValidator extends AbstractProcessor implements ConstCore {
 	}
 
 	public void process(IProject project, IStorage storage, IProgressMonitor monitor) {
-		if (FileUtils.isDiconFile(storage) && MarkerSetting.isDiconValidation(project)) {
+		IPreferenceStore pref = PreferencesUtil.getPreferenceStore(project);
+		boolean enableDiconValidation = pref.getBoolean(MARKER_SEVERITY_ENABLE_DICON_VALIDATION);
+		
+		if (FileUtils.isDiconFile(storage) && enableDiconValidation) {
 			if (storage instanceof IFile) {
 				MarkerUtils.deleteMarker((IFile) storage, ID_MARKER_DICONVALIDAION);
 			}

@@ -20,6 +20,7 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IStorage;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.jface.preference.IPreferenceStore;
 
 import org.seasar.kijimuna.core.ConstCore;
 import org.seasar.kijimuna.core.KijimunaCore;
@@ -33,6 +34,7 @@ import org.seasar.kijimuna.core.project.IFileProcessor;
 import org.seasar.kijimuna.core.project.ResourceVisitor;
 import org.seasar.kijimuna.core.util.FileUtils;
 import org.seasar.kijimuna.core.util.MarkerUtils;
+import org.seasar.kijimuna.core.util.PreferencesUtil;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc)
@@ -117,10 +119,10 @@ public class DiconBuilder extends AbstractProcessor implements ConstCore {
 							storage.getName()
 						}));
 			}
-			int errorSeverity = MarkerSetting.getDiconMarkerPreference(project,
-					MARKER_CATEGORY_XML_ERROR, false);
-			int warningSeverity = MarkerSetting.getDiconMarkerPreference(project,
-					MARKER_CATEGORY_XML_WARNING, false);
+			IPreferenceStore pref = PreferencesUtil.getPreferenceStore(project);
+			int errorSeverity = pref.getInt(MARKER_SEVERITY_XML_ERROR);
+			int warningSeverity = pref.getInt(MARKER_SEVERITY_XML_WARNING);
+			
 			DocumentHandler handler = new DocumentHandler(new DiconElementFactory(),
 					ID_MARKER_DICONXML, errorSeverity, warningSeverity);
 			handler.putDtdPath(PUBLIC_ID_DICON_20, DTD_DICON_20);

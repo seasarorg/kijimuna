@@ -29,9 +29,6 @@ import org.eclipse.core.runtime.IProgressMonitor;
 
 import org.seasar.kijimuna.core.ConstCore;
 import org.seasar.kijimuna.core.KijimunaCore;
-import org.seasar.kijimuna.core.KijimunaPreferences;
-import org.seasar.kijimuna.core.preference.IPreferences;
-import org.seasar.kijimuna.core.project.IProjectConfiguable;
 import org.seasar.kijimuna.core.project.IProjectRecordable;
 import org.seasar.kijimuna.core.rtti.IRttiCache;
 import org.seasar.kijimuna.core.rtti.RttiLoader;
@@ -41,8 +38,7 @@ import org.seasar.kijimuna.core.util.ProjectUtils;
 /**
  * @author Masataka Kurihara (Gluegent, Inc)
  */
-public class DiconNature implements IProjectNature, IProjectConfiguable,
-		IProjectRecordable, ConstCore {
+public class DiconNature implements IProjectNature, IProjectRecordable, ConstCore {
 
 	private static final String[] BUILDERS = new String[] {
 			ID_PROCESSOR_DICON_BUILDER,
@@ -68,7 +64,6 @@ public class DiconNature implements IProjectNature, IProjectConfiguable,
 	private ModelManager model = new ModelManager();
 	private RttiLoader rootLoader;
 	private IProject project;
-	private IPreferences pref;
 
 	public IProject getProject() {
 		return project;
@@ -157,12 +152,4 @@ public class DiconNature implements IProjectNature, IProjectConfiguable,
 			model.validate(monitor);
 		}
 	}
-
-	public IPreferences getPreferences() {
-		if (pref == null) {
-			pref = new KijimunaPreferences(project.getName());
-		}
-		return pref;
-	}
-
 }
