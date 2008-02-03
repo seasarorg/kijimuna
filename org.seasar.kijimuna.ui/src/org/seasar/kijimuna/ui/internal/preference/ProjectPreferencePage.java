@@ -97,7 +97,7 @@ public class ProjectPreferencePage extends PropertyPage implements ConstCore {
 		base.setLayoutData(pgd);
 		
 		enableProjectCustomSetting = new Button(base, SWT.CHECK | SWT.LEFT);
-		enableProjectCustomSetting.setText("プロジェクト固有の設定を有効にする");
+		enableProjectCustomSetting.setText(Messages.getString("ProjectPreferencePage.2")); //$NON-NLS-1$
 		enableProjectCustomSetting.addSelectionListener(new SelectionAdapter(){
 			public void widgetSelected(SelectionEvent e) {
 				handleEnableProjectCustomSetting();
@@ -106,7 +106,7 @@ public class ProjectPreferencePage extends PropertyPage implements ConstCore {
 		
 		Group group = new Group(base, SWT.SHADOW_NONE);
 		group.setLayout(new GridLayout(1, true));
-		group.setText("エラーマーカー");
+		group.setText(Messages.getString("ErrorMarkerDesign.1")); //$NON-NLS-1$
 		GridData gd = new GridData();
 		gd.horizontalAlignment = GridData.FILL;
 		gd.grabExcessHorizontalSpace = true;
