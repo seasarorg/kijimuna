@@ -90,6 +90,18 @@ public class ContainerElement extends DiconElement implements IContainerElement,
 		return s2ContainerRtti;
 	}
 
+	public void addAutoRegisterComponent(String name, String clazz, int depth,
+			int startLine, int startColumn) {
+		ComponentElement element = new ComponentElement(getProject(), getStorage());
+		HashMap property = new HashMap();
+		property.put("name", name);
+		property.put("class", clazz);
+		element.setAttributes(property);
+		element.setRootElement(this);
+		element.setStartLocation(depth, startLine, startColumn);
+		addChild(element);
+	}
+
 	private void addMagicComponent(String name, String clazz) {
 		addMagicComponent(getProject(), getStorage(), name, clazz);
 	}

@@ -18,6 +18,7 @@ package org.seasar.kijimuna.ui.internal.editor.dicon.contentassist;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
@@ -89,6 +90,22 @@ public class DiconElementAssistant extends XmlElementAssistant implements ConstU
 	private List getComponentProposals(IContainerElement container,
 			String prefix, int offset) {
 		List proposals = new ArrayList();
+		addProposals(container, prefix, offset, proposals);
+		List includeList = container.getIncludeList();
+		for (Iterator includeListIterator = includeList.iterator(); includeListIterator
+				.hasNext();) {
+			IIncludeElement includeElement = (IIncludeElement) includeListIterator
+					.next();
+			IContainerElement childContainerElement = (IContainerElement) includeElement
+					.getChildContainer();
+			addProposals(childContainerElement, prefix, offset, proposals);
+		}
+		Collections.sort(proposals, new ProposalComparator());
+		return proposals;
+	}
+
+	private void addProposals(IContainerElement container, String prefix, int offset,
+			List proposals) {
 		List componentList = container.getComponentList();
 		for (int i = 0; i < componentList.size(); i++) {
 			IComponentElement comp = (IComponentElement) componentList.get(i);
@@ -101,8 +118,6 @@ public class DiconElementAssistant extends XmlElementAssistant implements ConstU
 				proposals.add(proposal);
 			}
 		}
-		Collections.sort(proposals, new ProposalComparator());
-		return proposals;
 	}
 	
 	private List getNamespaceProposals(IContainerElement container,
