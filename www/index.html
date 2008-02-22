@@ -47,13 +47,20 @@
   </li>
 </ul>
 
+<img src="images/workbench.gif"/>
+
+<h2><a name="news">NEWS</a></h2>
+<ul>
+  <li>2008/02/05 Kijimuna 1.1.5  をリリースしました．変更点は<a href="http://www.seasar.org/wiki/index.php?SeasarWhatsNew%2F2008-02-05#p13496a5">こちら</a>．</li>
+  <li>2008/01/15 Kijimuna 1.1.4  をリリースしました．変更点は<a href="http://www.seasar.org/wiki/index.php?SeasarWhatsNew%2F2008-01-15#g9059643">こちら</a>．</li>
+</ul>
+
 <h2><a name="Setup">セットアップ</a></h2>
 <p>Eclipse3.2/3.3で動作します。次の更新サイトから「Kijimuna」を選択してインストールしてください。</p>
 <ul>
   <li><a href="http://eclipse.seasar.org/updates/3.2/ ">http://eclipse.seasar.org/updates/3.2/ </a></li>
 </ul>
-<p>Eclipse3.1の場合は、次の更新サイトから「Kijimuna」を選択してインストールしてください。
-Eclipse3.1用のKijimunaは、開発を終了する予定です。</p>
+<p>Eclipse3.1用の開発は終了していますが、古いバージョンを次の更新サイトからインストールできます。</p>
 <ul>
   <li><a href="http://eclipse.seasar.org/updates/3.1/ ">http://eclipse.seasar.org/updates/3.1/ </a></li>
 </ul>
@@ -62,20 +69,63 @@ Eclipse3.1用のKijimunaは、開発を終了する予定です。</p>
   <li><a href="http://eclipse.seasar.org/updates/3.0/ ">http://eclipse.seasar.org/updates/3.0/ </a></li>
 </ul>
 
-<h2><a name="Usage">使い方</a></h2>
-<p>プロジェクトの設定を行います。</p>
-<ul>
-  <li>プロジェクトのプロパティで「Kijimuna」を選択し、「Seasarプロジェクト」にチェックを入れます。</li>
-  <li>必要に応じて、設定を変更します。</li>
-</ul>
-<p>プロジェクトの設定画面を「OK」で閉じると、自動的にDiconファイルのパースとバリデーションが実行されます。実行されない場合は、プロジェクトをクリーンしてください。</p>
-
 <h2><a name="Download">ダウンロード</a></h2>
 <p>更新サイトを利用しない場合は、次からダウンロードすることができます。</p>
 <ul>
   <li><a href="download/2008-02-05/kijimuna-1.1.5.zip">kijimuna-1.1.5.zip (プラグイン)</a></li>
   <li><a href="download/2008-02-05/kijimuna-1.1.5-src.zip">kijimuna-1.1.5-src.zip (ソース)</a></li>
 </ul>
+
+<h2><a name="Snapsoht">スナップショット（開発版）</a></h2>
+<p>スナップショットは次の更新サイトからインストールすることができます。</p>
+<ul>
+  <li><a href="download/snapshot/">http://kijimuna.seasar.org/download/snapshot</a></li>
+</ul>
+<p>現在は以下のスナップショットを利用することができます。</p>
+<ul
+  <li>Kijimuna 1.1.7.20080223-01 <a href="https://www.seasar.org/issues/browse/KIJIMUNA-22">KIJIMUNA-22</a>対応</li>
+</ul>
+
+<p>
+（注）Kijimuna 1.1.5より後のバージョン番号は、メジャー、マイナー、リリース、yyyymmdd-連番形式とします。
+また、リリース番号が奇数のものはスナップショットで、偶数のものが正式リリースとなります。
+そのため、1.1.6は欠番とし、次回の正式リリースは1.1.8となります。
+</p>
+
+<h2><a name="Usage">使い方</a></h2>
+<p>プロジェクトの設定を行います。</p>
+<ul>
+  <li>プロジェクトのプロパティで「Kijimuna」を選択し、「Seasarプロジェクト」にチェックを入れます。</li>
+  <li>Eclipseのプロジェクト毎に設定する場合は、「プロジェクト固有の選択を有効にする」にチェックを入れます。</li>
+  <li>必要に応じて、設定を変更します。</li>
+</ul>
+
+<img src="images/project-property.gif"/>
+
+<p>プロジェクトの設定画面を「OK」で閉じると、自動的にDiconファイルのパースとバリデーションが実行されます。実行されない場合は、プロジェクトをクリーンしてください。</p>
+
+diconファイルを新規に作成する場合は、ウイザードから作成することができます。
+
+<img src="images/select-wizard.gif"/>
+<img src="images/new-dicon.gif"/>
+
+<h2><a name="maillist">メーリングリスト</a></h2>
+<dl>
+  <dt><a href="https://www.seasar.org/mailman/listinfo/seasar-user">seasar-user</a></dt>
+    <dd>
+      Seasar2および関連プロダクトの利用者のためのメーリングリストです。<br>
+      Kijimunaを利用していて疑問に思ったことや困ったこと、要望などはこちらへ。
+    </dd>
+  <dt><a href="https://www.seasar.org/mailman/listinfo/seasar-dev">seasar-dev</a></dt>
+    <dd>
+      Seasar2および関連プロダクト開発者のためのメーリングリストです。
+    </dd>
+</dl>
+<h2><a name="tracking-jpa">トラキング</a></h2>
+<dl>
+  <dt><a href="https://www.seasar.org/issues/browse/KIJIMUNA">JIRA</a></dt>
+    <dd>バグや問題の報告などはこちらへ</dd>
+</dl>
 
 <!-- document end -->
 <!-- don't edit start -->
