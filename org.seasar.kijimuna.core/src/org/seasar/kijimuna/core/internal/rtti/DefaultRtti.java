@@ -254,6 +254,17 @@ public class DefaultRtti implements IRtti {
 		return true;
 	}
 	
+	private boolean isEnum(IMember member) {
+		try {
+			int flags = member.getFlags();
+			if (Flags.isEnum(flags)) {
+				return true;
+			}
+		} catch (JavaModelException e) {
+		}
+		return false;
+	}
+	
 	private boolean isInstanceField(IField field) {
 		try {
 			int flags = field.getFlags();
@@ -709,7 +720,7 @@ public class DefaultRtti implements IRtti {
 	public IRttiFieldDescriptor getField(String name, boolean staticAccess) {
 		IRttiFieldDescriptor[] fields = getFields(Pattern.compile(name));
 		if (fields.length == 1) {
-			if (!staticAccess || fields[0].isStatic()) {
+			if (!staticAccess || fields[0].isStatic() || fields[0].isEnum()) {
 				return fields[0];
 			}
 		}
@@ -723,13 +734,13 @@ public class DefaultRtti implements IRtti {
 				for (int i = 0; i < fields.length; i++) {
 					String name = fields[i].getElementName();
 					if (!ret.containsKey(name) && pattern.matcher(name).matches()) {
-						if (isPublicMember(fields[i])) {
+						if (isPublicMember(fields[i]) || isEnum(fields[i])) {
 							int flags = fields[i].getFlags();
 							String typeSignature = Signature.toString(fields[i]
 									.getTypeSignature());
 							ret.put(name, new DefaultRttiFieldDescriptor(this, name,
 									loader.loadRtti(typeSignature), Flags.isFinal(flags),
-									Flags.isStatic(flags)));
+									Flags.isStatic(flags), Flags.isEnum(flags)));
 						}
 					}
 				}
@@ -754,11 +765,11 @@ public class DefaultRtti implements IRtti {
 		try {
 			if (pattern.matcher("class").matches()) {
 				ret.put("class", new DefaultRttiFieldDescriptor(this, "class", loader
-						.loadRtti("java.lang.Class"), true, true));
+						.loadRtti("java.lang.Class"), true, true, false));
 			}
 			if (isArray() && pattern.matcher("length").matches()) {
 				ret.put("length", new DefaultRttiFieldDescriptor(this, "length", loader
-						.loadRtti("int"), true, false));
+						.loadRtti("int"), true, false, false));
 			}
 			addAllFields(ret, pattern);
 		} catch (Exception ignore) {

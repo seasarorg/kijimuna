@@ -26,12 +26,14 @@ public class DefaultRttiFieldDescriptor extends AbstractRttiValuableDescriptor i
 
 	private boolean fFinal;
 	private boolean fStatic;
+	private boolean fEnum;
 
 	public DefaultRttiFieldDescriptor(IRtti parent, String name, IRtti type,
-			boolean fFinal, boolean fStatic) {
+			boolean fFinal, boolean fStatic, boolean fEnum) {
 		super(parent, name, type);
 		this.fFinal = fFinal;
 		this.fStatic = fStatic;
+		this.fEnum = fEnum;
 	}
 
 	public boolean equals(Object test) {
@@ -49,6 +51,10 @@ public class DefaultRttiFieldDescriptor extends AbstractRttiValuableDescriptor i
 
 	public boolean isStatic() {
 		return fStatic;
+	}
+	
+	public boolean isEnum() {
+		return fEnum;
 	}
 
 }
