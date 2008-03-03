@@ -186,7 +186,7 @@ public class DiconElementAssistant extends XmlElementAssistant implements ConstU
 		}
 		IRttiFieldDescriptor[] fields = rtti.getFields(pattern);
 		for (int i = 0; i < fields.length; i++) {
-			if (!isStatic || fields[i].isStatic()) {
+			if (!isStatic || fields[i].isStatic() || fields[i].isEnum()) {
 				String fieldName = fields[i].getName();
 				String replaceStr = fixed + fieldName;
 				proposals.add(createProposal(replaceStr, fieldName, prefix, offset,
