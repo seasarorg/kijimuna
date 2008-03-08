@@ -41,6 +41,7 @@ import org.seasar.kijimuna.core.util.PreferencesUtil;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc.)
+ * @author Kentaro Matsumae
  */
 public class DiconValidator extends AbstractProcessor implements ConstCore {
 
@@ -52,6 +53,11 @@ public class DiconValidator extends AbstractProcessor implements ConstCore {
 		projectValidations = DiconValidationFactory.createProjectValidation();
 	}
 
+	/**
+	 * フルバリデートが必要な場合true
+	 */
+	private boolean needFullValidate;
+
 	// -------------------------------------------------
 
 	public String getNatureID() {
@@ -61,7 +67,7 @@ public class DiconValidator extends AbstractProcessor implements ConstCore {
 	public void handleFileAdded(IFile addedFile, boolean fullBuild,
 			IProgressMonitor monitor) {
 		if (!fullBuild && FileUtils.isJavaFile(addedFile)) {
-			fullValidate(addedFile.getProject(), monitor);
+			needFullValidate = true;
 		} else {
 			process(addedFile.getProject(), addedFile, monitor);
 		}
@@ -82,7 +88,7 @@ public class DiconValidator extends AbstractProcessor implements ConstCore {
 	}
 
 	public void handleClassPassChanged(IProject project, IProgressMonitor monitor) {
-		fullValidate(project, monitor);
+		needFullValidate = true;
 	}
 
 	public IFileProcessor getFileBuilder() {
@@ -132,6 +138,11 @@ public class DiconValidator extends AbstractProcessor implements ConstCore {
 	}
 
 	public void handleFinish(IProject project, IProgressMonitor monitor) {
+		if(needFullValidate){
+			fullValidate(project, monitor);
+			needFullValidate = false;
+		}
+		
 		try {
 			project.deleteMarkers(ID_MARKER_DICONVALIDAION, true, IResource.DEPTH_ZERO);
 		} catch (CoreException e) {
