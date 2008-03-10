@@ -25,6 +25,7 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IStorage;
 import org.eclipse.core.runtime.IAdaptable;
 
+import org.seasar.kijimuna.core.parser.Attribute;
 import org.seasar.kijimuna.core.parser.IElement;
 import org.seasar.kijimuna.core.util.ProjectUtils;
 import org.seasar.kijimuna.core.util.StringUtils;
@@ -97,9 +98,18 @@ public class DefaultElement implements IElement, IAdaptable, Serializable {
 	}
 
 	public String getAttribute(String name) {
-		return (String) attributes.get(name);
+		Attribute attr = this.getAttributeObject(name);
+		if(attr != null){
+			return attr.getValue();
+		}else{
+			return null;
+		}
 	}
 
+	public Attribute getAttributeObject(String name){
+		return (Attribute) attributes.get(name);
+	}
+	
 	public void setAttributes(Map properties) {
 		this.attributes = properties;
 	}

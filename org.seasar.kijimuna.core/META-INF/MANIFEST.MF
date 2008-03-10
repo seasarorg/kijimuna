@@ -14,7 +14,9 @@ Require-Bundle: org.eclipse.core.runtime,
  org.junit,
  org.eclipse.ltk.core.refactoring,
  org.eclipse.jface,
- org.eclipse.ui
+ org.eclipse.ui,
+ org.eclipse.text,
+ org.eclipse.search
 Bundle-Activator: org.seasar.kijimuna.core.KijimunaCore
 Provide-Package: org.seasar.kijimuna.core,
  org.seasar.kijimuna.core.dicon,

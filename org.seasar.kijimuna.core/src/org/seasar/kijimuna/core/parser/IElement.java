@@ -52,6 +52,8 @@ public interface IElement extends IAdaptable {
 	void setBody(String body);
 
 	String getAttribute(String name);
+	
+	Attribute getAttributeObject(String name);
 
 	List getChildren();
 

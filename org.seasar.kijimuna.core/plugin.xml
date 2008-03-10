@@ -80,7 +80,7 @@
 
    <extension point="org.eclipse.ltk.core.refactoring.renameParticipants">
       <renameParticipant
-            class="org.seasar.kijimuna.core.internal.dicon.refactor.TypeRenameParticipant"
+            class="org.seasar.kijimuna.core.internal.dicon.refactor.KijimunaRenameParticipant"
             name="%refactoring.rename"
             id="org.seasar.kijimuna.core.refactor.dicon.rename">
          <enablement>
@@ -90,7 +90,20 @@
              </iterate>
            </with>
            <with variable="element">
-   	         <instanceof value="org.eclipse.jdt.core.IType"/>
+             <or>
+                <instanceof
+                      value="org.eclipse.jdt.core.IType">
+                </instanceof>
+                <instanceof
+                      value="org.eclipse.jdt.core.IMethod">
+                </instanceof>
+                <instanceof
+                      value="org.eclipse.jdt.core.IPackageFragment">
+                </instanceof>
+                <instanceof
+                      value="org.eclipse.jdt.core.IField">
+                </instanceof>
+             </or>
            </with>
          </enablement>
       </renameParticipant>

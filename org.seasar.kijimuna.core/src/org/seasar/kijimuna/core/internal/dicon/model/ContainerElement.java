@@ -39,6 +39,7 @@ import org.seasar.kijimuna.core.internal.dicon.info.ComponentKeyString;
 import org.seasar.kijimuna.core.internal.dicon.info.ComponentNotFoundRtti;
 import org.seasar.kijimuna.core.internal.dicon.info.ContainerRtti;
 import org.seasar.kijimuna.core.internal.dicon.info.InjectedRtti;
+import org.seasar.kijimuna.core.parser.Attribute;
 import org.seasar.kijimuna.core.parser.IElement;
 import org.seasar.kijimuna.core.rtti.IRtti;
 import org.seasar.kijimuna.core.rtti.IRttiConstructorDesctiptor;
@@ -94,8 +95,7 @@ public class ContainerElement extends DiconElement implements IContainerElement,
 			int startLine, int startColumn) {
 		ComponentElement element = new ComponentElement(getProject(), getStorage());
 		HashMap property = new HashMap();
-		property.put("name", name);
-		property.put("class", clazz);
+		property.put("name", new Attribute(name, clazz));
 		element.setAttributes(property);
 		element.setRootElement(this);
 		element.setStartLocation(depth, startLine, startColumn);
@@ -110,8 +110,7 @@ public class ContainerElement extends DiconElement implements IContainerElement,
 			String clazz) {
 		ComponentElement element = new ComponentElement(project, storage);
 		HashMap property = new HashMap();
-		property.put("name", name);
-		property.put("class", clazz);
+		property.put("name", new Attribute(name, clazz));
 		element.setAttributes(property);
 		// element.setStartLocation(2, 0, 0);
 		element.setRootElement(this);
