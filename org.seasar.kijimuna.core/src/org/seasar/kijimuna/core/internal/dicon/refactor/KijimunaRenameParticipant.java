@@ -15,9 +15,13 @@
  */
 package org.seasar.kijimuna.core.internal.dicon.refactor;
 
-import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -36,6 +40,9 @@ import org.eclipse.ltk.core.refactoring.CompositeChange;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 import org.eclipse.ltk.core.refactoring.TextFileChange;
 import org.eclipse.ltk.core.refactoring.participants.CheckConditionsContext;
+import org.eclipse.ltk.core.refactoring.participants.ISharableParticipant;
+import org.eclipse.ltk.core.refactoring.participants.RefactoringArguments;
+import org.eclipse.ltk.core.refactoring.participants.RenameArguments;
 import org.eclipse.ltk.core.refactoring.participants.RenameParticipant;
 import org.eclipse.text.edits.MultiTextEdit;
 import org.eclipse.text.edits.ReplaceEdit;
@@ -55,12 +62,15 @@ import org.seasar.kijimuna.core.util.StringUtils;
  * @author Masataka Kurihara (Gluegent, Inc.)
  * @author kentaro Matsumae
  */
-public class KijimunaRenameParticipant extends RenameParticipant {
+public class KijimunaRenameParticipant extends RenameParticipant implements ISharableParticipant{
 
-	private IFile[] dicons;
-	private IJavaElement targetElement;
 	private DiconNature nature;
 
+	private Set diconList = new HashSet();
+	
+	//key=element, value=newName
+	private Map renameElements = new HashMap();
+	
 	public String getName() {
 		return KijimunaCore.getResourceString("dicon.refactor.TypeRenameParticipant.1");
 	}
@@ -71,30 +81,46 @@ public class KijimunaRenameParticipant extends RenameParticipant {
 	}
 
 	protected boolean initialize(Object element) {
-		try{
-			targetElement = (IJavaElement) element;
-			IFile file = null;
-			
-			if (targetElement instanceof IPackageFragment) {
-				IPackageFragment pkgFragment = (IPackageFragment) element;
-				ICompilationUnit[] cUnits = pkgFragment.getCompilationUnits();
-				if(cUnits.length == 0){
-					return false;
-				}else{
-					file = (IFile) cUnits[0].getUnderlyingResource();
-				}
-			}else{
-				file = (IFile) targetElement.getUnderlyingResource();	
-			}
-			IProject prj = file.getProject();
+		try {
+			IJavaElement targetElement = (IJavaElement) element;
+			IProject prj = targetElement.getUnderlyingResource().getProject();
 			nature = DiconNature.getInstance(prj);
-			dicons = nature.getModel().getRelatedFiles(file, true);
-			return dicons.length > 0;
 			
+			addElement(element, (RenameArguments)getArguments());
+			return true;
+			
+		} catch (JavaModelException e) {
+			e.printStackTrace();
+		}
+		return false;
+	}
+	
+	public void addElement(Object element, RefactoringArguments arguments) {
+		IJavaElement javaElement = (IJavaElement) element;
+		String newName = ((RenameArguments)arguments).getNewName();
+		renameElements.put(javaElement, newName);
+		
+		try {
+			if (javaElement instanceof IPackageFragment) {
+				//名前変更対象パッケージのクラスに関連するdiconファイルをすべて取得
+				IPackageFragment pkgFragment = (IPackageFragment) javaElement;
+				ICompilationUnit[] cUnits = pkgFragment.getCompilationUnits();
+
+				for (int i = 0; i < cUnits.length; i++) {
+					ICompilationUnit cUnit = cUnits[i];
+					IFile file = (IFile) cUnit.getUnderlyingResource();
+					IFile[] dicon = nature.getModel().getRelatedFiles(file, true);
+					diconList.addAll(Arrays.asList(dicon));
+				}
+			} else {
+				// 名前変更対象クラスに関連するdiconファイルをすべて取得
+				IFile file = (IFile) javaElement.getUnderlyingResource();
+				IFile[] dicon = nature.getModel().getRelatedFiles(file, true);
+				diconList.addAll(Arrays.asList(dicon));
+			}
 		} catch (JavaModelException e) {
 			KijimunaCore.reportException(e);
 		}
-		return false;
 	}
 
 	public Change createChange(IProgressMonitor pm) throws CoreException,
@@ -103,174 +129,131 @@ public class KijimunaRenameParticipant extends RenameParticipant {
 		if (!getArguments().getUpdateReferences()){
 			return null;
 		}
-		List renameChanges = null;
-		
-		//TODO: xxxChange()内リファクタリング
-		if (targetElement instanceof IPackageFragment) {
-			renameChanges = createPacageRenameChange(pm);
-		}else if (targetElement instanceof IType) {
-			renameChanges = createTypeRenameChange(pm);
-		}else if (targetElement instanceof IMethod) {
-			renameChanges = createMethodRenameChange(pm);
-		}else if (targetElement instanceof IField){
-			renameChanges = createFieldRenameChange(pm);
-		}else{
-			//ignore
-		}
-		
-		if(renameChanges != null && renameChanges.size() > 0){
-			CompositeChange changes = new CompositeChange("Dicon Files");
-			changes.markAsSynthetic();
+		CompositeChange compChanges = new CompositeChange("Dicon Files");
+		compChanges.markAsSynthetic();
+
+		for (Iterator diconItr = diconList.iterator(); diconItr.hasNext();) {
+			IFile dicon = (IFile) diconItr.next();
+			ModelManager manager = nature.getModel();
+			IContainerElement model = manager.getContainer(dicon, pm);
+	
+			MultiTextEdit multiEdit = new MultiTextEdit();
 			
-			for (Iterator iterator = renameChanges.iterator(); iterator.hasNext();) {
-				changes.add((Change) iterator.next());
+			for (Iterator renameItr = renameElements.keySet().iterator(); renameItr.hasNext();) {
+				IJavaElement element = (IJavaElement) renameItr.next();
+				String newName = (String) renameElements.get(element);
+				
+				if (element instanceof IPackageFragment) {
+					createPacageRenameChange((IPackageFragment)element, newName, model, multiEdit, pm);
+				}else if (element instanceof IType) {
+					createTypeRenameChange((IType)element, newName, model, multiEdit, pm);
+				}else if (element instanceof IMethod) {
+					createMethodRenameChange((IMethod)element, newName, model, multiEdit, pm);
+				}else if (element instanceof IField){
+					createFieldRenameChange((IField)element, newName, model, multiEdit, pm);
+				}else{
+					//ignore
+				}
 			}
-			return changes;
+			TextFileChange change = new TextFileChange("", dicon);
+			change.setEdit(multiEdit);
+			compChanges.add(change);
+
 		}
-		return null;
+		return compChanges;
 	}
 
-	private List createTypeRenameChange(IProgressMonitor pm) {
-		IType targetType = (IType) targetElement;
+
+	private void createTypeRenameChange(
+			IType targetType, 
+			String newName,
+			IContainerElement model, 
+			MultiTextEdit multiEdit, 
+			IProgressMonitor pm) {
+		
 		String oldFQCN = targetType.getFullyQualifiedName();
-		String newName = getArguments().getNewName();
 		String pkgName = targetType.getPackageFragment().getElementName();
 		String newFQCN = ClassUtil.concatName(pkgName, newName);
-		return createFQCNRenameChange(newFQCN, oldFQCN, false, pm);
+		createFQCNRenameChange(newFQCN, oldFQCN, false, multiEdit, model, pm);
+
 	}
 
-	private List createPacageRenameChange(IProgressMonitor pm) {
-		IPackageFragment pkg = (IPackageFragment) targetElement;
+	private void createPacageRenameChange(
+			IPackageFragment pkg, 
+			String newPkgName,
+			IContainerElement model, 
+			MultiTextEdit multiEdit, 
+			IProgressMonitor pm) {
+		
 		String oldPkgName = pkg.getElementName();
-		String newPkgName = getArguments().getNewName();
-		return createFQCNRenameChange(newPkgName, oldPkgName, true, pm);
+		createFQCNRenameChange(newPkgName, oldPkgName, true, multiEdit, model, pm);
 	}
 	
-	private List createFQCNRenameChange(String newValue, String oldValue, 
-			boolean changePkgName,IProgressMonitor pm) {
+	private void createFQCNRenameChange(
+			String newValue, 
+			String oldValue, 
+			boolean changePkgName, 
+			MultiTextEdit multiEdit, 
+			IContainerElement model, 
+			IProgressMonitor pm) {
 	
-		List changes = new ArrayList();
+		List components = model.getComponentList();
 		
-		for (int i = 0; i < dicons.length; i++) {
-			IFile dicon = dicons[i];
-			ModelManager manager = nature.getModel();
-			IContainerElement model = manager.getContainer(dicon, pm);
-	
-			MultiTextEdit edit = new MultiTextEdit();
+		for (Iterator iterator = components.iterator(); iterator.hasNext();) {
+			IComponentElement component = (IComponentElement) iterator.next();
+			String fqcn = component.getComponentClassName();
 			
-			List components = model.getComponentList();
-			for (Iterator iterator = components.iterator(); iterator.hasNext();) {
-				IComponentElement component = (IComponentElement) iterator.next();
-				String fqcn = component.getComponentClassName();
-				if(fqcn == null){
-					continue;
-				}
-				if(changePkgName){
-					//パッケージ名変更
-					String[] result = ClassUtil.splitFQCN(fqcn);
-					String pkgName = result[0];
-					String typeName = result[1];
-					
-					if(pkgName.equals(oldValue)){
-						String newFQCN = ClassUtil.concatName(newValue, typeName);
-						ReplaceEdit replaceEdit = createClassAttrReplaceEdit(component, newFQCN);
-						edit.addChild(replaceEdit);
-					}
-				}else{
-					//クラス名変更
-					if(fqcn.equals(oldValue)){
-						ReplaceEdit replaceEdit = createClassAttrReplaceEdit(component, newValue);
-						edit.addChild(replaceEdit);
-					}
-				}
+			if(fqcn == null){
+				continue;
 			}
-			if(edit.getChildrenSize() > 0){
-				TextFileChange change = new TextFileChange("", dicon);
-				change.setEdit(edit);
-				changes.add(change);
+			if(changePkgName){
+				//パッケージ名変更
+				String[] result = ClassUtil.splitFQCN(fqcn);
+				String pkgName = result[0];
+				String typeName = result[1];
+				
+				if(pkgName.equals(oldValue)){
+					String newFQCN = ClassUtil.concatName(newValue, typeName);
+					ReplaceEdit replaceEdit = createClassAttrReplaceEdit(component, newFQCN);
+					multiEdit.addChild(replaceEdit);
+				}
+			}else{
+				//クラス名変更
+				if(fqcn.equals(oldValue)){
+					ReplaceEdit replaceEdit = createClassAttrReplaceEdit(component, newValue);
+					multiEdit.addChild(replaceEdit);
+				}
 			}
 		}
-		return changes;
 	}
 
-	private List createMethodRenameChange(IProgressMonitor pm) {
-		IMethod targetMethod = (IMethod) targetElement;
-		String newName = getArguments().getNewName();
+	private void createMethodRenameChange(
+			IMethod targetMethod, 
+			String newName, 
+			IContainerElement model, 
+			MultiTextEdit multiEdit, 
+			IProgressMonitor pm) {
+		
 		String oldName = targetMethod.getElementName();
 		String typeFQCN = targetMethod.getDeclaringType().getFullyQualifiedName();
-		
-		List changes = new ArrayList();
-		
-		for (int i = 0; i < dicons.length; i++) {
-			IFile dicon = dicons[i];
-			ModelManager manager = nature.getModel();
-			IContainerElement model = manager.getContainer(dicon, pm);
+
+		List components = model.getComponentList();
+		for (Iterator componentsItr = components.iterator(); componentsItr.hasNext();) {
+			IComponentElement component = (IComponentElement) componentsItr.next();
+			String className = component.getComponentClassName();
 			
-			MultiTextEdit edit = new MultiTextEdit();
-			
-			List components = model.getComponentList();
-			for (Iterator componentsItr = components.iterator(); componentsItr.hasNext();) {
-				IComponentElement component = (IComponentElement) componentsItr.next();
-				String className = component.getComponentClassName();
-				
-				if(className != null && className.equals(typeFQCN)){
-					createSetterInjectionEdit(newName, oldName, edit, component);
-					createMethodInjectionEdit(newName, oldName, edit, component);
-				}
-			}
-			if(edit.getChildrenSize() > 0){
-				TextFileChange change = new TextFileChange("", dicon);
-				change.setEdit(edit);
-				changes.add(change);
+			if(className != null && className.equals(typeFQCN)){
+				createSetterInjectionEdit(newName, oldName, multiEdit, component);
+				createMethodInjectionEdit(newName, oldName, multiEdit, component);
 			}
 		}
-		return changes;
 	}
 
-	private List createFieldRenameChange(IProgressMonitor pm) {
-		IField targetField = (IField) targetElement;
-		String oldName = targetField.getElementName();
-		String fqcn = targetField.getDeclaringType().getFullyQualifiedName();
-		String newName = getArguments().getNewName();
-		
-		List changes = new ArrayList();
-		for (int i = 0; i < dicons.length; i++) {
-			IFile dicon = dicons[i];
-			ModelManager manager = nature.getModel();
-			IContainerElement model = manager.getContainer(dicon, pm);
-			
-			MultiTextEdit edit = new MultiTextEdit();
-			List components = model.getComponentList();
-			
-			for (Iterator componentsItr = components.iterator(); componentsItr.hasNext();) {
-				IComponentElement component = (IComponentElement) componentsItr.next();
-				String className = component.getComponentClassName();
-				
-				if(className != null && className.equals(fqcn)){
-					List props = component.getPropertyList();
-					
-					for (Iterator propsItr = props.iterator(); propsItr.hasNext();) {
-						IPropertyElement prop = (IPropertyElement) propsItr.next();
-						String propName = prop.getPropertyName();
-						
-						if(propName.equals(oldName)){
-							ReplaceEdit replaceEdit = createPropNameReplaceEdit(prop, newName); 
-							edit.addChild(replaceEdit);
-						}
-					}
-				}
-			}
-			if(edit.getChildrenSize() > 0){
-				TextFileChange change = new TextFileChange("", dicon);
-				change.setEdit(edit);
-				changes.add(change);
-			}
-		}
-		return changes;
-	}
-
-	private void createSetterInjectionEdit(String newName, String oldName,
-			MultiTextEdit edit, IComponentElement component) {
+	private void createSetterInjectionEdit(
+			String newName, 
+			String oldName,
+			MultiTextEdit edit, 
+			IComponentElement component) {
 	
 		if(!newName.startsWith("set")){
 			return;
@@ -291,9 +274,12 @@ public class KijimunaRenameParticipant extends RenameParticipant {
 			}
 		}
 	}
-
-	private void createMethodInjectionEdit(String newName, String oldName,
-			MultiTextEdit edit, IComponentElement component) {
+	
+	private void createMethodInjectionEdit(
+			String newName, 
+			String oldName,
+			MultiTextEdit edit, 
+			IComponentElement component) {
 		
 		List initMethods = component.getInitMethodList();
 		for (Iterator iterator = initMethods.iterator(); iterator.hasNext();) {
@@ -303,6 +289,38 @@ public class KijimunaRenameParticipant extends RenameParticipant {
 			if(methodName.equals(oldName)){
 				ReplaceEdit replaceEdit = createInitMethodNameReplaceEdit(initMethod, newName); 
 				edit.addChild(replaceEdit);
+			}
+		}
+	}
+
+	private void createFieldRenameChange(
+			IField targetField, 
+			String newName,
+			IContainerElement model, 
+			MultiTextEdit multiEdit, 
+			IProgressMonitor pm) {
+
+		String oldName = targetField.getElementName();
+		String fqcn = targetField.getDeclaringType().getFullyQualifiedName();
+
+		List components = model.getComponentList();
+		
+		for (Iterator componentsItr = components.iterator(); componentsItr.hasNext();) {
+			IComponentElement component = (IComponentElement) componentsItr.next();
+			String className = component.getComponentClassName();
+			
+			if(className != null && className.equals(fqcn)){
+				List props = component.getPropertyList();
+				
+				for (Iterator propsItr = props.iterator(); propsItr.hasNext();) {
+					IPropertyElement prop = (IPropertyElement) propsItr.next();
+					String propName = prop.getPropertyName();
+					
+					if(propName.equals(oldName)){
+						ReplaceEdit replaceEdit = createPropNameReplaceEdit(prop, newName); 
+						multiEdit.addChild(replaceEdit);
+					}
+				}
 			}
 		}
 	}
@@ -330,4 +348,5 @@ public class KijimunaRenameParticipant extends RenameParticipant {
 		String newAttrDef = "name=\"" + newName + "\"";
 		return new ReplaceEdit(offset, length, newAttrDef);
 	}
+
 }
