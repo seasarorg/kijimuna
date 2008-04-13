@@ -95,7 +95,8 @@ public class ContainerElement extends DiconElement implements IContainerElement,
 			int startLine, int startColumn) {
 		ComponentElement element = new ComponentElement(getProject(), getStorage());
 		HashMap property = new HashMap();
-		property.put("name", new Attribute(name, clazz));
+		property.put("name", new Attribute("name", name));
+		property.put("class", new Attribute("class", clazz));
 		element.setAttributes(property);
 		element.setRootElement(this);
 		element.setStartLocation(depth, startLine, startColumn);
@@ -110,7 +111,8 @@ public class ContainerElement extends DiconElement implements IContainerElement,
 			String clazz) {
 		ComponentElement element = new ComponentElement(project, storage);
 		HashMap property = new HashMap();
-		property.put("name", new Attribute(name, clazz));
+		property.put("name", new Attribute("name", name));
+		property.put("class", new Attribute("class", clazz));
 		element.setAttributes(property);
 		// element.setStartLocation(2, 0, 0);
 		element.setRootElement(this);
