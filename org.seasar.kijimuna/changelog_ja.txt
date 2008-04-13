@@ -1,34 +1,41 @@
 Kijimuna 変更履歴
 
+1.1.10 (2008-04-13)
+[修正] s2jdbc-tutorialのs2jdbc.diconで「[property]コンポーネントキー
+       "hsqlDialect"が登録されていません。」と言われる（Kijimuna-22が再現）
+       問題を修正しました。(KIJIMUNA-34)
+
 1.1.8 (2008-03-30)
 ----------------------------------------------------------------------
 [新規] コンポーネントの自動登録に対応しました。(KIJIMUNA-22)
-　　以下のAutoRegisterに対応しました。
-　　・FileSystemComponentAutoRegister
-　　・JarComponentAutoRegister
-　　・ComponentAutoRegister
+       以下のAutoRegisterに対応しました。
+       ・FileSystemComponentAutoRegister
+       ・JarComponentAutoRegister
+       ・ComponentAutoRegister
+       [Seasar-user:12389], [seasar-dev:751]
 
-[新規] enumに対応しました。(KIJIMUNA-31)
+[新規] enumに対応しました。(KIJIMUNA-31) [Seasar-user:13122]
 
 [新規] diconファイルでenum定数の補完が効くようにしました。(KIJIMUNA-32)
+       [Seasar-user:13131]
 
 [新規] リファクタリングに一部対応しました。(KIJIMUNA-30)
 
 [修正] *.javaファイルがプロジェクトに大量に追加されたときにバリデーション処理が
-　　重くなる問題を解決しました。(KIJIMUNA-33)
+       重くなる問題を解決しました。(KIJIMUNA-33)
 
 1.1.5 (2008-02-05)
 ----------------------------------------------------------------------
 [修正] EclipseのFeature Detailsに表示されない問題を修正しました。(KIJIMUNA-24)
 
 [修正] プロジェクトのプロパティで設定したバリデーションの設定が、Eclipseを再起動するとデフォルト
-　　　にもどってしまうバグを修正しました。(KIJIMUNA21)
+       にもどってしまうバグを修正しました。(KIJIMUNA21)
 
 [修正] Eclipse3.3で動作するように修正しました。(KIJIMUNA-20)
 
 1.1.4 (2008-01-15)
 ----------------------------------------------------------------------
-[新規] public fieldに対応しました。(KIJIMUNA-19)
+[新規] public fieldに対応しました。(KIJIMUNA-19) [Seasar-user:12389]
 
 [修正] コンポーネントのコンストラクタの引数が配列のとき、型が正しく解決できな
        かった問題を修正しました。また、デフォルトパッケージのクラス名で解決でき
