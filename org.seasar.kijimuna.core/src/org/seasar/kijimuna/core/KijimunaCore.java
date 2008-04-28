@@ -20,17 +20,21 @@ import java.net.URL;
 import org.osgi.framework.BundleContext;
 import org.osgi.service.prefs.Preferences;
 
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResourceChangeEvent;
+import org.eclipse.core.resources.IResourceChangeListener;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Plugin;
 
 import org.seasar.kijimuna.core.project.ProjectRecorder;
+import org.seasar.kijimuna.core.util.ProjectUtils;
 
 /**
  * @author Masataka Kurihara (Gluegent, Inc)
  */
-public class KijimunaCore extends Plugin implements ConstCore {
+public class KijimunaCore extends Plugin implements IResourceChangeListener, ConstCore {
 
 	// static
 	// -------------------------------------------------------------------
@@ -79,6 +83,7 @@ public class KijimunaCore extends Plugin implements ConstCore {
 		super();
 		kijimuna = this;
 		messageManager = new MessageManager(this, PATH_RESOURCE);
+		ResourcesPlugin.getWorkspace().addResourceChangeListener(this, IResourceChangeEvent.PRE_DELETE);
 	}
 
 	public void start(BundleContext context) throws Exception {
@@ -96,6 +101,12 @@ public class KijimunaCore extends Plugin implements ConstCore {
 		messageManager = null;
 		kijimuna = null;
 		super.stop(context);
+	}
+
+	public void resourceChanged(IResourceChangeEvent event) {
+		if( event.getResource() instanceof IProject) {
+			ProjectUtils.clearDiconStorageWithCash((IProject)event.getResource());
+		}
 	}
 
 }
