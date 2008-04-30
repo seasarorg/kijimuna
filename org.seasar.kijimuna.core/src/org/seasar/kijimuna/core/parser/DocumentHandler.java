@@ -344,7 +344,7 @@ public class DocumentHandler extends DefaultHandler implements ConstCore {
 
 			if (propertyElement.getAttribute("name").equals("jarFileNames")
 					&& register instanceof JarComponentAutoRegister) {
-				setJarFileNames(register, propertyElement);
+				setJarFileNames((JarComponentAutoRegister) register, propertyElement);
 			}
 
 			if (propertyElement.getAttribute("name").equals("interceptor")
@@ -396,20 +396,20 @@ public class DocumentHandler extends DefaultHandler implements ConstCore {
 				addIgnoreClassPattern(register, initMethodElement);
 			} else if (initMethodElement.getAttribute("name").equals("addReferenceClass")
 					&& register instanceof ComponentAutoRegister) {
-				addReferenceClass(register, initMethodElement);
+				addReferenceClass((ComponentAutoRegister) register, initMethodElement);
 			}
 		}
 	}
 
-	private void setJarFileNames(IAutoRegister register, PropertyElement propertyElement) {
+	private void setJarFileNames(JarComponentAutoRegister register,
+			PropertyElement propertyElement) {
 		String jarFileNames = propertyElement.getBody();
 		if (jarFileNames != null && StringUtils.isString(jarFileNames)) {
-			((JarComponentAutoRegister) register).setJarFileNames(StringUtils
-					.decodeString(jarFileNames));
+			register.setJarFileNames(StringUtils.decodeString(jarFileNames));
 		}
 	}
 
-	private void addReferenceClass(IAutoRegister register,
+	private void addReferenceClass(ComponentAutoRegister register,
 			InitMethodElement initMethodElement) {
 		List argList = initMethodElement.getArgList();
 		Iterator argListIterator = argList.iterator();
@@ -419,7 +419,7 @@ public class DocumentHandler extends DefaultHandler implements ConstCore {
 		if (referenceClass.startsWith("@") && referenceClass.endsWith("@class")) {
 			String referenceClassName = referenceClass.substring(1, referenceClass
 					.length() - 6);
-			((ComponentAutoRegister) register).addReferenceClass(referenceClassName);
+			register.addReferenceClass(referenceClassName);
 		}
 	}
 
