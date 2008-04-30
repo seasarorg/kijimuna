@@ -48,11 +48,9 @@ public class FileUtilsTest extends TestCase implements ConstCore {
 		testProject.dispose();
 	}
 
-	private String contents =
-		"<?xml=\"1.0\" encoding=\"UTF-8\"?>\r\n" +
-		"<conponents>\r\n" +
-		"	<component class=\"java.util.ArrayList\"/>\r\n" +
-		"</components>";
+	private String contents = "<?xml=\"1.0\" encoding=\"UTF-8\"?>\r\n"
+			+ "<conponents>\r\n" + "	<component class=\"java.util.ArrayList\"/>\r\n"
+			+ "</components>";
 
 	public void testCreateFile() throws Exception {
 		InputStream stream = new ByteArrayInputStream(contents.getBytes());

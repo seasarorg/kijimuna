@@ -41,8 +41,7 @@ import org.seasar.kijimuna.core.util.ProjectUtils;
 public class DiconNature implements IProjectNature, IProjectRecordable, ConstCore {
 
 	private static final String[] BUILDERS = new String[] {
-			ID_PROCESSOR_DICON_BUILDER,
-			ID_PROCESSOR_DICON_VALIDATOR
+			ID_PROCESSOR_DICON_BUILDER, ID_PROCESSOR_DICON_VALIDATOR
 	};
 
 	public static DiconNature getInstance(IProject project) {

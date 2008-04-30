@@ -42,68 +42,45 @@ public class DefaultRttiTest extends TestCase {
 	protected void setUp() throws Exception {
 		project = new TestProject();
 		IPackageFragment pack = project.createPackage("test");
-		project.createType(pack,
-				"IBase.java", "public interface IBase {" +
-				"  public static final int BASE = 999;"+
-				"}");
-		project.createType(pack,
-			"IPerson.java", "public interface IPerson extends IBase {" +
-			"  public static final String CONST = \"static string\";"+
-			"}");
+		project.createType(pack, "IBase.java", "public interface IBase {"
+				+ "  public static final int BASE = 999;" + "}");
+		project
+				.createType(
+						pack,
+						"IPerson.java",
+						"public interface IPerson extends IBase {"
+								+ "  public static final String CONST = \"static string\";"
+								+ "}");
 		project.createType(pack, "AbstractPerson.java",
-			"public abstract class AbstractPerson {"+
-			"	public int integer;" +
-			"	public int getInteger() {" +
-			"		return integer;" +
-			"	}" +
-			"	public void setInteger(int integer) {" +
-			"		this.integer = integer;" +
-			"	}" +
-			"	public Person createPerson(String name) {" +
-			"		return new Person(name, -1);" +
-			"	}" +
-			"	public Person createPerson(String name, int age) {" +
-			"		return new Person(name, age);" +
-			"	}" +
-			"}");
-		project.createType(pack, "Person.java", 
-			"public class Person extends AbstractPerson implements IPerson" +
-			"	public Person parent;" +
-			"	public java.util.List list;" +
-			"	public static final char[ ] array = new char[0];" +
-			"	public Person() {" +
-			"	}" +
-			"	public Person(String name, int age) {" +
-			"	}" +
-			"	public Person createPerson() {" +
-			"		return new Person();" +
-			"	}" +
-			"	public Person createPerson(String name, int age) {" +
-			"		return new Person(name, age);" +
-			"	}" +
-			"	public java.util.Map createMap() {" +
-			"		return new java.util.HashMap();" +
-			"	}" +
-			"	public long createLong() {" +
-			"		return 100L;" +
-			"	}" +
-			"	public Person getParent() {" +
-			"		return parent;" +
-			"	}" +
-			"	public void setList(java.util.List list) {" +
-			"		this.list = list;" +
-			"	}" +
-			"	public static void main(String[] args) {" +
-			"		System.out.println(\"hello world\");" +
-			"	}" +
-			"}"
-		);
+				"public abstract class AbstractPerson {" + "	public int integer;"
+						+ "	public int getInteger() {" + "		return integer;" + "	}"
+						+ "	public void setInteger(int integer) {"
+						+ "		this.integer = integer;" + "	}"
+						+ "	public Person createPerson(String name) {"
+						+ "		return new Person(name, -1);" + "	}"
+						+ "	public Person createPerson(String name, int age) {"
+						+ "		return new Person(name, age);" + "	}" + "}");
+		project.createType(pack, "Person.java",
+				"public class Person extends AbstractPerson implements IPerson"
+						+ "	public Person parent;" + "	public java.util.List list;"
+						+ "	public static final char[ ] array = new char[0];"
+						+ "	public Person() {" + "	}"
+						+ "	public Person(String name, int age) {" + "	}"
+						+ "	public Person createPerson() {" + "		return new Person();"
+						+ "	}" + "	public Person createPerson(String name, int age) {"
+						+ "		return new Person(name, age);" + "	}"
+						+ "	public java.util.Map createMap() {"
+						+ "		return new java.util.HashMap();" + "	}"
+						+ "	public long createLong() {" + "		return 100L;" + "	}"
+						+ "	public Person getParent() {" + "		return parent;" + "	}"
+						+ "	public void setList(java.util.List list) {"
+						+ "		this.list = list;" + "	}"
+						+ "	public static void main(String[] args) {"
+						+ "		System.out.println(\"hello world\");" + "	}" + "}");
 		project.createType(pack, "DefaultPerson.java",
 				"public class DefaultPerson extends Person {" + "}");
-		project.createType(pack,
-				"Sample.java", "public class Sample {" +
-				"  public String str = \"string\";"+
-				"}");
+		project.createType(pack, "Sample.java", "public class Sample {"
+				+ "  public String str = \"string\";" + "}");
 		loader = new RttiLoader(project.getJavaProject().getElementName(), false);
 	}
 
@@ -323,7 +300,7 @@ public class DefaultRttiTest extends TestCase {
 		assertTrue(prop.isWritable());
 		assertTrue(prop.isReadable());
 	}
-	
+
 	public void testGetProperty4() throws Exception {
 		IRtti person = loader.loadRtti("test.Sample");
 		IRtti type = loader.loadRtti("java.lang.String");

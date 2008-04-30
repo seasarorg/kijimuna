@@ -49,7 +49,7 @@ public class JarComponentAutoRegister extends AbstractComponentAutoRegister {
 			}
 			IResource resource = parent.getResource();
 			File[] jars = null;
-			if(resource == null) {
+			if (resource == null) {
 				File file = parent.getPath().makeAbsolute().toFile();
 				jars = new File[1];
 				jars[0] = file;

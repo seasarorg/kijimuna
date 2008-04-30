@@ -27,7 +27,7 @@ public interface IRttiFieldDescriptor extends IAdaptable, Serializable {
 	boolean isFinal();
 
 	boolean isStatic();
-	
+
 	boolean isEnum();
 
 	IRtti getParent();

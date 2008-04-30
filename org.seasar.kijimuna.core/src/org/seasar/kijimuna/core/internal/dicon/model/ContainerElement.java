@@ -70,15 +70,15 @@ public class ContainerElement extends DiconElement implements IContainerElement,
 		IComponentKey interfaceKey = createComponentKey(rtti);
 		componentDefMap.put(interfaceKey, this);
 		containerKeySet.add(interfaceKey);
-		
+
 		setUpMagicComponents();
 	}
-	
+
 	private void setUpMagicComponents() {
 		// TODO: web.xmlを見てservletかportletか判断する必要あり
-		addMagicComponent(S2VersionUtil.isUsingVersion24(getProject()) ?
-				MODEL_NAME_APPLICATION : MODEL_NAME_SERVLETCONTEXT,
-				MODEL_INTERFACE_SERVLETCONTEXT);
+		addMagicComponent(
+				S2VersionUtil.isUsingVersion24(getProject()) ? MODEL_NAME_APPLICATION
+						: MODEL_NAME_SERVLETCONTEXT, MODEL_INTERFACE_SERVLETCONTEXT);
 		addMagicComponent(MODEL_NAME_REQUEST, MODEL_INTERFACE_REQUEST);
 		addMagicComponent(MODEL_NAME_RESPONSE, MODEL_INTERFACE_RESPONSE);
 		addMagicComponent(MODEL_NAME_SESSION, MODEL_INTERFACE_SESSION);
@@ -106,7 +106,7 @@ public class ContainerElement extends DiconElement implements IContainerElement,
 	private void addMagicComponent(String name, String clazz) {
 		addMagicComponent(getProject(), getStorage(), name, clazz);
 	}
-	
+
 	private void addMagicComponent(IProject project, IStorage storage, String name,
 			String clazz) {
 		ComponentElement element = new ComponentElement(project, storage);

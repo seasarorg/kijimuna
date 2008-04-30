@@ -62,15 +62,16 @@ import org.seasar.kijimuna.core.util.StringUtils;
  * @author Masataka Kurihara (Gluegent, Inc.)
  * @author kentaro Matsumae
  */
-public class KijimunaRenameParticipant extends RenameParticipant implements ISharableParticipant{
+public class KijimunaRenameParticipant extends RenameParticipant implements
+		ISharableParticipant {
 
 	private DiconNature nature;
 
 	private Set diconList = new HashSet();
-	
-	//key=element, value=newName
+
+	// key=element, value=newName
 	private Map renameElements = new HashMap();
-	
+
 	public String getName() {
 		return KijimunaCore.getResourceString("dicon.refactor.TypeRenameParticipant.1");
 	}
@@ -85,24 +86,24 @@ public class KijimunaRenameParticipant extends RenameParticipant implements ISha
 			IJavaElement targetElement = (IJavaElement) element;
 			IProject prj = targetElement.getUnderlyingResource().getProject();
 			nature = DiconNature.getInstance(prj);
-			
-			addElement(element, (RenameArguments)getArguments());
+
+			addElement(element, (RenameArguments) getArguments());
 			return true;
-			
+
 		} catch (JavaModelException e) {
 			e.printStackTrace();
 		}
 		return false;
 	}
-	
+
 	public void addElement(Object element, RefactoringArguments arguments) {
 		IJavaElement javaElement = (IJavaElement) element;
-		String newName = ((RenameArguments)arguments).getNewName();
+		String newName = ((RenameArguments) arguments).getNewName();
 		renameElements.put(javaElement, newName);
-		
+
 		try {
 			if (javaElement instanceof IPackageFragment) {
-				//名前変更対象パッケージのクラスに関連するdiconファイルをすべて取得
+				// 名前変更対象パッケージのクラスに関連するdiconファイルをすべて取得
 				IPackageFragment pkgFragment = (IPackageFragment) javaElement;
 				ICompilationUnit[] cUnits = pkgFragment.getCompilationUnits();
 
@@ -125,8 +126,8 @@ public class KijimunaRenameParticipant extends RenameParticipant implements ISha
 
 	public Change createChange(IProgressMonitor pm) throws CoreException,
 			OperationCanceledException {
-		
-		if (!getArguments().getUpdateReferences()){
+
+		if (!getArguments().getUpdateReferences()) {
 			return null;
 		}
 		CompositeChange compChanges = new CompositeChange("Dicon Files");
@@ -136,23 +137,27 @@ public class KijimunaRenameParticipant extends RenameParticipant implements ISha
 			IFile dicon = (IFile) diconItr.next();
 			ModelManager manager = nature.getModel();
 			IContainerElement model = manager.getContainer(dicon, pm);
-	
+
 			MultiTextEdit multiEdit = new MultiTextEdit();
-			
-			for (Iterator renameItr = renameElements.keySet().iterator(); renameItr.hasNext();) {
+
+			for (Iterator renameItr = renameElements.keySet().iterator(); renameItr
+					.hasNext();) {
 				IJavaElement element = (IJavaElement) renameItr.next();
 				String newName = (String) renameElements.get(element);
-				
+
 				if (element instanceof IPackageFragment) {
-					createPacageRenameChange((IPackageFragment)element, newName, model, multiEdit, pm);
-				}else if (element instanceof IType) {
-					createTypeRenameChange((IType)element, newName, model, multiEdit, pm);
-				}else if (element instanceof IMethod) {
-					createMethodRenameChange((IMethod)element, newName, model, multiEdit, pm);
-				}else if (element instanceof IField){
-					createFieldRenameChange((IField)element, newName, model, multiEdit, pm);
-				}else{
-					//ignore
+					createPacageRenameChange((IPackageFragment) element, newName, model,
+							multiEdit, pm);
+				} else if (element instanceof IType) {
+					createTypeRenameChange((IType) element, newName, model, multiEdit, pm);
+				} else if (element instanceof IMethod) {
+					createMethodRenameChange((IMethod) element, newName, model,
+							multiEdit, pm);
+				} else if (element instanceof IField) {
+					createFieldRenameChange((IField) element, newName, model, multiEdit,
+							pm);
+				} else {
+					// ignore
 				}
 			}
 			TextFileChange change = new TextFileChange("", dicon);
@@ -163,14 +168,9 @@ public class KijimunaRenameParticipant extends RenameParticipant implements ISha
 		return compChanges;
 	}
 
+	private void createTypeRenameChange(IType targetType, String newName,
+			IContainerElement model, MultiTextEdit multiEdit, IProgressMonitor pm) {
 
-	private void createTypeRenameChange(
-			IType targetType, 
-			String newName,
-			IContainerElement model, 
-			MultiTextEdit multiEdit, 
-			IProgressMonitor pm) {
-		
 		String oldFQCN = targetType.getFullyQualifiedName();
 		String pkgName = targetType.getPackageFragment().getElementName();
 		String newFQCN = ClassUtil.concatName(pkgName, newName);
@@ -178,62 +178,52 @@ public class KijimunaRenameParticipant extends RenameParticipant implements ISha
 
 	}
 
-	private void createPacageRenameChange(
-			IPackageFragment pkg, 
-			String newPkgName,
-			IContainerElement model, 
-			MultiTextEdit multiEdit, 
-			IProgressMonitor pm) {
-		
+	private void createPacageRenameChange(IPackageFragment pkg, String newPkgName,
+			IContainerElement model, MultiTextEdit multiEdit, IProgressMonitor pm) {
+
 		String oldPkgName = pkg.getElementName();
 		createFQCNRenameChange(newPkgName, oldPkgName, true, multiEdit, model, pm);
 	}
-	
-	private void createFQCNRenameChange(
-			String newValue, 
-			String oldValue, 
-			boolean changePkgName, 
-			MultiTextEdit multiEdit, 
-			IContainerElement model, 
+
+	private void createFQCNRenameChange(String newValue, String oldValue,
+			boolean changePkgName, MultiTextEdit multiEdit, IContainerElement model,
 			IProgressMonitor pm) {
-	
+
 		List components = model.getComponentList();
-		
+
 		for (Iterator iterator = components.iterator(); iterator.hasNext();) {
 			IComponentElement component = (IComponentElement) iterator.next();
 			String fqcn = component.getComponentClassName();
-			
-			if(fqcn == null){
+
+			if (fqcn == null) {
 				continue;
 			}
-			if(changePkgName){
-				//パッケージ名変更
+			if (changePkgName) {
+				// パッケージ名変更
 				String[] result = ClassUtil.splitFQCN(fqcn);
 				String pkgName = result[0];
 				String typeName = result[1];
-				
-				if(pkgName.equals(oldValue)){
+
+				if (pkgName.equals(oldValue)) {
 					String newFQCN = ClassUtil.concatName(newValue, typeName);
-					ReplaceEdit replaceEdit = createClassAttrReplaceEdit(component, newFQCN);
+					ReplaceEdit replaceEdit = createClassAttrReplaceEdit(component,
+							newFQCN);
 					multiEdit.addChild(replaceEdit);
 				}
-			}else{
-				//クラス名変更
-				if(fqcn.equals(oldValue)){
-					ReplaceEdit replaceEdit = createClassAttrReplaceEdit(component, newValue);
+			} else {
+				// クラス名変更
+				if (fqcn.equals(oldValue)) {
+					ReplaceEdit replaceEdit = createClassAttrReplaceEdit(component,
+							newValue);
 					multiEdit.addChild(replaceEdit);
 				}
 			}
 		}
 	}
 
-	private void createMethodRenameChange(
-			IMethod targetMethod, 
-			String newName, 
-			IContainerElement model, 
-			MultiTextEdit multiEdit, 
-			IProgressMonitor pm) {
-		
+	private void createMethodRenameChange(IMethod targetMethod, String newName,
+			IContainerElement model, MultiTextEdit multiEdit, IProgressMonitor pm) {
+
 		String oldName = targetMethod.getElementName();
 		String typeFQCN = targetMethod.getDeclaringType().getFullyQualifiedName();
 
@@ -241,83 +231,74 @@ public class KijimunaRenameParticipant extends RenameParticipant implements ISha
 		for (Iterator componentsItr = components.iterator(); componentsItr.hasNext();) {
 			IComponentElement component = (IComponentElement) componentsItr.next();
 			String className = component.getComponentClassName();
-			
-			if(className != null && className.equals(typeFQCN)){
+
+			if (className != null && className.equals(typeFQCN)) {
 				createSetterInjectionEdit(newName, oldName, multiEdit, component);
 				createMethodInjectionEdit(newName, oldName, multiEdit, component);
 			}
 		}
 	}
 
-	private void createSetterInjectionEdit(
-			String newName, 
-			String oldName,
-			MultiTextEdit edit, 
-			IComponentElement component) {
-	
-		if(!newName.startsWith("set")){
+	private void createSetterInjectionEdit(String newName, String oldName,
+			MultiTextEdit edit, IComponentElement component) {
+
+		if (!newName.startsWith("set")) {
 			return;
 		}
 		List props = component.getPropertyList();
-		
+
 		for (Iterator propsItr = props.iterator(); propsItr.hasNext();) {
 			IPropertyElement prop = (IPropertyElement) propsItr.next();
 			String propName = prop.getPropertyName();
 			String setterName = "set" + StringUtils.capitalize(propName);
-			
-			if(setterName.equals(oldName)){
+
+			if (setterName.equals(oldName)) {
 				String newPropName = newName.substring(3);
 				newPropName = StringUtils.decapitalize(newPropName);
-				
-				ReplaceEdit replaceEdit = createPropNameReplaceEdit(prop, newPropName); 
-				edit.addChild(replaceEdit);
-			}
-		}
-	}
-	
-	private void createMethodInjectionEdit(
-			String newName, 
-			String oldName,
-			MultiTextEdit edit, 
-			IComponentElement component) {
-		
-		List initMethods = component.getInitMethodList();
-		for (Iterator iterator = initMethods.iterator(); iterator.hasNext();) {
-			InitMethodElement initMethod = (InitMethodElement) iterator.next();
-			String methodName = initMethod.getMethodName();
-			
-			if(methodName.equals(oldName)){
-				ReplaceEdit replaceEdit = createInitMethodNameReplaceEdit(initMethod, newName); 
+
+				ReplaceEdit replaceEdit = createPropNameReplaceEdit(prop, newPropName);
 				edit.addChild(replaceEdit);
 			}
 		}
 	}
 
-	private void createFieldRenameChange(
-			IField targetField, 
-			String newName,
-			IContainerElement model, 
-			MultiTextEdit multiEdit, 
-			IProgressMonitor pm) {
+	private void createMethodInjectionEdit(String newName, String oldName,
+			MultiTextEdit edit, IComponentElement component) {
+
+		List initMethods = component.getInitMethodList();
+		for (Iterator iterator = initMethods.iterator(); iterator.hasNext();) {
+			InitMethodElement initMethod = (InitMethodElement) iterator.next();
+			String methodName = initMethod.getMethodName();
+
+			if (methodName.equals(oldName)) {
+				ReplaceEdit replaceEdit = createInitMethodNameReplaceEdit(initMethod,
+						newName);
+				edit.addChild(replaceEdit);
+			}
+		}
+	}
+
+	private void createFieldRenameChange(IField targetField, String newName,
+			IContainerElement model, MultiTextEdit multiEdit, IProgressMonitor pm) {
 
 		String oldName = targetField.getElementName();
 		String fqcn = targetField.getDeclaringType().getFullyQualifiedName();
 
 		List components = model.getComponentList();
-		
+
 		for (Iterator componentsItr = components.iterator(); componentsItr.hasNext();) {
 			IComponentElement component = (IComponentElement) componentsItr.next();
 			String className = component.getComponentClassName();
-			
-			if(className != null && className.equals(fqcn)){
+
+			if (className != null && className.equals(fqcn)) {
 				List props = component.getPropertyList();
-				
+
 				for (Iterator propsItr = props.iterator(); propsItr.hasNext();) {
 					IPropertyElement prop = (IPropertyElement) propsItr.next();
 					String propName = prop.getPropertyName();
-					
-					if(propName.equals(oldName)){
-						ReplaceEdit replaceEdit = createPropNameReplaceEdit(prop, newName); 
+
+					if (propName.equals(oldName)) {
+						ReplaceEdit replaceEdit = createPropNameReplaceEdit(prop, newName);
 						multiEdit.addChild(replaceEdit);
 					}
 				}
@@ -325,15 +306,17 @@ public class KijimunaRenameParticipant extends RenameParticipant implements ISha
 		}
 	}
 
-	private ReplaceEdit createClassAttrReplaceEdit(IComponentElement component, String newClassName) {
+	private ReplaceEdit createClassAttrReplaceEdit(IComponentElement component,
+			String newClassName) {
 		Attribute classAttr = component.getAttributeObject("class");
 		int offset = classAttr.getOffset();
 		int length = classAttr.getLength();
 		String newAttrDef = "class=\"" + newClassName + "\"";
 		return new ReplaceEdit(offset, length, newAttrDef);
 	}
-	
-	private ReplaceEdit createPropNameReplaceEdit(IPropertyElement prop, String newPropName) {
+
+	private ReplaceEdit createPropNameReplaceEdit(IPropertyElement prop,
+			String newPropName) {
 		Attribute nameAttr = prop.getAttributeObject("name");
 		int offset = nameAttr.getOffset();
 		int length = nameAttr.getLength();
@@ -341,7 +324,8 @@ public class KijimunaRenameParticipant extends RenameParticipant implements ISha
 		return new ReplaceEdit(offset, length, newAttrDef);
 	}
 
-	private ReplaceEdit createInitMethodNameReplaceEdit(InitMethodElement initMethod, String newName) {
+	private ReplaceEdit createInitMethodNameReplaceEdit(InitMethodElement initMethod,
+			String newName) {
 		Attribute nameAttr = initMethod.getAttributeObject("name");
 		int offset = nameAttr.getOffset();
 		int length = nameAttr.getLength();

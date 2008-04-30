@@ -83,7 +83,8 @@ public class KijimunaCore extends Plugin implements IResourceChangeListener, Con
 		super();
 		kijimuna = this;
 		messageManager = new MessageManager(this, PATH_RESOURCE);
-		ResourcesPlugin.getWorkspace().addResourceChangeListener(this, IResourceChangeEvent.PRE_DELETE);
+		ResourcesPlugin.getWorkspace().addResourceChangeListener(this,
+				IResourceChangeEvent.PRE_DELETE);
 	}
 
 	public void start(BundleContext context) throws Exception {
@@ -95,7 +96,8 @@ public class KijimunaCore extends Plugin implements IResourceChangeListener, Con
 	}
 
 	public void stop(BundleContext context) throws Exception {
-		Preferences pluginPref = Platform.getPreferencesService().getRootNode().node("plugin");
+		Preferences pluginPref = Platform.getPreferencesService().getRootNode().node(
+				"plugin");
 		pluginPref.flush();
 		recorder = null;
 		messageManager = null;
@@ -104,8 +106,8 @@ public class KijimunaCore extends Plugin implements IResourceChangeListener, Con
 	}
 
 	public void resourceChanged(IResourceChangeEvent event) {
-		if( event.getResource() instanceof IProject) {
-			ProjectUtils.clearDiconStorageWithCash((IProject)event.getResource());
+		if (event.getResource() instanceof IProject) {
+			ProjectUtils.clearDiconStorageWithCash((IProject) event.getResource());
 		}
 	}
 

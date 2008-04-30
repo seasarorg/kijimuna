@@ -48,7 +48,7 @@ public class ComponentElement extends AbstractExpressionElement implements
 		IComponentElement, ConstCore {
 
 	private static final Pattern PATTERN_ANY = Pattern.compile(".*");
-	
+
 	private Set componentKeySet;
 	private IComponentInfo info;
 	private IRttiConstructorDesctiptor suitableConstructor;
@@ -249,7 +249,7 @@ public class ComponentElement extends AbstractExpressionElement implements
 					if (ModelUtils.doDesignTimeAutoBinding(propDesc.getType())) {
 						processAutoBinding(propDesc);
 					}
-					if (propDesc.getValue() != null) { 
+					if (propDesc.getValue() != null) {
 						list.add(propDesc);
 					}
 				}
@@ -259,14 +259,14 @@ public class ComponentElement extends AbstractExpressionElement implements
 		}
 		return new IRttiPropertyDescriptor[0];
 	}
-	
+
 	private void processAutoBinding(IRttiPropertyDescriptor propDesc) {
-		AutoBindingComponentProvider provider =
-			new AutoBindingComponentProvider(getContainerElement());
+		AutoBindingComponentProvider provider = new AutoBindingComponentProvider(
+				getContainerElement());
 		IRtti rtti = provider.getAutoBindingComponentRtti(propDesc);
 		propDesc.setValue(rtti);
 	}
-	
+
 	public Object getAdapter(Class adapter) {
 		if (IComponentInfo.class.equals(adapter)) {
 			if (info == null) {

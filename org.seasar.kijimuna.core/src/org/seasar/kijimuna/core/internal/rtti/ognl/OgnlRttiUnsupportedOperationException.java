@@ -22,7 +22,7 @@ import org.seasar.kijimuna.core.KijimunaCore;
 public class OgnlRttiUnsupportedOperationException extends OgnlException {
 
 	public OgnlRttiUnsupportedOperationException() {
-		super(KijimunaCore.getResourceString(
-				"rtti.ognl.OgnlRttiUnsupportedOperationException.1"));
+		super(KijimunaCore
+				.getResourceString("rtti.ognl.OgnlRttiUnsupportedOperationException.1"));
 	}
 }

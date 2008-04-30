@@ -21,11 +21,11 @@ package org.seasar.kijimuna.core.parser;
 public class Attribute {
 
 	private final String name;
-	
+
 	private final String value;
-	
+
 	private final int offset;
-	
+
 	private final int length;
 
 	public Attribute(String name, String value, int offset, int length) {

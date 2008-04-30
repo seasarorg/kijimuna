@@ -99,17 +99,17 @@ public class DefaultElement implements IElement, IAdaptable, Serializable {
 
 	public String getAttribute(String name) {
 		Attribute attr = this.getAttributeObject(name);
-		if(attr != null){
+		if (attr != null) {
 			return attr.getValue();
-		}else{
+		} else {
 			return null;
 		}
 	}
 
-	public Attribute getAttributeObject(String name){
+	public Attribute getAttributeObject(String name) {
 		return (Attribute) attributes.get(name);
 	}
-	
+
 	public void setAttributes(Map properties) {
 		this.attributes = properties;
 	}

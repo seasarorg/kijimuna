@@ -15,7 +15,6 @@
  */
 package org.seasar.kijimuna.core.internal.dicon.model.autoregister;
 
-
 import org.eclipse.jdt.core.IJavaProject;
 
 /**
@@ -65,7 +64,7 @@ public interface IAutoRegister {
 	 * @param naming
 	 */
 	public void setAutoNaming(AutoNaming naming);
-	
+
 	/**
 	 * 追加されているClassPatternの数を返します。
 	 * 

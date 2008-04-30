@@ -38,13 +38,13 @@ public class ComponentHolderValidation implements IValidation, ConstCore {
 	public void validation(IDiconElement element) {
 		if (element instanceof IComponentHolderElement) {
 			IComponentHolderElement arg = (IComponentHolderElement) element;
-			if (arg instanceof IPropertyElement &&
-					ModelUtils.isAutoBindingProperty((IPropertyElement) arg)) {
+			if (arg instanceof IPropertyElement
+					&& ModelUtils.isAutoBindingProperty((IPropertyElement) arg)) {
 				return;
 			}
 			if (!isBindingTypeNone(arg)) {
 				checkError(arg);
-			}					
+			}
 			validComponentHolder(arg);
 		}
 	}
@@ -79,15 +79,17 @@ public class ComponentHolderValidation implements IValidation, ConstCore {
 			if (size == 0 && componentHolder instanceof MetaElement == false) {
 				if (!isBindingTypeNone(componentHolder)) {
 					MarkerSetting.createDiconMarker(
-							"dicon.validation.ComponentHolderValidation.3", componentHolder);
+							"dicon.validation.ComponentHolderValidation.3",
+							componentHolder);
 				}
 			}
 		}
 	}
 
 	private boolean isBindingTypeNone(IComponentHolderElement holder) {
-		return holder instanceof IPropertyElement &&
-				DICON_VAL_BINDING_TYPE_NONE.equals(((IPropertyElement) holder).getBindingType());
+		return holder instanceof IPropertyElement
+				&& DICON_VAL_BINDING_TYPE_NONE.equals(((IPropertyElement) holder)
+						.getBindingType());
 	}
 
 }

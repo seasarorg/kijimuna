@@ -45,25 +45,15 @@ public class OgnlExtensionsTest extends TestCase {
 	protected void setUp() throws Exception {
 		project = new TestProject();
 		IPackageFragment pack = project.createPackage("test");
-		project.createType(pack, "Person.java", 
-				"import java.util.List;" +
-				"public class Person {" +
-				"	public List list;" +
-				"	public static String STATIC = \"satic value\";" +
-				"	public Person getProperty() {" +
-				"		return null;" +
-				"	}" +
-				"	public List listFamily() {" +
-				"		return null;" +
-				"	}" +
-				"	public Person[] findFamily(String name, int age) {" +
-				"		return new Person[0];" +
-				"	}" +
-				"	public static Person newInstance() {" +
-				"		return new Person();" +
-				"	}" +
-				"}"
-			);
+		project.createType(pack, "Person.java", "import java.util.List;"
+				+ "public class Person {" + "	public List list;"
+				+ "	public static String STATIC = \"satic value\";"
+				+ "	public Person getProperty() {" + "		return null;" + "	}"
+				+ "	public List listFamily() {" + "		return null;" + "	}"
+				+ "	public Person[] findFamily(String name, int age) {"
+				+ "		return new Person[0];" + "	}"
+				+ "	public static Person newInstance() {" + "		return new Person();"
+				+ "	}" + "}");
 		loader = new RttiLoader(project.getJavaProject().getElementName(), true);
 		person = loader.loadRtti("test.Person");
 		ext = new OgnlExtensions(loader);

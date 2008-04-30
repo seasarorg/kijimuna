@@ -136,8 +136,7 @@ public class RttiLoader implements Serializable {
 				newType = getProject().findType(qualifiedName.replace('$', '.'));
 			} catch (JavaModelException ignore) {
 			}
-			if (newType == null &&
-					qualifiedName.indexOf('.') == -1) {
+			if (newType == null && qualifiedName.indexOf('.') == -1) {
 				try {
 					qualifiedName = "java.lang." + qualifiedName;
 					newType = getProject().findType(qualifiedName.replace('$', '.'));
@@ -280,7 +279,7 @@ public class RttiLoader implements Serializable {
 	private void setUpQualifyNamesCache() {
 		this.qualifyNamesCashe = new HashMap();
 	}
-	
+
 	private void readObject(ObjectInputStream in) throws IOException,
 			ClassNotFoundException {
 		in.defaultReadObject();

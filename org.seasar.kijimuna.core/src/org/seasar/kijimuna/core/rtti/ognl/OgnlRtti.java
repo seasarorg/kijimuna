@@ -46,12 +46,13 @@ public class OgnlRtti {
 		environment = new DefaultExecutionEnvironment();
 		environment.setExtensions(extensions);
 		environment.setClassResolver(new ClassResolver() {
-			public Class classForName(Environment environment,
-					String className) throws OgnlException {
+
+			public Class classForName(Environment environment, String className)
+					throws OgnlException {
 				// デフォルトのClassResolverは、staticフィールドにアクセスしようとすると
 				// リフレクションが使われるためプロジェクト内のクラスを見つけられない
-				JavaProjectClassLoader loader = new JavaProjectClassLoader(
-						rootLoader.getProject());
+				JavaProjectClassLoader loader = new JavaProjectClassLoader(rootLoader
+						.getProject());
 				try {
 					return loader.loadClass(className);
 				} catch (ClassNotFoundException e) {
@@ -86,7 +87,9 @@ public class OgnlRtti {
 		} catch (OgnlRttiUnsupportedOperationException ignore) {
 		} catch (OgnlRttiUnprocessable e) {
 			return rootLoader.loadHasErrorRtti(null, KijimunaCore.getResourceString(
-					"rtti.ognl.OgnlRtti.2", new Object[] {e.getMessage()}));
+					"rtti.ognl.OgnlRtti.2", new Object[] {
+						e.getMessage()
+					}));
 		} catch (ExpressionSyntaxException e) {
 			return rootLoader.loadHasErrorRtti(null, KijimunaCore.getResourceString(
 					"rtti.ognl.OgnlRtti.1", new Object[] {

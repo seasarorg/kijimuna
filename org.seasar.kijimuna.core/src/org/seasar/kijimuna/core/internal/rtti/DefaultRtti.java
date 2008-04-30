@@ -253,7 +253,7 @@ public class DefaultRtti implements IRtti {
 		}
 		return true;
 	}
-	
+
 	private boolean isEnum(IMember member) {
 		try {
 			int flags = member.getFlags();
@@ -264,13 +264,13 @@ public class DefaultRtti implements IRtti {
 		}
 		return false;
 	}
-	
+
 	private boolean isInstanceField(IField field) {
 		try {
 			int flags = field.getFlags();
 			if (!Flags.isFinal(flags) && !Flags.isStatic(flags)) {
 				return true;
-			} 
+			}
 		} catch (JavaModelException e) {
 		}
 		return false;
@@ -410,10 +410,11 @@ public class DefaultRtti implements IRtti {
 		return new DefaultRttiPropertyDescriptor(this, propertyName, propertyRtti,
 				isReader);
 	}
-	
-	private DefaultRttiPropertyDescriptor getPropertyDescriptor(IField field, Pattern pattern) {
+
+	private DefaultRttiPropertyDescriptor getPropertyDescriptor(IField field,
+			Pattern pattern) {
 		String propertyName = field.getElementName();
-		String propertyType=null;
+		String propertyType = null;
 		try {
 			String signature = field.getTypeSignature();
 			propertyType = Signature.toString(signature);
@@ -458,7 +459,7 @@ public class DefaultRtti implements IRtti {
 						}
 					}
 				}
-				
+
 				IField[] fields = getType().getFields();
 				for (int i = 0; i < fields.length; i++) {
 					if (isPublicMember(fields[i]) && isInstanceField(fields[i])) {
@@ -470,7 +471,7 @@ public class DefaultRtti implements IRtti {
 						}
 					}
 				}
-				
+
 				IRtti parent = getSuperClass();
 				if (parent != null) {
 					IRttiPropertyDescriptor[] props = parent.getProperties(pattern);
@@ -498,7 +499,7 @@ public class DefaultRtti implements IRtti {
 		}
 		return new IRtti[0];
 	}
-	
+
 	private Set getInterfacesRecursively(IType type) {
 		Set ret = new TreeSet();
 		if (type == null) {
@@ -516,8 +517,9 @@ public class DefaultRtti implements IRtti {
 			}
 			String superclass = type.getSuperclassName();
 			if (superclass != null) {
-				ret.addAll(getInterfacesRecursively(loader.loadRtti(superclass)
-						.getType()));
+				ret
+						.addAll(getInterfacesRecursively(loader.loadRtti(superclass)
+								.getType()));
 			}
 		} catch (JavaModelException ignore) {
 		}

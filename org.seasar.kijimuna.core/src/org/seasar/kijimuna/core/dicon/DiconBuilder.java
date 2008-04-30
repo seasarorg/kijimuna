@@ -122,7 +122,7 @@ public class DiconBuilder extends AbstractProcessor implements ConstCore {
 			IPreferenceStore pref = PreferencesUtil.getPreferenceStore(project);
 			int errorSeverity = pref.getInt(MARKER_SEVERITY_XML_ERROR);
 			int warningSeverity = pref.getInt(MARKER_SEVERITY_XML_WARNING);
-			
+
 			DocumentHandler handler = new DocumentHandler(new DiconElementFactory(),
 					ID_MARKER_DICONXML, errorSeverity, warningSeverity);
 			handler.putDtdPath(PUBLIC_ID_DICON_20, DTD_DICON_20);

@@ -24,7 +24,8 @@ public interface ConstCore {
 
 	public static final String ID_NATURE_DICON = ID_PLUGIN_CORE + ".nature";
 	public static final String ID_PROCESSOR_DICON_BUILDER = ID_PLUGIN_CORE + ".builder";
-	public static final String ID_PROCESSOR_DICON_VALIDATOR = ID_PLUGIN_CORE + ".validator";
+	public static final String ID_PROCESSOR_DICON_VALIDATOR = ID_PLUGIN_CORE
+			+ ".validator";
 
 	public static final String ID_MARKER = ID_PLUGIN_CORE + ".marker";
 	public static final String ID_MARKER_DICONVALIDAION = ID_MARKER + ".diconvalidation";
@@ -76,52 +77,35 @@ public interface ConstCore {
 	public static final String DICON_ATTR_NAMESPACE = "namespace";
 	public static final String DICON_ATTR_BINDINGTYPE = "bindingType";
 	public static final String[] DICON_ATTRS_ARG = new String[] {
-			DICON_BODY,
-			DICON_INJECTED_VALUE
+			DICON_BODY, DICON_INJECTED_VALUE
 	};
 	public static final String[] DICON_ATTRS_ASPECT = new String[] {
-			DICON_ATTR_POINTCUT,
-			DICON_BODY,
-			DICON_INJECTED_VALUE
+			DICON_ATTR_POINTCUT, DICON_BODY, DICON_INJECTED_VALUE
 	};
 	public static final String[] DICON_ATTRS_COMPONENT = new String[] {
-			DICON_ATTR_NAME,
-			DICON_ATTR_CLASS,
-			DICON_ATTR_INSTANCE,
-			DICON_ATTR_AUTOBINDING,
-			DICON_BODY,
-			DICON_INJECTED_VALUE
+			DICON_ATTR_NAME, DICON_ATTR_CLASS, DICON_ATTR_INSTANCE,
+			DICON_ATTR_AUTOBINDING, DICON_BODY, DICON_INJECTED_VALUE
 	};
 	public static final String[] DICON_ATTRS_CONTAINER = new String[] {
-			DICON_ATTR_NAMESPACE,
-			DICON_ATTR_PATH
+			DICON_ATTR_NAMESPACE, DICON_ATTR_PATH
 	};
 	public static final String[] DICON_ATTRS_DESCRIPTION = new String[] {
-			DICON_DESCRIPTION
+		DICON_DESCRIPTION
 	};
 	public static final String[] DICON_ATTRS_DESTROYMETHOD = new String[] {
-			DICON_ATTR_NAME,
-			DICON_BODY,
-			DICON_INJECTED_VALUE
+			DICON_ATTR_NAME, DICON_BODY, DICON_INJECTED_VALUE
 	};
 	public static final String[] DICON_ATTRS_INCLUDE = new String[] {
-			DICON_ATTR_PATH
+		DICON_ATTR_PATH
 	};
 	public static final String[] DICON_ATTRS_INITMETHOD = new String[] {
-			DICON_ATTR_NAME,
-			DICON_BODY,
-			DICON_INJECTED_VALUE
+			DICON_ATTR_NAME, DICON_BODY, DICON_INJECTED_VALUE
 	};
 	public static final String[] DICON_ATTRS_META = new String[] {
-			DICON_ATTR_NAME,
-			DICON_BODY,
-			DICON_INJECTED_VALUE
+			DICON_ATTR_NAME, DICON_BODY, DICON_INJECTED_VALUE
 	};
 	public static final String[] DICON_ATTRS_PROPERTY = new String[] {
-			DICON_ATTR_NAME,
-			DICON_ATTR_BINDINGTYPE,
-			DICON_BODY,
-			DICON_INJECTED_VALUE
+			DICON_ATTR_NAME, DICON_ATTR_BINDINGTYPE, DICON_BODY, DICON_INJECTED_VALUE
 	};
 	public static final String DICON_VAL_INSTANCE_SINGLETON = "singleton";
 	public static final String DICON_VAL_INSTANCE_PROTOTYPE = "prototype";
@@ -172,7 +156,7 @@ public interface ConstCore {
 	public static final int MARKER_SEVERITY_INFO = 2;
 	public static final int MARKER_SEVERITY_IGNORE = 3;
 
-	//preference設定項目
+	// preference設定項目
 	public static final String PREFERENCES_KEY_VERSION = ID_PLUGIN_CORE + ".version";
 	public static final String MARKER_SEVERITY_ENABLE_PROJECT_CUSTOM = "marker.severity.enable_project_custom";
 	public static final String MARKER_SEVERITY_ENABLE_DICON_VALIDATION = "marker.severity.not_validation";
@@ -190,12 +174,12 @@ public interface ConstCore {
 	public static final String EDITOR_COLOR_TAG = "editor.color.tag";
 	public static final String EDITOR_COLOR_ATTRIBUTE = "editor.color.attribute";
 	public static final String EDITOR_COLOR_DEFALUT = "editor.color.default";
-	
+
 	public static final String[] MARKER_SET_XML_ERROR = new String[] {
-			"parser.DocumentHandler.1"
+		"parser.DocumentHandler.1"
 	};
 	public static final String[] MARKER_SET_XML_WARNING = new String[] {
-			"parser.DocumentHandler.2"
+		"parser.DocumentHandler.2"
 	};
 	public static final String[] MARKER_SET_NULL_INJECTION = new String[] {
 			"dicon.validation.AutoConstructorInvoke.3",
@@ -221,8 +205,7 @@ public interface ConstCore {
 			"dicon.validation.AutoSetterInjection.4"
 	};
 	public static final String[] MARKER_SET_DICON_FETAL = new String[] {
-			"dicon.validation.AspectAssemble.1",
-			"dicon.validation.AspectValidation.1",
+			"dicon.validation.AspectAssemble.1", "dicon.validation.AspectValidation.1",
 			"dicon.validation.AspectValidation.2",
 			"dicon.validation.AutoConstructorInvoke.4",
 			"dicon.validation.AutoConstructorInvoke.5",
@@ -240,18 +223,14 @@ public interface ConstCore {
 			"dicon.validation.PropertyValidation.1"
 	};
 	public static final String[] MARKER_SET_DICON_PROBLEM = new String[] {
-			"dicon.validation.AspectValidation.3",
-			"dicon.validation.AspectValidation.5",
-			"dicon.validation.AspectValidation.6",
-			"dicon.validation.AspectValidation.7",
-			"dicon.validation.AspectValidation.8",
-			"dicon.validation.AspectValidation.9",
+			"dicon.validation.AspectValidation.3", "dicon.validation.AspectValidation.5",
+			"dicon.validation.AspectValidation.6", "dicon.validation.AspectValidation.7",
+			"dicon.validation.AspectValidation.8", "dicon.validation.AspectValidation.9",
 			"dicon.validation.ComponentHolderValidation.2",
 			"dicon.validation.ComponentHolderValidation.4",
 			"dicon.validation.ComponentValidation.3",
 			"dicon.validation.DestroyMethodValidation.1",
-			"dicon.validation.MethodValidation.1",
-			"dicon.validation.MethodValidation.3"
+			"dicon.validation.MethodValidation.1", "dicon.validation.MethodValidation.3"
 	};
 
 }

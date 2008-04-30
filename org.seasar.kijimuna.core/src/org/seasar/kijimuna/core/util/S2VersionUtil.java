@@ -23,9 +23,8 @@ import org.eclipse.jdt.core.JavaModelException;
 
 public class S2VersionUtil {
 
-	private static final String VERSION_24 =
-		"org.seasar.framework.container.ExternalContext";
-	
+	private static final String VERSION_24 = "org.seasar.framework.container.ExternalContext";
+
 	public static boolean isUsingVersion24(IProject project) {
 		IType type = null;
 		try {

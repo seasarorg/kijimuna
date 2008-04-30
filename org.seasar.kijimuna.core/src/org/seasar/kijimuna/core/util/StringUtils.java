@@ -125,7 +125,7 @@ public class StringUtils {
 		}
 		return (String[]) list.toArray(new String[list.size()]);
 	}
-	
+
 	/**
 	 * 文字列リテラルをデコードします。
 	 * 
@@ -143,14 +143,15 @@ public class StringUtils {
 	 * 引数で渡した文字列が文字列リテラルかどうかをチェックします。
 	 * 文字列がダブルクォートで開始し、ダブルクォートで終了している場合にtrueを返却します。
 	 * 
-	 * @param value チェック対象の文字列
+	 * @param value
+	 *            チェック対象の文字列
 	 * @return 文字列リテラルの場合true、そうでない場合false
 	 */
-	public static boolean isString(String value){
-		if(value==null){
+	public static boolean isString(String value) {
+		if (value == null) {
 			return false;
 		}
-		if(value.startsWith("\"") && value.endsWith("\"")){
+		if (value.startsWith("\"") && value.endsWith("\"")) {
 			return true;
 		}
 		return false;

@@ -29,24 +29,26 @@ import org.seasar.kijimuna.core.preference.KijimunaPreferenceInitializer;
 
 /**
  * 設定ストアを取得するためのユーティリティクラスです
+ * 
  * @author kenmaz (http://d.hatena.ne.jp/kenmaz)
- *
+ * 
  */
-public class PreferencesUtil implements ConstCore{
+public class PreferencesUtil implements ConstCore {
 
 	/**
 	 * プロジェクト固有の設定ストアを取得します。<br>
 	 * プロジェクト固有設定が行われていない場合はワークスペースの設定ストアを取得します。
 	 */
-	public static IPreferenceStore getPreferenceStore(IProject project){
+	public static IPreferenceStore getPreferenceStore(IProject project) {
 		IPreferenceStore store = getPreferenceStoreOfProject(project);
 		boolean isPrjCustom = store.getBoolean(MARKER_SEVERITY_ENABLE_PROJECT_CUSTOM);
-		if(!isPrjCustom){
+		if (!isPrjCustom) {
 			return getPreferenceStoreOfWorkspace();
-		}else{
-			return store;	
+		} else {
+			return store;
 		}
 	}
+
 	/**
 	 * プロジェクト固有の設定ストアを取得します。
 	 */
@@ -58,25 +60,25 @@ public class PreferencesUtil implements ConstCore{
 	}
 
 	/**
-	 * ワークスペースの設定ストアを取得します。 
+	 * ワークスペースの設定ストアを取得します。
 	 */
-	public static IPreferenceStore getPreferenceStoreOfWorkspace(){
+	public static IPreferenceStore getPreferenceStoreOfWorkspace() {
 		String id = KijimunaCore.getInstance().getBundle().getSymbolicName();
-		return getStore(new InstanceScope(),id);
+		return getStore(new InstanceScope(), id);
 	}
-	
-	private static IPreferenceStore getStore(IScopeContext scope, String id){
+
+	private static IPreferenceStore getStore(IScopeContext scope, String id) {
 		ScopedPreferenceStore store = new ScopedPreferenceStore(scope, id);
 		String version = store.getString(PREFERENCES_KEY_VERSION);
-		
-		//以前のバージョンの設定がのこっている場合
+
+		// 以前のバージョンの設定がのこっている場合
 		if (!version.equals(KijimunaCore.getVersion())) {
-			//ストアをクリア
+			// ストアをクリア
 			KijimunaPreferenceInitializer.setToDefalutAll(store);
-			//マーカーをクリア
+			// マーカーをクリア
 			MarkerUtils.removeAllMarker(ConstCore.ID_MARKER);
-			//modelデータを削除
-			IPath stateLoc = KijimunaCore.getInstance().getStateLocation(); //TODO:what?
+			// modelデータを削除
+			IPath stateLoc = KijimunaCore.getInstance().getStateLocation(); // TODO:what?
 			FileUtils.deleteAllFiles(stateLoc);
 		}
 		return store;

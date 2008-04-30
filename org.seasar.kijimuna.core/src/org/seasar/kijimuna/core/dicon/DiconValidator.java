@@ -111,8 +111,9 @@ public class DiconValidator extends AbstractProcessor implements ConstCore {
 
 	public void process(IProject project, IStorage storage, IProgressMonitor monitor) {
 		IPreferenceStore pref = PreferencesUtil.getPreferenceStore(project);
-		boolean enableDiconValidation = pref.getBoolean(MARKER_SEVERITY_ENABLE_DICON_VALIDATION);
-		
+		boolean enableDiconValidation = pref
+				.getBoolean(MARKER_SEVERITY_ENABLE_DICON_VALIDATION);
+
 		if (FileUtils.isDiconFile(storage) && enableDiconValidation) {
 			if (storage instanceof IFile) {
 				MarkerUtils.deleteMarker((IFile) storage, ID_MARKER_DICONVALIDAION);
@@ -138,11 +139,11 @@ public class DiconValidator extends AbstractProcessor implements ConstCore {
 	}
 
 	public void handleFinish(IProject project, IProgressMonitor monitor) {
-		if(needFullValidate){
+		if (needFullValidate) {
 			fullValidate(project, monitor);
 			needFullValidate = false;
 		}
-		
+
 		try {
 			project.deleteMarkers(ID_MARKER_DICONVALIDAION, true, IResource.DEPTH_ZERO);
 		} catch (CoreException e) {

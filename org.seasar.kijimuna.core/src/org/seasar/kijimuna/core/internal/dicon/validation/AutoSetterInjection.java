@@ -43,17 +43,16 @@ public class AutoSetterInjection implements IValidation, ConstCore {
 			}
 		} else if (element instanceof IPropertyElement) {
 			IPropertyElement prop = (IPropertyElement) element;
-			if (isAutoBinding(prop) &&
-					ModelUtils.isAutoBindingProperty(prop)) {
+			if (isAutoBinding(prop) && ModelUtils.isAutoBindingProperty(prop)) {
 				validateAutoBinding(prop);
 			}
 		}
 	}
-	
+
 	private void validateAutoBinding(IPropertyElement prop) {
 		IRtti rtti = (IRtti) prop.getParent().getAdapter(IRtti.class);
-		validate(prop, (IRtti) prop.getAdapter(IRtti.class),
-				rtti.getQualifiedName(), prop.getPropertyName());
+		validate(prop, (IRtti) prop.getAdapter(IRtti.class), rtti.getQualifiedName(),
+				prop.getPropertyName());
 	}
 
 	// 自動セッターインジェクション�C���W�F�N�V����
@@ -63,16 +62,17 @@ public class AutoSetterInjection implements IValidation, ConstCore {
 			IRttiPropertyDescriptor[] autoInjected = info.getAutoInjectedProperties();
 			for (int i = 0; i < autoInjected.length; i++) {
 				IRtti value = autoInjected[i].getValue();
-				validate(component, value, autoInjected[i].getParent()
-						.getQualifiedName(), autoInjected[i].getName());
+				validate(component, value,
+						autoInjected[i].getParent().getQualifiedName(), autoInjected[i]
+								.getName());
 			}
 		}
 	}
-	
+
 	private boolean isAutoBinding(IComponentElement component) {
 		return isAutoBindingComponent(component.getAutoBindingMode());
 	}
-	
+
 	private boolean isAutoBinding(IPropertyElement prop) {
 		IElement element = prop.getParent();
 		if (element instanceof IComponentElement) {
@@ -81,14 +81,14 @@ public class AutoSetterInjection implements IValidation, ConstCore {
 		}
 		return false;
 	}
-	
+
 	private boolean isAutoBindingComponent(String autoBindingMode) {
-		return DICON_VAL_AUTO_BINDING_AUTO.equals(autoBindingMode) ||
-				DICON_VAL_AUTO_BINDING_PROPERTY.equals(autoBindingMode);
+		return DICON_VAL_AUTO_BINDING_AUTO.equals(autoBindingMode)
+				|| DICON_VAL_AUTO_BINDING_PROPERTY.equals(autoBindingMode);
 	}
-	
-	private void validate(IDiconElement element, IRtti value,
-			String parentName, String propName) {
+
+	private void validate(IDiconElement element, IRtti value, String parentName,
+			String propName) {
 		if (value instanceof IComponentNotFound) {
 			// mustならエラー。mayなら警告なし。
 			if (element instanceof IPropertyElement) {
@@ -102,19 +102,20 @@ public class AutoSetterInjection implements IValidation, ConstCore {
 					return;
 				}
 			}
-			MarkerSetting.createDiconMarker(
-					"dicon.validation.AutoSetterInjection.2", element,
-					new Object[] {parentName, propName});
+			MarkerSetting.createDiconMarker("dicon.validation.AutoSetterInjection.2",
+					element, new Object[] {
+							parentName, propName
+					});
 		} else if (value instanceof ITooManyRegisted) {
-			MarkerSetting.createDiconMarker(
-					"dicon.validation.AutoSetterInjection.3", element,
-					new Object[] {parentName, propName,
+			MarkerSetting.createDiconMarker("dicon.validation.AutoSetterInjection.3",
+					element, new Object[] {
+							parentName, propName,
 							ModelUtils.getInjectedElementName(value)
 					});
 		} else if (value != null) {
-			MarkerSetting.createDiconMarker(
-					"dicon.validation.AutoSetterInjection.1", element,
-					new Object[] {parentName, propName,
+			MarkerSetting.createDiconMarker("dicon.validation.AutoSetterInjection.1",
+					element, new Object[] {
+							parentName, propName,
 							ModelUtils.getInjectedElementName(value)
 					});
 		}

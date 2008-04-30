@@ -9,10 +9,11 @@ import org.seasar.kijimuna.core.util.PreferencesUtil;
 
 /**
  * Kijimunaのデフォルト設定値を設定するクラス
+ * 
  * @author kenmaz (http://d.hatena.ne.jp/kenmaz)
  */
-public class KijimunaPreferenceInitializer extends AbstractPreferenceInitializer 
-	implements ConstCore{
+public class KijimunaPreferenceInitializer extends AbstractPreferenceInitializer
+		implements ConstCore {
 
 	/**
 	 * 設定ストアの初期値を定義します。
@@ -30,19 +31,20 @@ public class KijimunaPreferenceInitializer extends AbstractPreferenceInitializer
 		store.setDefault(MARKER_SEVERITY_JAVA_FETAL, MARKER_SEVERITY_ERROR);
 		store.setDefault(MARKER_SEVERITY_DICON_FETAL, MARKER_SEVERITY_ERROR);
 		store.setDefault(MARKER_SEVERITY_DICON_PROBLEM, MARKER_SEVERITY_WARNING);
-		store.setDefault(EDITOR_COLOR_COMMENT,"128,0,0");
-		store.setDefault(EDITOR_COLOR_XMLDECL,"128,128,128");
-		store.setDefault(EDITOR_COLOR_DOCDECL,"64,128,128");
-		store.setDefault(EDITOR_COLOR_TAG,"0,0,128");
-		store.setDefault(EDITOR_COLOR_ATTRIBUTE,"0,128,0");
-		store.setDefault(EDITOR_COLOR_DEFALUT,"0,0,0");
+		store.setDefault(EDITOR_COLOR_COMMENT, "128,0,0");
+		store.setDefault(EDITOR_COLOR_XMLDECL, "128,128,128");
+		store.setDefault(EDITOR_COLOR_DOCDECL, "64,128,128");
+		store.setDefault(EDITOR_COLOR_TAG, "0,0,128");
+		store.setDefault(EDITOR_COLOR_ATTRIBUTE, "0,128,0");
+		store.setDefault(EDITOR_COLOR_DEFALUT, "0,0,0");
 	}
-	
+
 	/**
 	 * 設定ストアを初期化します。
+	 * 
 	 * @param store
 	 */
-	public static void setToDefalutAll(IPreferenceStore store){
+	public static void setToDefalutAll(IPreferenceStore store) {
 		store.setToDefault(PREFERENCES_KEY_VERSION);
 		store.setToDefault(MARKER_SEVERITY_ENABLE_PROJECT_CUSTOM);
 		store.setToDefault(MARKER_SEVERITY_XML_ERROR);
@@ -58,6 +60,6 @@ public class KijimunaPreferenceInitializer extends AbstractPreferenceInitializer
 		store.setToDefault(EDITOR_COLOR_DOCDECL);
 		store.setToDefault(EDITOR_COLOR_TAG);
 		store.setToDefault(EDITOR_COLOR_ATTRIBUTE);
-		store.setToDefault(EDITOR_COLOR_DEFALUT);		
+		store.setToDefault(EDITOR_COLOR_DEFALUT);
 	}
 }

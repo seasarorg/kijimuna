@@ -115,20 +115,20 @@ public class JavaPackageSearcher {
 			// direct search types
 			if (lastDot == -1 && prefix.length() > 0) {
 				IPackageFragmentRoot[] pkgs = javaProject.getAllPackageFragmentRoots();
-				char[][] typeNames = {prefix.toCharArray()};
-				
+				char[][] typeNames = {
+					prefix.toCharArray()
+				};
+
 				final ArrayList res = new ArrayList();
-				TypeNameRequestor typeNameRequestor = new TypeNameRequestor(){
-					public void acceptType(
-							int modifiers, 
-							char[] packageName,
-							char[] simpleTypeName, 
-							char[][] enclosingTypeNames,
+				TypeNameRequestor typeNameRequestor = new TypeNameRequestor() {
+
+					public void acceptType(int modifiers, char[] packageName,
+							char[] simpleTypeName, char[][] enclosingTypeNames,
 							String path) {
-						
+
 						if (enclosingTypeNames.length == 0 && Flags.isPublic(modifiers)) {
 							StringBuffer fqcn = new StringBuffer();
-							if(packageName.length > 0){
+							if (packageName.length > 0) {
 								fqcn.append(packageName).append(".");
 							}
 							fqcn.append(simpleTypeName);
@@ -136,17 +136,12 @@ public class JavaPackageSearcher {
 						}
 					}
 				};
-				//TODO:3.2との互換性をとるため,deprecatedメソッドを使用した。
-				new SearchEngine().searchAllTypeNames(
-						null, 
-						prefix.toCharArray(),
-						SearchPattern.R_PREFIX_MATCH,
-						IJavaSearchConstants.CLASS,
-						SearchEngine.createJavaSearchScope(pkgs),
-						typeNameRequestor,
-						IJavaSearchConstants.WAIT_UNTIL_READY_TO_SEARCH,
-						null);
-				
+				// TODO:3.2との互換性をとるため,deprecatedメソッドを使用した。
+				new SearchEngine().searchAllTypeNames(null, prefix.toCharArray(),
+						SearchPattern.R_PREFIX_MATCH, IJavaSearchConstants.CLASS,
+						SearchEngine.createJavaSearchScope(pkgs), typeNameRequestor,
+						IJavaSearchConstants.WAIT_UNTIL_READY_TO_SEARCH, null);
+
 				for (Iterator iterator = res.iterator(); iterator.hasNext();) {
 					String fqcn = (String) iterator.next();
 					IType type = javaProject.findType(fqcn);

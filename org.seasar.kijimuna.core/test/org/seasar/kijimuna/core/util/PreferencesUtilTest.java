@@ -8,7 +8,6 @@ import org.seasar.kijimuna.core.test.TestProject;
 
 import junit.framework.TestCase;
 
-
 public class PreferencesUtilTest extends TestCase {
 
 	private TestProject testProject;
@@ -24,7 +23,8 @@ public class PreferencesUtilTest extends TestCase {
 	}
 
 	public void testGetPreferenceStore_GetStoreOfProject() {
-		IPreferenceStore storeOfProject = PreferencesUtil.getPreferenceStoreOfProject(project);
+		IPreferenceStore storeOfProject = PreferencesUtil
+				.getPreferenceStoreOfProject(project);
 		storeOfProject.setValue(ConstCore.MARKER_SEVERITY_ENABLE_PROJECT_CUSTOM, true);
 		storeOfProject.setValue("test", "OK");
 		IPreferenceStore store = PreferencesUtil.getPreferenceStore(project);
@@ -32,7 +32,8 @@ public class PreferencesUtilTest extends TestCase {
 	}
 
 	public void testGetPreferenceStore_GetStoreOfWorkspace() {
-		IPreferenceStore storeOfWorkspace = PreferencesUtil.getPreferenceStoreOfWorkspace();
+		IPreferenceStore storeOfWorkspace = PreferencesUtil
+				.getPreferenceStoreOfWorkspace();
 		storeOfWorkspace.setValue("test", "OK");
 		IPreferenceStore store = PreferencesUtil.getPreferenceStore(project);
 		assertEquals("OK", store.getString("test"));

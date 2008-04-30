@@ -41,10 +41,8 @@ public class MarkerUtilsTest extends TestCase implements ConstCore {
 	protected void setUp() throws Exception {
 		testProject = new TestProject();
 		IPackageFragment pack = testProject.createPackage("test");
-		IType type = testProject.createType(pack,
-				"Test.java", "public class Test {" +
-				"  public int getInt() { return 999; }"+
-				"}");
+		IType type = testProject.createType(pack, "Test.java", "public class Test {"
+				+ "  public int getInt() { return 999; }" + "}");
 		file = type.getUnderlyingResource();
 	}
 

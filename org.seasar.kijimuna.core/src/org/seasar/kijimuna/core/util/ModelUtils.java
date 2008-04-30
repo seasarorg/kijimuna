@@ -195,12 +195,11 @@ public class ModelUtils implements ConstCore {
 		}
 		return new IRttiMethodDesctiptor[0];
 	}
-	
+
 	public static boolean isAutoBindingProperty(IPropertyElement prop) {
-		return prop != null &&
-				prop.getChildren().isEmpty() &&
-				StringUtils.noneValue(prop.getExpression()) &&
-				!DICON_VAL_BINDING_TYPE_NONE.equals(prop.getBindingType());
+		return prop != null && prop.getChildren().isEmpty()
+				&& StringUtils.noneValue(prop.getExpression())
+				&& !DICON_VAL_BINDING_TYPE_NONE.equals(prop.getBindingType());
 	}
 
 }

@@ -52,7 +52,7 @@ public class DefaultRttiFieldDescriptor extends AbstractRttiValuableDescriptor i
 	public boolean isStatic() {
 		return fStatic;
 	}
-	
+
 	public boolean isEnum() {
 		return fEnum;
 	}

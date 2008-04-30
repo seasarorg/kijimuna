@@ -60,7 +60,7 @@ public class PropertyElement extends ComponentHolderElement implements IProperty
 		}
 		return buffer.toString();
 	}
-	
+
 	protected IRtti getNonExpressionValue() {
 		if (ModelUtils.isAutoBindingProperty(this)) {
 			IElement element = getParent();
@@ -75,16 +75,16 @@ public class PropertyElement extends ComponentHolderElement implements IProperty
 				return rtti;
 			}
 			IRttiPropertyDescriptor propDesc = rtti.getProperty(getPropertyName());
-			AutoBindingComponentProvider provider =
-				new AutoBindingComponentProvider(getContainerElement());
+			AutoBindingComponentProvider provider = new AutoBindingComponentProvider(
+					getContainerElement());
 			return provider.getAutoBindingComponentRtti(propDesc);
 		}
 		return super.getNonExpressionValue();
 	}
-	
+
 	private boolean isNotDisplay() {
-		return !DICON_VAL_BINDING_TYPE_MUST.equals(getBindingType()) &&
-				getAdapter(IRtti.class) instanceof HasErrorRtti;
+		return !DICON_VAL_BINDING_TYPE_MUST.equals(getBindingType())
+				&& getAdapter(IRtti.class) instanceof HasErrorRtti;
 	}
 
 }

@@ -8,8 +8,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.seasar.kijimuna.core.ConstCore;
 import org.seasar.kijimuna.core.util.ProjectUtils;
 
-
-public class KijimunaProject extends TestProject implements ConstCore{
+public class KijimunaProject extends TestProject implements ConstCore {
 
 	public KijimunaProject() throws CoreException, MalformedURLException, IOException {
 		super();
@@ -23,5 +22,4 @@ public class KijimunaProject extends TestProject implements ConstCore{
 		addJar(ID_PLUGIN_CORE, "test/resources/lib/s2-framework-2.4.22.jar");
 	}
 
-	
 }

@@ -49,7 +49,7 @@ class ComponentHolderElement extends AbstractExpressionElement implements
 		}
 		return loadChildElementNotFoundRtti();
 	}
-	
+
 	protected IRtti loadChildElementNotFoundRtti() {
 		return getRttiLoader().loadHasErrorRtti(null,
 				KijimunaCore.getResourceString("dicon.model.ComponentHolderElement.1"));

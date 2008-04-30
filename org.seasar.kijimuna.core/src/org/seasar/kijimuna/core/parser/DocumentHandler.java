@@ -67,7 +67,7 @@ public class DocumentHandler extends DefaultHandler implements ConstCore {
 	private IProject project;
 	private IStorage storage;
 	private String contents;
-	
+
 	private IProgressMonitor monitor;
 	private Stack stack;
 	private Locator locator;
@@ -78,7 +78,7 @@ public class DocumentHandler extends DefaultHandler implements ConstCore {
 	private int errorSeverity;
 	private int warningSeverity;
 	private String publicId;
-	
+
 	public DocumentHandler(ElementFactory factory) {
 		this(factory, null, MARKER_SEVERITY_IGNORE, MARKER_SEVERITY_IGNORE);
 	}
@@ -134,7 +134,7 @@ public class DocumentHandler extends DefaultHandler implements ConstCore {
 		}
 		this.contents = readDiconContents();
 	}
-	
+
 	public void startElement(String namespaceURI, String localName, String qName,
 			Attributes attributes) {
 		if (monitor != null) {
@@ -148,11 +148,12 @@ public class DocumentHandler extends DefaultHandler implements ConstCore {
 			Attribute attr = createAttribute(name, value, locator, qName);
 			property.put(name, attr);
 		}
-		
+
 		IElement element = factory.createElement(project, storage, qName);
-		element.setStartLocation(depth, locator.getLineNumber(), locator.getColumnNumber());
+		element.setStartLocation(depth, locator.getLineNumber(), locator
+				.getColumnNumber());
 		element.setAttributes(property);
-		
+
 		if (depth == 1) {
 			result = element;
 			element.setRootElement(element);
@@ -250,49 +251,50 @@ public class DocumentHandler extends DefaultHandler implements ConstCore {
 		}
 	}
 
-	private Attribute createAttribute(String name, String value, Locator locator, String tagName) {
-		
-		//対象element文字列<element .. .. ..>を取得(複数行にわたる場合にも対応)
+	private Attribute createAttribute(String name, String value, Locator locator,
+			String tagName) {
+
+		// 対象element文字列<element .. .. ..>を取得(複数行にわたる場合にも対応)
 		int totalOffset = 0;
 		StringBuffer elementSb = new StringBuffer();
 
 		boolean inElement = false;
 		String[] split = contents.split("\n");
-		for (int lineCnt = 0 ; lineCnt < split.length; lineCnt++) {
-			String line = split[lineCnt]+"\n";
-			if(line.indexOf("<"+tagName+" ") != -1){
+		for (int lineCnt = 0; lineCnt < split.length; lineCnt++) {
+			String line = split[lineCnt] + "\n";
+			if (line.indexOf("<" + tagName + " ") != -1) {
 				inElement = true;
 			}
-			if(inElement){
+			if (inElement) {
 				elementSb.append(line);
-			}else{
+			} else {
 				totalOffset += line.length();
 			}
-			if(line.indexOf(">") != -1 && inElement){
-				if(locator.getLineNumber() == lineCnt + 1){
+			if (line.indexOf(">") != -1 && inElement) {
+				if (locator.getLineNumber() == lineCnt + 1) {
 					break;
-				}else{
+				} else {
 					inElement = false;
 					totalOffset += elementSb.toString().length();
 					elementSb = new StringBuffer();
 				}
 			}
 		}
-		
-		//対象elementから対象属性の出現領域を取得、offset,lengthを求めてAttributeを返す。
+
+		// 対象elementから対象属性の出現領域を取得、offset,lengthを求めてAttributeを返す。
 		String defRegexp = name + "\\s*=\\s*\"" + value + "\"";
 		Pattern p = Pattern.compile(defRegexp);
 		Matcher matcher = p.matcher(elementSb.toString());
-		if(matcher.find()){
+		if (matcher.find()) {
 			int startIdx = matcher.start();
 			int endIdx = matcher.end();
 			return new Attribute(name, value, totalOffset + startIdx, endIdx - startIdx);
-		}else{
-			//対象の属性が存在しない
-			return new Attribute(name, value);	
+		} else {
+			// 対象の属性が存在しない
+			return new Attribute(name, value);
 		}
 	}
-	
+
 	private void registerAutoComponent(ContainerElement containerElement) {
 		List componentList = containerElement.getComponentList();
 		for (Iterator componentListIterator = componentList.iterator(); componentListIterator
@@ -316,14 +318,16 @@ public class DocumentHandler extends DefaultHandler implements ConstCore {
 		List initMethodList = componentElement.getInitMethodList();
 		processInitMethod(register, initMethodList);
 		register.registerAll();
-		if(register instanceof AbstractComponentAutoRegister) {
-			Map componentMap = ((AbstractComponentAutoRegister)register).getComponentMap();
+		if (register instanceof AbstractComponentAutoRegister) {
+			Map componentMap = ((AbstractComponentAutoRegister) register)
+					.getComponentMap();
 			for (Iterator it = componentMap.entrySet().iterator(); it.hasNext();) {
 				Entry entry = (Entry) it.next();
 				((ContainerElement) componentElement.getRootElement())
 						.addAutoRegisterComponent((String) entry.getKey(), (String) entry
-								.getValue(), componentElement.getDepth(), componentElement
-								.getStartLine(), componentElement.getStartColumn());
+								.getValue(), componentElement.getDepth(),
+								componentElement.getStartLine(), componentElement
+										.getStartColumn());
 			}
 		}
 	}
@@ -342,26 +346,27 @@ public class DocumentHandler extends DefaultHandler implements ConstCore {
 					&& register instanceof JarComponentAutoRegister) {
 				setJarFileNames(register, propertyElement);
 			}
-			
+
 			if (propertyElement.getAttribute("name").equals("interceptor")
 					&& register instanceof AspectAutoRegister) {
-				setInterceptor((AspectAutoRegister)register, propertyElement);
+				setInterceptor((AspectAutoRegister) register, propertyElement);
 			}
-			
+
 			if (propertyElement.getAttribute("name").equals("pointcut")
 					&& register instanceof AspectAutoRegister) {
-				setPointcut((AspectAutoRegister)register, propertyElement);
+				setPointcut((AspectAutoRegister) register, propertyElement);
 			}
 		}
 	}
-	
-	private void setInterceptor(AspectAutoRegister register, PropertyElement propertyElement) {
+
+	private void setInterceptor(AspectAutoRegister register,
+			PropertyElement propertyElement) {
 		AspectElement aspectElement = new AspectElement(project, storage);
 		aspectElement.setBody(propertyElement.getBody());
 		register.setAspectElement(aspectElement);
-		register.setContainerElement((ContainerElement)propertyElement.getRootElement());
+		register.setContainerElement((ContainerElement) propertyElement.getRootElement());
 	}
-	
+
 	private void setPointcut(AspectAutoRegister register, PropertyElement propertyElement) {
 		HashMap property = new HashMap();
 		property.put("pointcut", new Attribute("pointcut", propertyElement.getBody()));

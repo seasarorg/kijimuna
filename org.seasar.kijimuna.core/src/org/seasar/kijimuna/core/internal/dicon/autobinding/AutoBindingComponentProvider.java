@@ -32,30 +32,30 @@ public class AutoBindingComponentProvider {
 		}
 		this.container = container;
 	}
-	
+
 	public IRtti getAutoBindingComponentRtti(IRttiPropertyDescriptor propDesc) {
 		IRtti inject = findByComponentName(propDesc);
 		if (inject == null) {
 			IRtti rtti = findByPropertyType(propDesc);
-			inject = rtti != null && !(rtti instanceof HasErrorRtti) ? rtti :
-					new ComponentNotFoundRtti(createComponentKey(propDesc.getName()));
+			inject = rtti != null && !(rtti instanceof HasErrorRtti) ? rtti
+					: new ComponentNotFoundRtti(createComponentKey(propDesc.getName()));
 		}
 		return inject;
 	}
-	
+
 	private IRtti findByComponentName(IRttiPropertyDescriptor propDesc) {
 		IRtti rtti = getComponentRttiFromKeySource(propDesc.getName());
 		return propDesc.getType().isAssignableFrom(rtti) ? rtti : null;
 	}
-	
+
 	private IRtti findByPropertyType(IRttiPropertyDescriptor propDesc) {
 		return getComponentRttiFromKeySource(propDesc.getType());
 	}
-	
+
 	private IRtti getComponentRttiFromKeySource(Object key) {
 		return container.getComponent(createComponentKey(key));
 	}
-	
+
 	private IComponentKey createComponentKey(Object key) {
 		return container.createComponentKey(key);
 	}
