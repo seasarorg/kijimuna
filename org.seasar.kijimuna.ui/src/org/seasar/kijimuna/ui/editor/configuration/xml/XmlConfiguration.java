@@ -60,10 +60,7 @@ public class XmlConfiguration extends SourceViewerConfiguration implements XmlCo
 
 	public String[] getConfiguredContentTypes(ISourceViewer sourceViewer) {
 		return new String[] {
-				TYPE_COMMENT,
-				TYPE_XML_DECL,
-				TYPE_DOC_DECL,
-				TYPE_TAG,
+				TYPE_COMMENT, TYPE_XML_DECL, TYPE_DOC_DECL, TYPE_TAG,
 				IDocument.DEFAULT_CONTENT_TYPE
 		};
 	}
@@ -182,7 +179,7 @@ public class XmlConfiguration extends SourceViewerConfiguration implements XmlCo
 				new HyperlinkDetector(sourceViewer, processor)
 		};
 	}
-	
+
 	public void updatePreferences() {
 		getTagColorScanner().configure();
 		getDocColorScanner().configure();

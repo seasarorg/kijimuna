@@ -36,7 +36,7 @@ public interface XmlConsts {
 	RGB COLOR_TAG = new RGB(0, 0, 128);
 	RGB COLOR_ATTRIBUTE = new RGB(0, 128, 0);
 	RGB COLOR_DEFAULT = new RGB(0, 0, 0);
-	
+
 	String PREF_COLOR = "editor.color";
 	String PREF_COLOR_COMMENT = PREF_COLOR + ".comment";
 	String PREF_COLOR_XML_DECL = PREF_COLOR + ".xmldecl";

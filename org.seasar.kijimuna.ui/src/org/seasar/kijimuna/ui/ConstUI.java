@@ -74,14 +74,8 @@ public interface ConstUI extends ConstCore {
 	String IMAGE_NEW_DICON = "picture/wiz_new_dicon.gif";
 
 	String[] ECLIPSE_ENCODINGS = new String[] {
-			"ISO-8859-1",
-			"UTF-8",
-			"UTF-16",
-			"UTF-16BE",
-			"UTF-16LE",
-			"US-ASCII",
-			"Shift_JIS",
-			"Windows-31J"
+			"ISO-8859-1", "UTF-8", "UTF-16", "UTF-16BE", "UTF-16LE", "US-ASCII",
+			"Shift_JIS", "Windows-31J"
 	};
 
 	String ACTION_CONTENTASSIST_PROPOSAL = "ContentAssistProposal";

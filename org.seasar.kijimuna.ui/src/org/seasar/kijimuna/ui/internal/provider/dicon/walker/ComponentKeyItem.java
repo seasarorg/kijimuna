@@ -47,7 +47,7 @@ public class ComponentKeyItem extends AbstractInternalContainer implements
 	public int getMarkerSeverity() {
 		IProject project = getElement().getProject();
 		IPreferenceStore store = PreferencesUtil.getPreferenceStore(project);
-		
+
 		int tooMany = key.getTooMany();
 		if (tooMany == IComponentKey.TOO_MANY_PROBLEM) {
 			store.getInt(MARKER_SEVERITY_DICON_PROBLEM);

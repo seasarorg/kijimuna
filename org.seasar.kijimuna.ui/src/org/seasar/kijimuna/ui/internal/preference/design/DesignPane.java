@@ -24,7 +24,7 @@ import org.eclipse.swt.widgets.TabFolder;
 public class DesignPane extends Composite {
 
 	private TabFolder folder;
-	
+
 	public DesignPane(Composite parent, int style) {
 		super(parent, style);
 		GridLayout g = new GridLayout(1, true);
@@ -33,7 +33,7 @@ public class DesignPane extends Composite {
 		setLayout(g);
 		setFont(parent.getFont());
 	}
-	
+
 	public TabFolder getTabFolder() {
 		if (folder == null) {
 			GridData gd = new GridData();

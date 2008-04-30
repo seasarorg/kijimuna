@@ -109,8 +109,8 @@ public class ContentItem extends AbstractInternalContainer implements ConstUI {
 			if (isOutline) {
 				if (obj instanceof IIncludeElement) {
 					ret.add(new IncludeItem((IIncludeElement) obj, this));
-				} else if (obj instanceof IPropertyElement &&
-						ModelUtils.isAutoBindingProperty(((IPropertyElement) obj))) {
+				} else if (obj instanceof IPropertyElement
+						&& ModelUtils.isAutoBindingProperty(((IPropertyElement) obj))) {
 					ret.add(new AutoInjectedPropertyItem(this, (IPropertyElement) obj));
 				} else if (obj instanceof IDiconElement) {
 					ret.add(new ContentItem((IDiconElement) obj, this, true));

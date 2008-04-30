@@ -33,8 +33,8 @@ import org.seasar.kijimuna.ui.internal.editor.dicon.configuration.DiconConfigura
  * @author Masataka Kurihara (Gluegent, Inc.)
  * @author Toshitaka Agata (Nulab, Inc.)
  */
-public class DiconXmlEditor extends TextEditor implements
-		IPropertyChangeListener, ConstUI {
+public class DiconXmlEditor extends TextEditor implements IPropertyChangeListener,
+		ConstUI {
 
 	private ColorManager colorManager;
 
@@ -47,21 +47,24 @@ public class DiconXmlEditor extends TextEditor implements
 	}
 
 	public void dispose() {
-		PreferencesUtil.getPreferenceStoreOfWorkspace().removePropertyChangeListener(this);
+		PreferencesUtil.getPreferenceStoreOfWorkspace()
+				.removePropertyChangeListener(this);
 		colorManager.dispose();
 		super.dispose();
 	}
-	
+
 	protected void createActions() {
 		super.createActions();
-		IAction action = new ContentAssistAction(KijimunaUI.getResourceBundle(),ACTION_CONTENTASSIST_PROPOSAL, this);
-		action.setActionDefinitionId(ITextEditorActionDefinitionIds.CONTENT_ASSIST_PROPOSALS);
+		IAction action = new ContentAssistAction(KijimunaUI.getResourceBundle(),
+				ACTION_CONTENTASSIST_PROPOSAL, this);
+		action
+				.setActionDefinitionId(ITextEditorActionDefinitionIds.CONTENT_ASSIST_PROPOSALS);
 		setAction(ACTION_CONTENTASSIST_PROPOSAL, action);
 	}
 
 	public void propertyChange(PropertyChangeEvent event) {
 		DiconConfiguration config = (DiconConfiguration) getSourceViewerConfiguration();
-		if(config != null){
+		if (config != null) {
 			config.updatePreferences();
 			getSourceViewer().invalidateTextPresentation();
 		}

@@ -35,23 +35,23 @@ import org.seasar.kijimuna.ui.editor.configuration.xml.XmlConsts;
 public class DiconEditorColoringDesign extends Composite implements XmlConsts {
 
 	private List colorFieldEditors = new ArrayList();
-	
+
 	private IPreferenceStore store;
 
 	private Group group;
-	
+
 	public DiconEditorColoringDesign(Composite parent, int style, IPreferenceStore store) {
 		super(parent, style);
 		this.store = store;
 		buildDesign();
 	}
-	
+
 	public void buildDesign() {
 		setLayout(new GridLayout(2, false));
 		setFont(getParent().getFont());
-		
+
 		group = new Group(this, SWT.SHADOW_ETCHED_IN);
-				
+
 		addColorFieldEditor("DiconEditorColoringDesign.2", PREF_COLOR_COMMENT);
 		addColorFieldEditor("DiconEditorColoringDesign.3", PREF_COLOR_XML_DECL);
 		addColorFieldEditor("DiconEditorColoringDesign.4", PREF_COLOR_DOC_DECL);
@@ -59,14 +59,15 @@ public class DiconEditorColoringDesign extends Composite implements XmlConsts {
 		addColorFieldEditor("DiconEditorColoringDesign.6", PREF_COLOR_ATTRIBUTE);
 		addColorFieldEditor("DiconEditorColoringDesign.7", PREF_COLOR_DEFAULT);
 	}
-	
+
 	private ColorFieldEditor addColorFieldEditor(String labelKey, String prefKey) {
-		ColorFieldEditor c = new ColorFieldEditor(prefKey, Messages.getString(labelKey), group);
+		ColorFieldEditor c = new ColorFieldEditor(prefKey, Messages.getString(labelKey),
+				group);
 		setColor(c, store.getString(prefKey));
 		colorFieldEditors.add(c);
 		return c;
 	}
-	
+
 	private void setColor(ColorFieldEditor editor, String rgbStr) {
 		RGB rgb;
 		try {
@@ -76,9 +77,9 @@ public class DiconEditorColoringDesign extends Composite implements XmlConsts {
 			rgb = COLOR_DEFAULT;
 		}
 		editor.getColorSelector().setColorValue(rgb);
-		
+
 	}
-	
+
 	public void store() {
 		for (Iterator iterator = colorFieldEditors.iterator(); iterator.hasNext();) {
 			ColorFieldEditor editor = (ColorFieldEditor) iterator.next();
@@ -88,7 +89,7 @@ public class DiconEditorColoringDesign extends Composite implements XmlConsts {
 			store.putValue(prefKey, color);
 		}
 	}
-	
+
 	public void loadDefault() {
 		for (Iterator iterator = colorFieldEditors.iterator(); iterator.hasNext();) {
 			ColorFieldEditor editor = (ColorFieldEditor) iterator.next();

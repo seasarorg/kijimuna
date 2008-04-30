@@ -65,7 +65,7 @@ public class AutoInjectedArgItem extends AbstractInternalContainer implements
 		if (args != null) {
 			IProject project = getElement().getProject();
 			IPreferenceStore store = PreferencesUtil.getPreferenceStore(project);
-			
+
 			if (args[index] instanceof ITooManyRegisted) {
 				return store.getInt(MARKER_SEVERITY_DICON_FETAL);
 			} else if (args[index] instanceof IComponentNotFound) {

@@ -50,7 +50,8 @@ public class MethodItem extends AbstractInternalContainer implements IHasJavaEle
 	public int getMarkerSeverity() {
 		if (needsSeverity) {
 			if (method.isFinal() || method.isStatic()) {
-				IPreferenceStore pref = PreferencesUtil.getPreferenceStore(getElement().getProject());
+				IPreferenceStore pref = PreferencesUtil.getPreferenceStore(getElement()
+						.getProject());
 				return pref.getInt(MARKER_SEVERITY_DICON_PROBLEM);
 			}
 		}

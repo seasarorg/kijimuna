@@ -36,10 +36,7 @@ public class XmlDocumentProvider extends FileDocumentProvider implements XmlCons
 		if (document != null) {
 			IDocumentPartitioner partitioner = new DefaultPartitioner(
 					new XmlPartitionScanner(), new String[] {
-							TYPE_COMMENT,
-							TYPE_XML_DECL,
-							TYPE_DOC_DECL,
-							TYPE_TAG,
+							TYPE_COMMENT, TYPE_XML_DECL, TYPE_DOC_DECL, TYPE_TAG,
 							IDocument.DEFAULT_CONTENT_TYPE
 					});
 			document.setDocumentPartitioner(partitioner);

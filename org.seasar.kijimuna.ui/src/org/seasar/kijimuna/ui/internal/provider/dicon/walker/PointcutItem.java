@@ -43,7 +43,8 @@ public class PointcutItem extends AbstractInternalContainer implements ConstUI {
 
 	public int getMarkerSeverity() {
 		if (pointcut.hasError()) {
-			IPreferenceStore pref = PreferencesUtil.getPreferenceStore(getElement().getProject());
+			IPreferenceStore pref = PreferencesUtil.getPreferenceStore(getElement()
+					.getProject());
 			return pref.getInt(MARKER_SEVERITY_DICON_PROBLEM);
 		}
 		return MARKER_SEVERITY_NONE;

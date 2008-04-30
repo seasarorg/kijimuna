@@ -31,7 +31,7 @@ public class TagColorScanner extends AbstractColorScanner {
 		super(manager);
 		configure();
 	}
-	
+
 	public void configure() {
 		IToken attribute = getColorToken(PREF_COLOR_ATTRIBUTE);
 		IRule[] rules = new IRule[3];

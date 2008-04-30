@@ -49,7 +49,7 @@ public class AutoInjectedPropertyItem extends AbstractInternalContainer implemen
 		this.propName = propDesc.getName();
 		this.propValue = propDesc.getValue();
 	}
-	
+
 	public AutoInjectedPropertyItem(ContentItem parent, IPropertyElement prop) {
 		super(parent);
 		this.prop = prop;
@@ -58,14 +58,14 @@ public class AutoInjectedPropertyItem extends AbstractInternalContainer implemen
 	}
 
 	protected IPropertySource createProperty() {
-		return propDesc != null ? new AutoInjectedPropertyProperty(propDesc) :
-				new AutoInjectedPropertyProperty(prop);
+		return propDesc != null ? new AutoInjectedPropertyProperty(propDesc)
+				: new AutoInjectedPropertyProperty(prop);
 	}
 
 	public int getMarkerSeverity() {
 		IProject project = getElement().getProject();
 		IPreferenceStore store = PreferencesUtil.getPreferenceStore(project);
-		
+
 		IRtti arg = propValue;
 		if (arg instanceof ITooManyRegisted) {
 			return store.getInt(MARKER_SEVERITY_DICON_FETAL);
@@ -112,7 +112,7 @@ public class AutoInjectedPropertyItem extends AbstractInternalContainer implemen
 	public String getImageName() {
 		return IMAGE_ICON_PROPERTY;
 	}
-	
+
 	public IDiconElement getElement() {
 		return prop != null ? prop : super.getElement();
 	}

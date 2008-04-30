@@ -28,27 +28,26 @@ import org.seasar.kijimuna.core.util.PreferencesUtil;
 import org.seasar.kijimuna.ui.editor.configuration.ColorManager;
 import org.seasar.kijimuna.ui.editor.configuration.xml.XmlConsts;
 
-public abstract class AbstractColorScanner extends RuleBasedScanner
-		implements XmlConsts {
+public abstract class AbstractColorScanner extends RuleBasedScanner implements XmlConsts {
 
 	private ColorManager manager;
-	
+
 	public AbstractColorScanner(ColorManager manager) {
 		this.manager = manager;
 	}
-	
+
 	protected ColorManager getColorManager() {
 		return manager;
 	}
-	
+
 	protected IToken getColorToken(String prefKey) {
 		return getColorToken(getRGB(prefKey));
 	}
-	
+
 	protected IToken getColorToken(RGB rgb) {
 		return new Token(new TextAttribute(getColorManager().getColor(rgb)));
 	}
-	
+
 	protected RGB getRGB(String prefKey) {
 		IPreferenceStore pref = PreferencesUtil.getPreferenceStoreOfWorkspace();
 		try {

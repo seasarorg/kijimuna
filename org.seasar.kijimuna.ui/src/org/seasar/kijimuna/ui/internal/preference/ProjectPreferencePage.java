@@ -53,21 +53,23 @@ public class ProjectPreferencePage extends PropertyPage implements ConstCore {
 	private Button enableProjectCustomSetting;
 	private ErrorMarkerDesign markerDesign;
 	private Composite base;
-	
+
 	protected Control createContents(Composite parent) {
-		IPreferenceStore store = PreferencesUtil.getPreferenceStoreOfProject(getProject());
+		IPreferenceStore store = PreferencesUtil
+				.getPreferenceStoreOfProject(getProject());
 		setPreferenceStore(store);
 
 		GridLayout layout = new GridLayout(1, true);
 		layout.marginHeight = 0;
 		layout.marginWidth = 0;
 		parent.setLayout(layout);
-		
+
 		// nature checkbox
 		natureCheck = new Button(parent, SWT.CHECK | SWT.LEFT);
 		natureCheck.setText(Messages.getString("ProjectPreferencePage.1")); //$NON-NLS-1$
 		natureCheck.setFont(parent.getFont());
 		natureCheck.addSelectionListener(new SelectionAdapter() {
+
 			public void widgetSelected(SelectionEvent e) {
 				handleNatureCheck();
 			}
@@ -77,13 +79,14 @@ public class ProjectPreferencePage extends PropertyPage implements ConstCore {
 		GridData separatorGd = new GridData();
 		separatorGd.horizontalAlignment = GridData.FILL;
 		separator.setLayoutData(separatorGd);
-		
-		base = new Composite(parent, SWT.NONE){
+
+		base = new Composite(parent, SWT.NONE) {
+
 			public void setEnabled(boolean enabled) {
 				enableProjectCustomSetting.setEnabled(enabled);
-				if(enabled){
+				if (enabled) {
 					markerDesign.setEnabled(enableProjectCustomSetting.getSelection());
-				}else{
+				} else {
 					markerDesign.setEnabled(false);
 				}
 			}
@@ -95,15 +98,16 @@ public class ProjectPreferencePage extends PropertyPage implements ConstCore {
 		pgd.grabExcessVerticalSpace = true;
 		pgd.grabExcessHorizontalSpace = true;
 		base.setLayoutData(pgd);
-		
+
 		enableProjectCustomSetting = new Button(base, SWT.CHECK | SWT.LEFT);
 		enableProjectCustomSetting.setText(Messages.getString("ProjectPreferencePage.2")); //$NON-NLS-1$
-		enableProjectCustomSetting.addSelectionListener(new SelectionAdapter(){
+		enableProjectCustomSetting.addSelectionListener(new SelectionAdapter() {
+
 			public void widgetSelected(SelectionEvent e) {
 				handleEnableProjectCustomSetting();
 			}
 		});
-		
+
 		Group group = new Group(base, SWT.SHADOW_NONE);
 		group.setLayout(new GridLayout(1, true));
 		group.setText(Messages.getString("ErrorMarkerDesign.1")); //$NON-NLS-1$
@@ -111,13 +115,13 @@ public class ProjectPreferencePage extends PropertyPage implements ConstCore {
 		gd.horizontalAlignment = GridData.FILL;
 		gd.grabExcessHorizontalSpace = true;
 		group.setLayoutData(gd);
-		
+
 		// error marker
 		markerDesign = new ErrorMarkerDesign(group, SWT.NULL, getPreferenceStore());
 		markerDesign.setLayoutData(gd);
-		
+
 		init();
-		
+
 		return parent;
 	}
 
@@ -134,28 +138,29 @@ public class ProjectPreferencePage extends PropertyPage implements ConstCore {
 		enableProjectCustomSetting.setSelection(projectCustom);
 		handleEnableProjectCustomSetting();
 	}
-	
-	private void handleNatureCheck(){
+
+	private void handleNatureCheck() {
 		base.setEnabled(natureCheck.getSelection());
 	}
+
 	private void handleEnableProjectCustomSetting() {
 		markerDesign.setEnabled(enableProjectCustomSetting.getSelection());
 	}
-	
+
 	private IProject getProject() {
 		return (IProject) getElement();
 	}
-	
+
 	public boolean performOk() {
 		applyModification();
 		cleanupDiconModel();
 		return true;
 	}
-	
+
 	protected void performApply() {
 		applyModification();
 	}
-	
+
 	private void applyModification() {
 		try {
 			IProject project = getProject();
@@ -167,12 +172,12 @@ public class ProjectPreferencePage extends PropertyPage implements ConstCore {
 				ProjectUtils.removeNature(project, ID_NATURE_DICON);
 			}
 			IPreferenceStore store = getPreferenceStore();
-			
+
 			boolean enablePrjCustom = enableProjectCustomSetting.getSelection();
 			store.setValue(MARKER_SEVERITY_ENABLE_PROJECT_CUSTOM, enablePrjCustom);
-			
+
 			markerDesign.store();
-			
+
 		} catch (CoreException e) {
 			KijimunaUI.reportException(e);
 		}
@@ -182,18 +187,19 @@ public class ProjectPreferencePage extends PropertyPage implements ConstCore {
 		if (natureCheck.getSelection()) {
 			markerDesign.loadDefault();
 
-			boolean b = getPreferenceStore().getDefaultBoolean(MARKER_SEVERITY_ENABLE_PROJECT_CUSTOM);
+			boolean b = getPreferenceStore().getDefaultBoolean(
+					MARKER_SEVERITY_ENABLE_PROJECT_CUSTOM);
 			enableProjectCustomSetting.setSelection(b);
 			handleEnableProjectCustomSetting();
 		}
 	}
-	
+
 	private void cleanupDiconModel() {
 		IRunnableWithProgress runnable = new IRunnableWithProgress() {
-			public void run(IProgressMonitor monitor) throws
-					InvocationTargetException, InterruptedException {
-				KijimunaCore.getProjectRecorder().cleanup(getProject(),
-						monitor);
+
+			public void run(IProgressMonitor monitor) throws InvocationTargetException,
+					InterruptedException {
+				KijimunaCore.getProjectRecorder().cleanup(getProject(), monitor);
 			}
 		};
 		IWorkbenchWindow w = PlatformUI.getWorkbench().getActiveWorkbenchWindow();

@@ -52,33 +52,34 @@ public class PluginPreferencePage extends PreferencePage implements
 		IPreferenceStore store = PreferencesUtil.getPreferenceStoreOfWorkspace();
 		setPreferenceStore(store);
 	}
-	
+
 	protected Control createContents(Composite parent) {
 		IPreferenceStore store = getPreferenceStore();
 
 		DesignPane pane = new DesignPane(parent, SWT.NULL);
 		TabFolder folder = pane.getTabFolder();
-		
+
 		// error marker tab
 		markerDesign = new ErrorMarkerDesign(folder, SWT.NULL, store);
 		TabItem item = new TabItem(folder, SWT.NULL);
 		item.setText(Messages.getString("ErrorMarkerDesign.1"));
 		item.setControl(markerDesign);
-		
+
 		// editor coloring tab
 		coloringDesign = new DiconEditorColoringDesign(folder, SWT.NULL, store);
 		item = new TabItem(folder, SWT.NULL);
 		item.setText(Messages.getString("DiconEditorColoringDesign.1"));
 		item.setControl(coloringDesign);
-		
+
 		return pane;
 	}
-	
+
 	public boolean performOk() {
 		applyModification();
 		IRunnableWithProgress runnable = new IRunnableWithProgress() {
-			public void run(IProgressMonitor monitor) throws
-					InvocationTargetException, InterruptedException {
+
+			public void run(IProgressMonitor monitor) throws InvocationTargetException,
+					InterruptedException {
 				KijimunaCore.getProjectRecorder().cleanup(monitor);
 			}
 		};
@@ -94,16 +95,16 @@ public class PluginPreferencePage extends PreferencePage implements
 		}
 		return true;
 	}
-	
+
 	protected void performApply() {
 		applyModification();
 	}
-	
+
 	protected void performDefaults() {
 		markerDesign.loadDefault();
 		coloringDesign.loadDefault();
 	}
-	
+
 	private void applyModification() {
 		markerDesign.store();
 		coloringDesign.store();

@@ -68,7 +68,7 @@ public class AutoInjectedPropertyProperty extends NullProperty {
 	public AutoInjectedPropertyProperty(IRttiPropertyDescriptor property) {
 		this.property = property;
 	}
-	
+
 	public AutoInjectedPropertyProperty(IPropertyElement prop) {
 		this.prop = prop;
 	}
@@ -100,7 +100,7 @@ public class AutoInjectedPropertyProperty extends NullProperty {
 		}
 		return null;
 	}
-	
+
 	private String getQualifiedClassNameOfParent() {
 		if (prop != null) {
 			IRtti parent = (IRtti) prop.getParent().getAdapter(IRtti.class);
@@ -108,21 +108,21 @@ public class AutoInjectedPropertyProperty extends NullProperty {
 		}
 		return property.getParent().getQualifiedName();
 	}
-	
+
 	private String getPropertyName() {
 		return prop != null ? prop.getPropertyName() : property.getName();
 	}
-	
+
 	private String getQualifiedClassNameOfProperty() {
 		if (prop != null) {
 			IRtti parent = (IRtti) prop.getParent().getAdapter(IRtti.class);
-			IRttiPropertyDescriptor propDesc = parent != null ? parent
-					.getProperty(prop.getPropertyName()) : null;
+			IRttiPropertyDescriptor propDesc = parent != null ? parent.getProperty(prop
+					.getPropertyName()) : null;
 			return propDesc != null ? propDesc.getType().getQualifiedName() : "";
 		}
 		return property.getType().getQualifiedName();
 	}
-	
+
 	private IRtti getPropertyValue() {
 		return prop != null ? (IRtti) prop.getAdapter(IRtti.class) : property.getValue();
 	}

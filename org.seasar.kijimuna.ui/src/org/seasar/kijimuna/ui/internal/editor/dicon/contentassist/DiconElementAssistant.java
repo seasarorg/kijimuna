@@ -86,16 +86,15 @@ public class DiconElementAssistant extends XmlElementAssistant implements ConstU
 		int last = prefix.lastIndexOf('.');
 		return last < 0 ? prefix : prefix.substring(last + 1);
 	}
-	
-	private List getComponentProposals(IContainerElement container,
-			String prefix, int offset) {
+
+	private List getComponentProposals(IContainerElement container, String prefix,
+			int offset) {
 		List proposals = new ArrayList();
 		addProposals(container, prefix, offset, proposals);
 		List includeList = container.getIncludeList();
 		for (Iterator includeListIterator = includeList.iterator(); includeListIterator
 				.hasNext();) {
-			IIncludeElement includeElement = (IIncludeElement) includeListIterator
-					.next();
+			IIncludeElement includeElement = (IIncludeElement) includeListIterator.next();
 			IContainerElement childContainerElement = (IContainerElement) includeElement
 					.getChildContainer();
 			addProposals(childContainerElement, prefix, offset, proposals);
@@ -110,8 +109,7 @@ public class DiconElementAssistant extends XmlElementAssistant implements ConstU
 		for (int i = 0; i < componentList.size(); i++) {
 			IComponentElement comp = (IComponentElement) componentList.get(i);
 			String name = comp.getComponentName();
-			if (StringUtils.existValue(name) && isMatch(name, getLastPrefix(
-					prefix))) {
+			if (StringUtils.existValue(name) && isMatch(name, getLastPrefix(prefix))) {
 				ICompletionProposal proposal = createProposal(name, name,
 						getLastPrefix(prefix), offset, name.length(),
 						IMAGE_ICON_COMPONENT);
@@ -119,23 +117,22 @@ public class DiconElementAssistant extends XmlElementAssistant implements ConstU
 			}
 		}
 	}
-	
-	private List getNamespaceProposals(IContainerElement container,
-			String prefix, int offset) {
+
+	private List getNamespaceProposals(IContainerElement container, String prefix,
+			int offset) {
 		Map proposals = new HashMap();
 		List includes = container.getIncludeList();
 		for (int i = 0; i < includes.size(); i++) {
 			IIncludeElement include = (IIncludeElement) includes.get(i);
 			String namespace = include.getChildContainer().getNamespace();
-			if (StringUtils.existValue(namespace) && isMatch(namespace,
-					getLastPrefix(prefix))) {
+			if (StringUtils.existValue(namespace)
+					&& isMatch(namespace, getLastPrefix(prefix))) {
 				if (proposals.containsKey(namespace)) {
 					continue;
 				}
-				ICompletionProposal proposal = createProposal(namespace,
-						namespace + " - " + include.getPath(),
-						getLastPrefix(prefix), offset, namespace.length(),
-						IMAGE_ICON_CONTAINER);
+				ICompletionProposal proposal = createProposal(namespace, namespace
+						+ " - " + include.getPath(), getLastPrefix(prefix), offset,
+						namespace.length(), IMAGE_ICON_CONTAINER);
 				proposals.put(namespace, proposal);
 			}
 		}
@@ -143,7 +140,7 @@ public class DiconElementAssistant extends XmlElementAssistant implements ConstU
 		Collections.sort(ret, new ProposalComparator());
 		return ret;
 	}
-	
+
 	private List getOGNLProposals(IDiconElement element, String prefix, int offset) {
 		List proposals = new ArrayList();
 		if (prefix.length() == 0) {
@@ -307,13 +304,13 @@ public class DiconElementAssistant extends XmlElementAssistant implements ConstU
 							if ((elRtti != null) && !(elRtti instanceof HasErrorRtti)) {
 								if (elRtti.getQualifiedName().equals(
 										MODEL_INTERFACE_S2CONTAINER)) {
-									IContainerElement container = (IContainerElement)
-											elRtti.getAdapter(IContainerElement.class);
+									IContainerElement container = (IContainerElement) elRtti
+											.getAdapter(IContainerElement.class);
 									if (container != null) {
-										proposals.addAll(getComponentProposals(
-												container, prefix, offset));
-										proposals.addAll(getNamespaceProposals(
-												container, prefix, offset));
+										proposals.addAll(getComponentProposals(container,
+												prefix, offset));
+										proposals.addAll(getNamespaceProposals(container,
+												prefix, offset));
 									}
 								}
 								proposals.addAll(getMemberProposals(elRtti, el + ".",
@@ -333,11 +330,10 @@ public class DiconElementAssistant extends XmlElementAssistant implements ConstU
 		}
 		superProposals.addAll(proposals);
 	}
-	
+
 	private IContainerElement getContainerElement() {
 		XmlRegion region = getXmlRegion();
-		IParseResult result = CoreUtils.parse(region.getStringToEnd(), region
-				.getFile());
+		IParseResult result = CoreUtils.parse(region.getStringToEnd(), region.getFile());
 		return (IContainerElement) result.getRootElement();
 	}
 

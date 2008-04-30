@@ -29,7 +29,7 @@ public class DocColorScanner extends AbstractColorScanner {
 		super(manager);
 		configure();
 	}
-	
+
 	public void configure() {
 		IRule[] rules = new IRule[4];
 		rules[0] = new CommentRule(getColorToken(PREF_COLOR_COMMENT));
