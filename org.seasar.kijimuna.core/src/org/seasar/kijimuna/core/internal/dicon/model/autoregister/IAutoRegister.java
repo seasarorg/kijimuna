@@ -15,7 +15,6 @@
  */
 package org.seasar.kijimuna.core.internal.dicon.model.autoregister;
 
-import java.util.Map;
 
 import org.eclipse.jdt.core.IJavaProject;
 
@@ -66,6 +65,20 @@ public interface IAutoRegister {
 	 * @param naming
 	 */
 	public void setAutoNaming(AutoNaming naming);
+	
+	/**
+	 * 追加されているClassPatternの数を返します。
+	 * 
+	 * @return
+	 */
+	public int getClassPatternSize();
 
-	public Map getComponentMap();
+	/**
+	 * ClassPatternを返します。
+	 * 
+	 * @param index
+	 * @return
+	 */
+	public ClassPattern getClassPattern(int index);
+
 }

@@ -49,4 +49,33 @@ public final class ClassUtil {
     	}
     	return result;
     }
+    
+    /**
+     * パッケージ名を返します。
+     * 
+     * @param clazz
+     * @return パッケージ名
+     */
+    public static String getPackageName(String fqcn) {
+        int pos = fqcn.lastIndexOf('.');
+        if (pos > 0) {
+            return fqcn.substring(0, pos);
+        }
+        return null;
+    }
+
+
+    /**
+     * FQCNからパッケージ名を除いた名前を返します。
+     * 
+     * @param className
+     * @return FQCNからパッケージ名を除いた名前
+     */
+    public static String getShortClassName(String className) {
+        int i = className.lastIndexOf('.');
+        if (i > 0) {
+            return className.substring(i + 1);
+        }
+        return className;
+    }
 }

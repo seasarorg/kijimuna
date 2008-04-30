@@ -26,9 +26,9 @@ import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.seasar.kijimuna.core.KijimunaCore;
 
 /**
- * <code>FileSystemComponentAutoRegister</code>の動作をエミュレートするIAutoRegisterの実装。
+ * <code>FileSystemComponentAutoRegister</code>の動作をエミュレートするIAutoRegisterの実装承。
  */
-public class FileSystemComponentAutoRegister extends AbstractAutoRegister {
+public class FileSystemComponentAutoRegister extends AbstractComponentAutoRegister {
 
 	public void registerAll() {
 		try {

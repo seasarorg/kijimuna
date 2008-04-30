@@ -16,9 +16,7 @@
 package org.seasar.kijimuna.core.internal.dicon.model.autoregister;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.eclipse.jdt.core.IJavaProject;
 
@@ -30,7 +28,6 @@ public abstract class AbstractAutoRegister implements IAutoRegister {
 	private IJavaProject project;
 	private List classPatterns = new ArrayList();
 	private List ignoreClassPatterns = new ArrayList();
-	private Map componentMap = new HashMap();
 	private AutoNaming naming = new DefaultAutoNaming();
 
 	public void setProject(IJavaProject project) {
@@ -68,30 +65,28 @@ public abstract class AbstractAutoRegister implements IAutoRegister {
 	}
 
 	/**
-	 * 引数で指定したクラスを処理します。
-	 * <p>
-	 * 登録するクラスパターンにマッチしていれば登録し、 そうでなければ何も行いません。
+	 * 追加されているClassPatternの数を返します。
 	 * 
-	 * @param packageName
-	 *            パッケージ名
-	 * @param shortClassName
-	 *            クラス名
+	 * @return
 	 */
-	protected void processClass(String packageName, String shortClassName) {
-		if (isIgnore(packageName, shortClassName)) {
-			return;
-		}
-		if (isMatch(packageName, shortClassName)) {
-			String clazz = packageName + "." + shortClassName;
-			String name = naming.defineName(packageName, shortClassName);
-			componentMap.put(name, clazz);
-		}
+	public int getClassPatternSize() {
+		return classPatterns.size();
+	}
+
+	/**
+	 * ClassPatternを返します。
+	 * 
+	 * @param index
+	 * @return
+	 */
+	public ClassPattern getClassPattern(int index) {
+		return (ClassPattern) classPatterns.get(index);
 	}
 
 	/**
 	 * 引数で指定したクラスが登録するクラスパターンにマッチするかどうかを調べます。
 	 */
-	private boolean isMatch(String packageName, String shortClassName) {
+	protected boolean isMatch(String packageName, String shortClassName) {
 		if (classPatterns.isEmpty()) {
 			return false;
 		}
@@ -110,7 +105,7 @@ public abstract class AbstractAutoRegister implements IAutoRegister {
 	/**
 	 * 引数で指定したクラスが無視するクラスパターンにマッチするかどうかを調べます。
 	 */
-	private boolean isIgnore(String packageName, String shortClassName) {
+	protected boolean isIgnore(String packageName, String shortClassName) {
 		if (ignoreClassPatterns.isEmpty()) {
 			return false;
 		}
@@ -126,11 +121,4 @@ public abstract class AbstractAutoRegister implements IAutoRegister {
 		return false;
 	}
 
-	public Map getComponentMap() {
-		return componentMap;
-	}
-
-	public void setComponentMap(Map componentMap) {
-		this.componentMap = componentMap;
-	}
 }

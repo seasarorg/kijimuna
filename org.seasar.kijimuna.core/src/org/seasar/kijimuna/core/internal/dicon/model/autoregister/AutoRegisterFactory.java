@@ -37,7 +37,9 @@ public class AutoRegisterFactory {
 		autoRegisters
 				.put("org.seasar.framework.container.autoregister.ComponentAutoRegister",
 						"org.seasar.kijimuna.core.internal.dicon.model.autoregister.ComponentAutoRegister");
-
+		autoRegisters
+				.put("org.seasar.framework.container.autoregister.AspectAutoRegister",
+						"org.seasar.kijimuna.core.internal.dicon.model.autoregister.AspectAutoRegister");
 	}
 
 	/**

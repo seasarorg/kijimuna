@@ -32,7 +32,7 @@ import org.seasar.kijimuna.core.util.ResourceUtil;
 /**
  * <code>JarComponentAutoRegister</code>の動作をエミュレートするIAutoRegisterの実装。
  */
-public class JarComponentAutoRegister extends AbstractAutoRegister {
+public class JarComponentAutoRegister extends AbstractComponentAutoRegister {
 
 	private String referenceClass;
 	private Pattern[] jarFileNamePatterns;

@@ -44,10 +44,13 @@ import org.eclipse.jdt.core.JavaCore;
 import org.seasar.kijimuna.core.ConstCore;
 import org.seasar.kijimuna.core.KijimunaCore;
 import org.seasar.kijimuna.core.internal.dicon.model.ArgElement;
+import org.seasar.kijimuna.core.internal.dicon.model.AspectElement;
 import org.seasar.kijimuna.core.internal.dicon.model.ComponentElement;
 import org.seasar.kijimuna.core.internal.dicon.model.ContainerElement;
 import org.seasar.kijimuna.core.internal.dicon.model.InitMethodElement;
 import org.seasar.kijimuna.core.internal.dicon.model.PropertyElement;
+import org.seasar.kijimuna.core.internal.dicon.model.autoregister.AbstractComponentAutoRegister;
+import org.seasar.kijimuna.core.internal.dicon.model.autoregister.AspectAutoRegister;
 import org.seasar.kijimuna.core.internal.dicon.model.autoregister.AutoRegisterFactory;
 import org.seasar.kijimuna.core.internal.dicon.model.autoregister.ComponentAutoRegister;
 import org.seasar.kijimuna.core.internal.dicon.model.autoregister.IAutoRegister;
@@ -313,13 +316,15 @@ public class DocumentHandler extends DefaultHandler implements ConstCore {
 		List initMethodList = componentElement.getInitMethodList();
 		processInitMethod(register, initMethodList);
 		register.registerAll();
-		Map componentMap = register.getComponentMap();
-		for (Iterator it = componentMap.entrySet().iterator(); it.hasNext();) {
-			Entry entry = (Entry) it.next();
-			((ContainerElement) componentElement.getRootElement())
-					.addAutoRegisterComponent((String) entry.getKey(), (String) entry
-							.getValue(), componentElement.getDepth(), componentElement
-							.getStartLine(), componentElement.getStartColumn());
+		if(register instanceof AbstractComponentAutoRegister) {
+			Map componentMap = ((AbstractComponentAutoRegister)register).getComponentMap();
+			for (Iterator it = componentMap.entrySet().iterator(); it.hasNext();) {
+				Entry entry = (Entry) it.next();
+				((ContainerElement) componentElement.getRootElement())
+						.addAutoRegisterComponent((String) entry.getKey(), (String) entry
+								.getValue(), componentElement.getDepth(), componentElement
+								.getStartLine(), componentElement.getStartColumn());
+			}
 		}
 	}
 
@@ -337,7 +342,30 @@ public class DocumentHandler extends DefaultHandler implements ConstCore {
 					&& register instanceof JarComponentAutoRegister) {
 				setJarFileNames(register, propertyElement);
 			}
+			
+			if (propertyElement.getAttribute("name").equals("interceptor")
+					&& register instanceof AspectAutoRegister) {
+				setInterceptor((AspectAutoRegister)register, propertyElement);
+			}
+			
+			if (propertyElement.getAttribute("name").equals("pointcut")
+					&& register instanceof AspectAutoRegister) {
+				setPointcut((AspectAutoRegister)register, propertyElement);
+			}
 		}
+	}
+	
+	private void setInterceptor(AspectAutoRegister register, PropertyElement propertyElement) {
+		AspectElement aspectElement = new AspectElement(project, storage);
+		aspectElement.setBody(propertyElement.getBody());
+		register.setAspectElement(aspectElement);
+		register.setContainerElement((ContainerElement)propertyElement.getRootElement());
+	}
+	
+	private void setPointcut(AspectAutoRegister register, PropertyElement propertyElement) {
+		HashMap property = new HashMap();
+		property.put("pointcut", new Attribute("pointcut", propertyElement.getBody()));
+		register.getAspectElement().setAttributes(property);
 	}
 
 	private void setReferenceClass(IAutoRegister register, PropertyElement propertyElement) {

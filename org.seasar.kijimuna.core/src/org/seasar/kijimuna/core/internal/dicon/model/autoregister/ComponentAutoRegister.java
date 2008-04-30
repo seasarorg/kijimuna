@@ -26,10 +26,10 @@ import org.seasar.kijimuna.core.KijimunaCore;
 /**
  * <code>ComponentAutoRegister</code>の動作をエミュレートするIAutoRegisterの実装。
  */
-public class ComponentAutoRegister extends AbstractAutoRegister {
+public class ComponentAutoRegister extends AbstractComponentAutoRegister {
 
 	private List referenceClasses = new ArrayList();
-	private IAutoRegister register;
+	private AbstractComponentAutoRegister register;
 
 	public void addReferenceClass(String className) {
 		referenceClasses.add(className);
