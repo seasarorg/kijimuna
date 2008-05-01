@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-Name: %plugin.name
 Bundle-SymbolicName: org.seasar.kijimuna.core; singleton=true
-Bundle-Version: 1.1.10
+Bundle-Version: 1.1.11.qualifier
 Bundle-ClassPath: KijimunaCore.jar,ognl-3.0.0-pre-2.jar,dtdparser-1.2.1.jar
 Bundle-Vendor: %author
 Bundle-Localization: plugin
