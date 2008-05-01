@@ -69,18 +69,6 @@ public class PreferencesUtil implements ConstCore {
 
 	private static IPreferenceStore getStore(IScopeContext scope, String id) {
 		ScopedPreferenceStore store = new ScopedPreferenceStore(scope, id);
-		String version = store.getString(PREFERENCES_KEY_VERSION);
-
-		// 以前のバージョンの設定がのこっている場合
-		if (!version.equals(KijimunaCore.getVersion())) {
-			// ストアをクリア
-			KijimunaPreferenceInitializer.setToDefalutAll(store);
-			// マーカーをクリア
-			MarkerUtils.removeAllMarker(ConstCore.ID_MARKER);
-			// modelデータを削除
-			IPath stateLoc = KijimunaCore.getInstance().getStateLocation(); // TODO:what?
-			FileUtils.deleteAllFiles(stateLoc);
-		}
 		return store;
 	}
 }
