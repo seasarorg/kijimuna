@@ -16,6 +16,9 @@
 package org.seasar.kijimuna.ui.editor.configuration.xml;
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.jdt.core.IJarEntryResource;
+import org.eclipse.jdt.internal.ui.javaeditor.JarEntryEditorInput;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.ITextDoubleClickStrategy;
 import org.eclipse.jface.text.ITextHover;
@@ -118,6 +121,12 @@ public class XmlConfiguration extends SourceViewerConfiguration implements XmlCo
 		IEditorInput input = editor.getEditorInput();
 		if (input instanceof IFileEditorInput) {
 			return ((IFileEditorInput) input).getFile();
+		} else if (input instanceof JarEntryEditorInput) {
+			IJarEntryResource jarEntry = (IJarEntryResource) ((JarEntryEditorInput) input)
+					.getStorage();
+			IProject project = jarEntry.getPackageFragmentRoot().getJavaProject()
+					.getProject();
+			return project.getFile(jarEntry.getFullPath());
 		}
 		return null;
 	}
