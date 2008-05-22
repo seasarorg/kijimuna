@@ -1,5 +1,18 @@
 Kijimuna 変更履歴
 
+1.1.12 (2008-05-22)
+----------------------------------------------------------------------
+[新規] AspectAutoRegister対応。(KIJIMUNA-28)
+
+[修正] sa-struts-tutorial-1.0.2-rc2をimport→validate→deleteした後、
+       sa-struts-tutorial-1.0.1-rc4をimport→validateするとIOエラー
+       が発生する問題を修正しました。(KIJIMUNA-35)
+
+[修正] ワークスペースのPreferenceStoreが効いていない問題を修正しました。(KIJIMUNA-36)
+
+[修正] クラスパスが通ったjarファイル内のdiconファイルを操作すると
+       NullPointerExceptionが発生する問題を修正しました。(KIJIMUNA-38) [Seasar-user:14138]
+
 1.1.10 (2008-04-13)
 [修正] s2jdbc-tutorialのs2jdbc.diconで「[property]コンポーネントキー
        "hsqlDialect"が登録されていません。」と言われる（Kijimuna-22が再現）

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <site>
-   <feature url="features/org.seasar.kijimuna_1.1.11.200805012308.jar" id="org.seasar.kijimuna" version="1.1.11.200805012308">
+   <feature url="features/org.seasar.kijimuna_1.1.12.jar" id="org.seasar.kijimuna" version="1.1.12">
       <category name="Kijimuna stable"/>
    </feature>
    <category-def name="Kijimuna stable" label="Kijimuna stable versions"/>
