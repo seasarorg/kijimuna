@@ -144,7 +144,7 @@ public class ProjectPreferencePage extends PropertyPage implements ConstCore {
 	}
 
 	private void handleEnableProjectCustomSetting() {
-		markerDesign.setEnabled(enableProjectCustomSetting.getSelection());
+		markerDesign.setEnabled(enableProjectCustomSetting.getSelection() && natureCheck.getSelection());
 	}
 
 	private IProject getProject() {
