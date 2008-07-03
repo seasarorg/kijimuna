@@ -21,10 +21,8 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.regex.Pattern;
 
-import org.eclipse.core.resources.IContainer;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.jdt.core.IJavaElement;
 import org.eclipse.jdt.core.IType;
+import org.eclipse.jdt.launching.JavaRuntime;
 
 import org.seasar.kijimuna.core.KijimunaCore;
 import org.seasar.kijimuna.core.util.ResourceUtil;
@@ -43,26 +41,17 @@ public class JarComponentAutoRegister extends AbstractComponentAutoRegister {
 			if (!type.exists()) {
 				return;
 			}
-			IJavaElement parent = type.getPackageFragment().getParent();
-			if (!parent.getElementName().endsWith(".jar")) {
-				return;
-			}
-			IResource resource = parent.getResource();
-			File[] jars = null;
-			if (resource == null) {
-				File file = parent.getPath().makeAbsolute().toFile();
-				jars = new File[1];
-				jars[0] = file;
-			} else {
-				IContainer container = resource.getParent();
-				File basedir = container.getLocation().makeAbsolute().toFile();
-				jars = basedir.listFiles();
-			}
-			for (int i = 0; i < jars.length; ++i) {
-				if (!isAppliedJar(jars[i].getName())) {
+			String[] classPaths = JavaRuntime
+					.computeDefaultRuntimeClassPath(getProject());
+			for (int i = 0; i < classPaths.length; i++) {
+				File file = new File(classPaths[i]);
+				if (file.isDirectory()) {
 					continue;
 				}
-				JarFile jarFile = new JarFile(jars[i]);
+				if (!isAppliedJar(file.getName())) {
+					continue;
+				}
+				JarFile jarFile = new JarFile(file);
 				Enumeration enumeration = jarFile.entries();
 				while (enumeration.hasMoreElements()) {
 					final JarEntry entry = (JarEntry) enumeration.nextElement();
