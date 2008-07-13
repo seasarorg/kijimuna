@@ -31,7 +31,6 @@ public class MessageManager {
 
 	private Plugin plugin;
 	private String resourceBaseName;
-	private String pluginID;
 	private ResourceBundle bundle;
 
 	public MessageManager(Plugin plugin, String resourceBaseName) {
@@ -41,7 +40,7 @@ public class MessageManager {
 
 	public void reportInfo(String message) {
 		try {
-			IStatus status = new Status(IStatus.INFO, pluginID, IStatus.OK, message, null);
+			IStatus status = new Status(IStatus.INFO, plugin.getBundle().getSymbolicName(), IStatus.OK, message, null);
 			plugin.getLog().log(status);
 		} catch (RuntimeException e1) {
 		}
@@ -53,7 +52,7 @@ public class MessageManager {
 			if (e instanceof CoreException) {
 				status = ((CoreException) e).getStatus();
 			} else {
-				status = new Status(IStatus.ERROR, pluginID, IStatus.OK, e.getMessage(),
+				status = new Status(IStatus.ERROR, plugin.getBundle().getSymbolicName(), IStatus.OK, e.getMessage(),
 						e);
 			}
 			plugin.getLog().log(status);
