@@ -40,6 +40,7 @@ public class DiconXmlEditor extends TextEditor implements IPropertyChangeListene
 
 	public DiconXmlEditor() {
 		super();
+		setEditorContextMenuId("#DiconEditorContext");
 		colorManager = new ColorManager();
 		setSourceViewerConfiguration(new DiconConfiguration(this, colorManager));
 		setDocumentProvider(new XmlDocumentProvider());

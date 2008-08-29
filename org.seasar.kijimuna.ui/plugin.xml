@@ -64,5 +64,54 @@
             class="org.seasar.kijimuna.ui.internal.editor.dicon.DiconXmlEditor"
             name="XML"/>
    </extension>
+   <extension
+         point="org.eclipse.ui.popupMenus">
+      <viewerContribution
+            id="org.seasar.kijimuna.ui.viewerContribution.OpenJava"
+            targetID="#DiconEditorContext">
+         <action
+               class="org.seasar.kijimuna.ui.action.OpenJavaAction"
+               definitionId="org.seasar.kijimuna.ui.command.OpenJava"
+               id="org.seasar.kijimuna.ui.action.OpenJava"
+               label="%JavaFileOpenAction.label"
+               menubarPath="additions">
+         </action>
+      </viewerContribution>
+   </extension>
+   <extension
+         point="org.eclipse.ui.bindings">
+      <key
+            commandId="org.seasar.kijimuna.ui.command.OpenJava"
+            contextId="org.eclipse.ui.textEditorScope"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            sequence="F3">
+      </key>
+   </extension>
+   <extension
+         point="org.eclipse.ui.commands">
+      <category
+            id="org.seasar.kijimuna.ui.category"
+            name="Kijimuna">
+      </category>
+      <command
+            categoryId="org.seasar.kijimuna.ui.category"
+            id="org.seasar.kijimuna.ui.command.OpenJava"
+            name="%JavaFileOpenAction.label">
+      </command>
+   </extension>
+   <extension
+         point="org.eclipse.ui.actionSets">
+      <actionSet
+            id="org.seasar.kijimuna.ui.actionSet.OpenJava"
+            label="%JavaFileOpenAction.label"
+            visible="true">
+         <action
+               class="org.seasar.kijimuna.ui.action.OpenJavaAction"
+               definitionId="org.seasar.kijimuna.ui.command.OpenJava"
+               id="org.seasar.kijimuna.ui.action.OpenJavaAction"
+               label="%JavaFileOpenAction.label">
+         </action>
+      </actionSet>
+   </extension>
 
 </plugin>
